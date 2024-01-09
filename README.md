@@ -105,7 +105,7 @@ with access to ReportService, it will be a reporting module. Without a repositor
 
 ## Functionalities - proposal for app version 1.0
 
-Automatically status change.
+`All functionalities in 1.0 are proposed for desktop use only.`
 
 ### Restaurant Menu
 - add
@@ -131,6 +131,8 @@ Automatically status change.
 - show all
 - show specific
 - filter ASC/DESC by id, price, customer, status, order_time
+
+  Order status shall be changed automatically, for example: waiter accepts the order and it goes to the kitchen changing the order status from PENDING to PREPARING.
 
 ### Reservation
 - add
