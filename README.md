@@ -102,3 +102,54 @@ with access to ReportService, it will be a reporting module. Without a repositor
 ## Restaurant Management System Schema
 
 ![Restaurant_Management_System_Schema drawio (1)](https://github.com/BartoliniAndBorderCollies/Restaurant_Management_System_REST_API/assets/126821059/1a3cbc2a-5990-40c4-9b95-1600c6162638)
+
+## Functionalities
+
+Automatically status change.
+
+### Restaurant Menu
+- add
+- update
+- delete
+- show all
+- show specific
+- filter ASC/DESC by price, name
+
+### Inventory
+- add
+- update
+- delete
+- show all
+- show specific
+- show not available (amount = 0)
+- filter ASC/DESC by name, price, stock_amount, delivery_date, Supplier, expiry_date
+
+### Order
+- add
+- update
+- delete
+- show all
+- show specific
+- filter ASC/DESC by id, price, customer, status, order_time
+
+### Reservation
+- add
+- update
+- delete
+- show all
+- show specific
+- filter ASC/DESC by id, time, table, name
+
+### Customer
+- add
+- update
+- delete
+- show all
+- show specific
+- filter ASC/DESC by id, name, role, total_spent
+
+### Report
+- generate a report using parameters
+- download the report to excel file
+
+  
