@@ -103,7 +103,7 @@ with access to ReportService, it will be a reporting module. Without a repositor
 
 ![Restaurant_Management_System_Schema drawio (1)](https://github.com/BartoliniAndBorderCollies/Restaurant_Management_System_REST_API/assets/126821059/1a3cbc2a-5990-40c4-9b95-1600c6162638)
 
-## Functionalities
+## Functionalities - proposal for app version 1.0
 
 Automatically status change.
 
