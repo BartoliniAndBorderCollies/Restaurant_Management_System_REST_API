@@ -98,3 +98,7 @@ This table will have relationships with the Order and Reservation tables.
 
 ### ReportController: 
 with access to ReportService, it will be a reporting module. Without a repository, without saving to the database. A Customer with the appropriate role selects parameters and the report is generated automatically, the downloaded .excel file is saved on the hard disk. The reporting module will have access to all repositories.
+
+## Restaurant Management System Schema
+
+![Restaurant_Management_System_Schema drawio (1)](https://github.com/BartoliniAndBorderCollies/Restaurant_Management_System_REST_API/assets/126821059/1a3cbc2a-5990-40c4-9b95-1600c6162638)
