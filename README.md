@@ -112,24 +112,30 @@ with access to ReportService, it will be a reporting module. Without a repositor
 
 `All functionalities in 1.0 are proposed for desktop use only.`
 
-### Restaurant Menu
-- add
-- update
-- delete
-- show all
-- show specific
+
+### 1. Restaurant Menu
+- add a record
+- update a record
+- delete a record
+- delete all records
+- show all records
+- show specific record
 - filter ASC/DESC by price, name
 
-### Inventory
-- add
-- update
-- delete
-- show all
-- show specific
+This is a single record in menu of the restaurant, for example: Lech Beer 0,5 L.
+
+### 2. Inventory
+- add an item
+- update an item
+- delete an item
+- show all items
+- show specific item
 - show not available (amount = 0)
 - filter ASC/DESC by name, price, stock_amount, delivery_date, Supplier, expiry_date
 
-### Order
+It will not be possible to order a position from restaurant menu if there is a lack of ingredient. Therefore 'Inventory' will be also an information what is on the stock and how many items are available. This will be a help a staff to make a supplies of things which are really needed. Also staff will be able to check anytime the current stocks.
+
+### 3. Order
 - add
 - update
 - delete
@@ -137,9 +143,11 @@ with access to ReportService, it will be a reporting module. Without a repositor
 - show specific
 - filter ASC/DESC by id, price, customer, status, order_time
 
-  Order status shall be changed automatically, for example: waiter accepts the order and it goes to the kitchen changing the order status from PENDING to PREPARING.
+Order status shall be changed manually, for example: waiter takes guests to the table and clicks PENDING. Then he takes the order and through the app it goes to the kitchen where cooks change the order status from PENDING to PREPARING. When order is ready cooks change status clicking DONE. Waiter can see it on the app and he goes and takes the order to the correct table, then he clicks NOT PAID.
+Finally the waiter clicks PAID when it is paid.
+It is possible to change status to CANCELLED from PENDING, PREPARING, DONE.
 
-### Reservation
+### 4. Reservation
 - add
 - update
 - delete
@@ -147,16 +155,20 @@ with access to ReportService, it will be a reporting module. Without a repositor
 - show specific
 - filter ASC/DESC by id, time, table, name
 
-### Customer
+This part will greatly improve work of restaurant because you will have the exact information about all reservations and you would know what is the occupation level at which hours, which tables are the most popular, which days, which hours. It will help to plan for example marketing campaigns to encourage people to come in lower hours or to plan a broader team of staff to be at work in the rushes hours.
+
+### 5. Customer
 - add
 - update
 - delete
 - show all
 - show specific
-- filter ASC/DESC by id, name, role, total_spent
+- filter ASC/DESC by id, name, role
 
-### Report
-- generate a report using parameters
-- download the report to excel file
+This part is about all users -> guests (clients) as well as members of a staff.
+Proposed roles: (ADMIN, OWNER, MANAGER, STAFF, CLIENT)
 
-  
+### 6. Report
+It will be possible to generate a report depending on a role. For example OWNER 
+could check sales in a specific month. MANAGER could check stock level in specific period of time.
+A report will be downloadable in excel file for further processing of data. 
