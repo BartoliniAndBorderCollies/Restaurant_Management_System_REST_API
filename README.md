@@ -101,7 +101,8 @@ with access to ReportService, it will be a reporting module. Without a repositor
 
 ## Restaurant Management System Schema
 
-![Restaurant_Management_System_Schema drawio (1)](https://github.com/BartoliniAndBorderCollies/Restaurant_Management_System_REST_API/assets/126821059/1a3cbc2a-5990-40c4-9b95-1600c6162638)
+![Restaurant_Management_System_Schema drawio](https://github.com/BartoliniAndBorderCollies/Restaurant_Management_System_REST_API/assets/126821059/cc03ed52-2592-4c2c-8617-97222ba2d922)
+
 
 ## Restaurant Management System - Status circulation
 
