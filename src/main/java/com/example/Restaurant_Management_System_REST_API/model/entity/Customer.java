@@ -26,6 +26,10 @@ public class Customer implements UserDetails {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    private LocalDateTime creationTime;
+    @OneToOne(mappedBy = "customer")
+    private Reservation reservation;
+
     //Below are fields for security issues
     private String password;
     private Boolean accountNonExpired;//to avoid hardcoding I established these fields
