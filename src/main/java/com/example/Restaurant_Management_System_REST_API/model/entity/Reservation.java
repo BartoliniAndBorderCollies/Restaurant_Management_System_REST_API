@@ -17,7 +17,7 @@ public class Reservation {
     private Long id;
     private String name;
     private String description;
-    private int howManyPeople;
+    private int peopleAmount;
     private LocalDateTime start;
     @OneToMany(mappedBy = "reservation")
     private ArrayList<Table> tables;
