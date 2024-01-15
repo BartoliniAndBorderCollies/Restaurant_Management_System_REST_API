@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class SingleRecord {
+public abstract class CatalogItem {
 
     private String name;
     private String description;

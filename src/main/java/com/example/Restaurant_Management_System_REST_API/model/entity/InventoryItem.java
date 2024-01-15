@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
-import com.example.Restaurant_Management_System_REST_API.model.SingleRecord;
+import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class InventoryItem extends SingleRecord {
+public class InventoryItem extends CatalogItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
