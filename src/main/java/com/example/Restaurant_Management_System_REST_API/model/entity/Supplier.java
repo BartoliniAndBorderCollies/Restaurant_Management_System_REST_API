@@ -10,11 +10,13 @@ import java.util.ArrayList;
 @Entity
 @Getter
 @Setter
-public class Supplier extends ContactDetails {
+public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    @Embedded
+    private ContactDetails contactDetails;
 
     @OneToMany(mappedBy = "supplier")
     private ArrayList<InventoryItem> inventoryItemList;

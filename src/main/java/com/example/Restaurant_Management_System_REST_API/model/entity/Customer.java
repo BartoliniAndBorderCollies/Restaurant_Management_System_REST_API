@@ -77,4 +77,6 @@ public class Customer implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+    @Embedded
+    private ContactDetails contactDetails;
 }
