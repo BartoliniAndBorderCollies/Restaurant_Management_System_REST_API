@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
-
+import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
