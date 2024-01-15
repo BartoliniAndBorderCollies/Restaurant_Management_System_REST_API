@@ -13,7 +13,7 @@ public abstract class ContactDetails {
     private String street;
     private String houseNumber;
     private String city;
-    private int postalCode;
-    private int telephoneNumber;
+    private String postalCode;
+    private String telephoneNumber;
     private String emailAddress;
 }
