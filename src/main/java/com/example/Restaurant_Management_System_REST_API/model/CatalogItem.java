@@ -11,5 +11,7 @@ public abstract class CatalogItem {
 
     private String name;
     private String description;
-    private double price;
+    private Double price; //I use object to be able to hold null values (for updating process, I want to update
+    //just fields which hold values, if some are skipped they should not be changed on db. if it was a primitive data type
+    //of double then it would change to 0.0 if not provided other value in put request
 }
