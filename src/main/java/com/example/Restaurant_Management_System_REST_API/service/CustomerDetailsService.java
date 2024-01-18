@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class RestaurantCustomerDetailsService implements UserDetailsService {
+public class CustomerDetailsService implements UserDetailsService {
 
     private final CustomerRepository customerRepository;
 
