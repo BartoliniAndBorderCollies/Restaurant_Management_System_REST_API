@@ -30,6 +30,10 @@ public class Customer implements UserDetails {
 
     //Below are fields for security issues
     private String password;
+    private Boolean accountNonExpired;//to avoid hardcoding I established these fields
+    private Boolean accountNonLocked;
+    private Boolean credentialsNonExpired;
+    private Boolean enabled;
     private String emailAddress; //TODO: delete when abstract class with contact details will be implemented
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles;
@@ -53,21 +57,21 @@ public class Customer implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return credentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
