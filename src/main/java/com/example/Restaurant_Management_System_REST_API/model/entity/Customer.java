@@ -33,6 +33,9 @@ public class Customer implements UserDetails {
     private Boolean credentialsNonExpired;
     private Boolean enabled;
     private String emailAddress; //TODO: delete when abstract class with contact details will be implemented
+    @ManyToMany
+    @JoinTable(name = "customer_authorities", joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<SimpleGrantedAuthority> authorities;
 
     @Override
