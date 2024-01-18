@@ -20,7 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, MvcRequestMatcher.Builder mvc)
             throws Exception {
         return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable) //TODO: consult this part with my mentor
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(mvc.pattern("/api/admin/**")) //TODO: update path with appropriate mapping
                         .hasRole("ADMIN")
