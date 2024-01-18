@@ -7,12 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import java.util.List;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Entity
@@ -35,14 +33,11 @@ public class Customer implements UserDetails {
     private Boolean credentialsNonExpired;
     private Boolean enabled;
     private String emailAddress; //TODO: delete when abstract class with contact details will be implemented
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    private List<SimpleGrantedAuthority> authorities;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+    public Collection<? extends SimpleGrantedAuthority> getAuthorities() {
+        return this.authorities;
     }
 
     @Override
