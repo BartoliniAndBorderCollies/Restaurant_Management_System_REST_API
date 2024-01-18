@@ -32,8 +32,6 @@ public class SecurityConfig {
                         .hasRole("STAFF")
                         .anyRequest()
                         .permitAll())
-                .formLogin(Customizer.withDefaults())
-                .logout(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
