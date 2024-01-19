@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,5 +19,5 @@ public class Supplier {
     private ContactDetails contactDetails;
 
     @OneToMany(mappedBy = "supplier")
-    private ArrayList<InventoryItem> inventoryItemList;
+    private List<InventoryItem> inventoryItemList;
 }

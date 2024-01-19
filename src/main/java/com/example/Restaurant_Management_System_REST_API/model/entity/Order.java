@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,5 +29,5 @@ public class Order {
             name = "order_menu_record",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "menu_record_id"))
-    private ArrayList<MenuRecord> menuRecords;
+    private List<MenuRecord> menuRecords;
 }
