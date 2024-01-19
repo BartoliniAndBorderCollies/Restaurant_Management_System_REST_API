@@ -15,5 +15,4 @@ public class ContactDetails {
     private String city;
     private String postalCode;
     private String telephoneNumber;
-    private String emailAddress;
 }
