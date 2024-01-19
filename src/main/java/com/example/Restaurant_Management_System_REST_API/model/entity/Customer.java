@@ -1,8 +1,8 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
 
@@ -26,10 +27,11 @@ public class Customer implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
     private LocalDateTime creationTime;
     @OneToOne(mappedBy = "customer")
     private Reservation reservation;
+    @Embedded
+    private ContactDetails contactDetails;
 
     //Below are fields for security issues
     private String password;
@@ -37,7 +39,7 @@ public class Customer implements UserDetails {
     private Boolean accountNonLocked;
     private Boolean credentialsNonExpired;
     private Boolean enabled;
-    private String emailAddress; //TODO: delete when abstract class with contact details will be implemented
+    private String emailAddress;
     @ManyToMany
     @JoinTable(name = "customer_authorities", joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
@@ -77,6 +79,4 @@ public class Customer implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-    @Embedded
-    private ContactDetails contactDetails;
 }
