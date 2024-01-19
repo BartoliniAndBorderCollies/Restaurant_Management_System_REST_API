@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -16,7 +16,7 @@ public class MenuRecord extends CatalogItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private List<String> ingredients;
+    private Set<String> ingredients;
     private Category category;
     private boolean isAvailable;
 }
