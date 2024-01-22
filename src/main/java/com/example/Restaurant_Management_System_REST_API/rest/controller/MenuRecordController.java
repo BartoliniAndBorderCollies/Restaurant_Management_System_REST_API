@@ -17,9 +17,11 @@ public class MenuRecordController {
 
     private MenuRecordService menuRecordService;
 
-    @PostMapping("/add") // This will be done by only owner and manager
-    public MenuRecord create(@RequestBody MenuRecord menuRecord) {
-        return menuRecordService.create(menuRecord);
+    //TODO: validations, spring security coverage, Junit tests, integrations tests. Merge to develop branch!
+
+    @PostMapping("/add") // This will be done only by owner and manager
+    public MenuRecordDTOResponse create(@RequestBody MenuRecordDTORequest menuRecordDTORequest) {
+        return menuRecordService.create(menuRecordDTORequest);
     }
 
     @GetMapping("/{id}") // this will be done by all roles
