@@ -1,9 +1,12 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTORequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,13 +17,17 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class MenuRecordService implements GenericBasicCrudOperations<MenuRecord, MenuRecord, Long> {
+public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordDTOResponse, MenuRecordDTORequest, Long> {
 
     private MenuRecordRepository menuRecordRepository;
+    private ModelMapper modelMapper;
 
     @Override
-    public MenuRecord create(MenuRecord menuRecord) {
-        return menuRecordRepository.save(menuRecord);
+    public MenuRecordDTOResponse create(MenuRecordDTORequest menuRecordDTORequest) {
+        MenuRecord menuRecord = modelMapper.map(menuRecordDTORequest, MenuRecord.class);
+        menuRecordRepository.save(menuRecord);
+
+        return modelMapper.map(menuRecord, MenuRecordDTOResponse.class);
     }
 
     @Override
