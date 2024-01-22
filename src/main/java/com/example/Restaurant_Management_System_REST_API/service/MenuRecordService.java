@@ -39,12 +39,12 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
     }
 
     @Override
-    public List<MenuRecord> findAll() {
+    public List<MenuRecordDTOResponse> findAll() {
         Iterable<MenuRecord> iterable = menuRecordRepository.findAll();
-        List<MenuRecord> list = new ArrayList<>();
+        List<MenuRecordDTOResponse> list = new ArrayList<>();
 
         for (MenuRecord menuRecord : iterable) {
-            list.add(menuRecord);
+            list.add(modelMapper.map(menuRecord, MenuRecordDTOResponse.class));
         }
 //        iterable.forEach(list::add); a shorter version
         return list;
