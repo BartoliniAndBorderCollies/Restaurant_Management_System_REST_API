@@ -68,7 +68,8 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
 
     @Override
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
-        MenuRecord menuRecord = findById(id);
+        MenuRecord menuRecord = menuRecordRepository.findById(id).orElseThrow(() ->
+                new NotFoundInDatabaseException(MenuRecord.class));
         menuRecordRepository.delete(menuRecord);
 
         return new ResponseEntity<>("Menu record has been deleted!", HttpStatus.OK);
