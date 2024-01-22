@@ -51,17 +51,19 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
     }
 
     @Override
-    public MenuRecord update(Long id, MenuRecord updatedMenuRecord) throws NotFoundInDatabaseException {
-        MenuRecord menuRecord = findById(id);
+    public MenuRecordDTOResponse update(Long id, MenuRecordDTORequest updatedMenuRecordDTO) throws NotFoundInDatabaseException {
+        MenuRecordDTOResponse menuRecordDTOResponse = findById(id);
 
-        Optional.ofNullable(updatedMenuRecord.getName()).ifPresent(menuRecord::setName);
-        Optional.ofNullable(updatedMenuRecord.getDescription()).ifPresent(menuRecord::setDescription);
-        Optional.ofNullable(updatedMenuRecord.getPrice()).ifPresent(menuRecord::setPrice);
-        Optional.ofNullable(updatedMenuRecord.getIngredients()).ifPresent(menuRecord::setIngredients);
-        Optional.ofNullable(updatedMenuRecord.getCategory()).ifPresent(menuRecord::setCategory);
-        Optional.ofNullable(updatedMenuRecord.getIsAvailable()).ifPresent(menuRecord::setIsAvailable);
+        Optional.ofNullable(updatedMenuRecordDTO.getName()).ifPresent(menuRecordDTOResponse::setName);
+        Optional.ofNullable(updatedMenuRecordDTO.getDescription()).ifPresent(menuRecordDTOResponse::setDescription);
+        Optional.ofNullable(updatedMenuRecordDTO.getPrice()).ifPresent(menuRecordDTOResponse::setPrice);
+        Optional.ofNullable(updatedMenuRecordDTO.getIngredients()).ifPresent(menuRecordDTOResponse::setIngredients);
+        Optional.ofNullable(updatedMenuRecordDTO.getCategory()).ifPresent(menuRecordDTOResponse::setCategory);
+        Optional.ofNullable(updatedMenuRecordDTO.getIsAvailable()).ifPresent(menuRecordDTOResponse::setIsAvailable);
 
-        return menuRecordRepository.save(menuRecord);
+        menuRecordRepository.save(modelMapper.map(menuRecordDTOResponse, MenuRecord.class));
+
+        return menuRecordDTOResponse;
     }
 
     @Override
