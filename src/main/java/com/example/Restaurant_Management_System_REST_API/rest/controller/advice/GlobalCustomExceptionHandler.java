@@ -1,4 +1,4 @@
-package com.example.Restaurant_Management_System_REST_API.controller.advice;
+package com.example.Restaurant_Management_System_REST_API.rest.controller.advice;
 
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import org.springframework.http.HttpStatus;

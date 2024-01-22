@@ -1,4 +1,4 @@
-package com.example.Restaurant_Management_System_REST_API.controller;
+package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
