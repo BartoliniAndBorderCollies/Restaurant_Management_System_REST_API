@@ -31,9 +31,11 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
     }
 
     @Override
-    public MenuRecord findById(Long menuRecordId) throws NotFoundInDatabaseException {
-        return menuRecordRepository.findById(menuRecordId).orElseThrow(() ->
+    public MenuRecordDTOResponse findById(Long menuRecordId) throws NotFoundInDatabaseException {
+        MenuRecord menuRecord = menuRecordRepository.findById(menuRecordId).orElseThrow(() ->
                 new NotFoundInDatabaseException(MenuRecord.class));
+
+        return modelMapper.map(menuRecord, MenuRecordDTOResponse.class);
     }
 
     @Override
