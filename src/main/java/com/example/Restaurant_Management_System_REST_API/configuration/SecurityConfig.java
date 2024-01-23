@@ -23,12 +23,11 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(mvc.pattern("/api/admin/**")) //TODO: update path with appropriate mapping
+                        .requestMatchers(mvc.pattern("")) //TODO: update path with appropriate mapping
                         .hasRole("ADMIN")
-                        .requestMatchers(mvc.pattern("/api/owner/**")) //TODO: update path with appropriate mapping
-                        .hasRole("OWNER")
-                        .requestMatchers(mvc.pattern("/api/manager/**")) //TODO: update path with appropriate mapping
-                        .hasRole("MANAGER")
+                        .requestMatchers(mvc.pattern("/api/menu/record/add"), mvc.pattern("/api/menu/record/update/**"),
+                                 mvc.pattern("/api/menu/record/delete/**"))
+                        .hasAnyRole("OWNER", "MANAGER")
                         .requestMatchers(mvc.pattern("/api/staff/**")) //TODO: update path with appropriate mapping
                         .hasRole("STAFF")
                         .anyRequest()
