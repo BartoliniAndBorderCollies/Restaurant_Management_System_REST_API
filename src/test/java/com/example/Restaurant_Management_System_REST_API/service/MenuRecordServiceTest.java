@@ -56,4 +56,21 @@ class MenuRecordServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void create_ShouldReturnTypeMenuRecordDTOResponse_WhenMenuRecordDTORequestIsGiven() {
+        //Arrange
+        MenuRecordDTOResponse expected = new MenuRecordDTOResponse();
+        MenuRecord menuRecord = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
+
+        when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
+        when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
+        when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(expected);
+
+        //Act
+        MenuRecordDTOResponse actual = menuRecordService.create(menuRecordDTORequest);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
 }
