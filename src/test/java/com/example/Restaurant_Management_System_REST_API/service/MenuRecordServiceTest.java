@@ -21,9 +21,18 @@ class MenuRecordServiceTest {
     private MenuRecordService menuRecordService;
     private MenuRecordRepository menuRecordRepository;
     private ModelMapper modelMapper;
+    private Set<String> ingredients;
+    private MenuRecordDTORequest menuRecordDTORequest;
 
     @BeforeEach
     public void setUp() {
+        ingredients = new HashSet<>();
+        ingredients.add("water");
+        ingredients.add("hops");
+        ingredients.add("barley");
+
+        menuRecordDTORequest = new MenuRecordDTORequest(1L, ingredients, Category.BEVERAGE, true);
+
         menuRecordRepository = mock(MenuRecordRepository.class);
         modelMapper = mock(ModelMapper.class);
 
@@ -33,13 +42,7 @@ class MenuRecordServiceTest {
     @Test
     public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() {
         //Arrange
-        Set<String> ingredients = new HashSet<>();
-        ingredients.add("water");
-        ingredients.add("hops");
-        ingredients.add("barley");
-
         MenuRecord menuRecord = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
-        MenuRecordDTORequest menuRecordDTORequest = new MenuRecordDTORequest(1L, ingredients, Category.BEVERAGE, true);
         MenuRecordDTOResponse expected = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, false);
 
         when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
