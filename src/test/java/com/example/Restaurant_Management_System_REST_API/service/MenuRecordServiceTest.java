@@ -21,17 +21,20 @@ class MenuRecordServiceTest {
     private MenuRecordService menuRecordService;
     private MenuRecordRepository menuRecordRepository;
     private ModelMapper modelMapper;
-    private Set<String> ingredients;
     private MenuRecordDTORequest menuRecordDTORequest;
+    private MenuRecord menuRecord;
+    private MenuRecordDTOResponse menuRecordDTOResponse;
 
     @BeforeEach
     public void setUp() {
-        ingredients = new HashSet<>();
+        Set<String> ingredients = new HashSet<>();
         ingredients.add("water");
         ingredients.add("hops");
         ingredients.add("barley");
 
         menuRecordDTORequest = new MenuRecordDTORequest(1L, ingredients, Category.BEVERAGE, true);
+        menuRecord = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
+        menuRecordDTOResponse = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, false);
 
         menuRecordRepository = mock(MenuRecordRepository.class);
         modelMapper = mock(ModelMapper.class);
@@ -42,35 +45,29 @@ class MenuRecordServiceTest {
     @Test
     public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() {
         //Arrange
-        MenuRecord menuRecord = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
-        MenuRecordDTOResponse expected = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, false);
-
         when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
         when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
-        when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(expected);
+        when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse);
 
         //Act
         MenuRecordDTOResponse actual = menuRecordService.create(menuRecordDTORequest);
 
         //Assert
-        assertEquals(expected, actual);
+        assertEquals(menuRecordDTOResponse, actual);
     }
 
     @Test
     public void create_ShouldReturnTypeMenuRecordDTOResponse_WhenMenuRecordDTORequestIsGiven() {
-        //Arrange
-        MenuRecordDTOResponse expected = new MenuRecordDTOResponse();
-        MenuRecord menuRecord = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
-
+        //Arrange - takes from @BeforeEach
         when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
         when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
-        when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(expected);
+        when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse);
 
         //Act
         MenuRecordDTOResponse actual = menuRecordService.create(menuRecordDTORequest);
 
         //Assert
-        assertEquals(expected, actual);
+        assertEquals(menuRecordDTOResponse, actual);
     }
 
 }
