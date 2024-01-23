@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 class MenuRecordServiceTest {
 
@@ -68,6 +68,20 @@ class MenuRecordServiceTest {
 
         //Assert
         assertEquals(menuRecordDTOResponse, actual);
+    }
+
+    @Test
+    public void create_ShouldCallExactlyOnceOnMenuRecordRepo_WhenMenuRecordDTORequestIsGiven() {
+        //Arrange - takes from @BeforeEach
+        when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
+        when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
+        when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse);
+
+        //Act
+        menuRecordService.create(menuRecordDTORequest);
+
+        //Assert
+        verify(menuRecordRepository, times(1)).save(menuRecord);
     }
 
 }
