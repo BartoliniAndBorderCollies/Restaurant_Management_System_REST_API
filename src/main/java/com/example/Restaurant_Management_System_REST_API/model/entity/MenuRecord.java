@@ -5,7 +5,9 @@ import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MenuRecord extends CatalogItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
