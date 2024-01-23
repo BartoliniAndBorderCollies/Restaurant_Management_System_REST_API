@@ -17,7 +17,7 @@ public class MenuRecordController {
 
     private MenuRecordService menuRecordService;
 
-    //TODO: validations, spring security coverage, Junit tests, integrations tests. Merge to develop branch!
+    //TODO: Junit tests, integrations tests. Merge to develop branch!
 
     @PostMapping("/add") // This will be done only by owner and manager
     public MenuRecordDTOResponse create(@RequestBody MenuRecordDTORequest menuRecordDTORequest) {
