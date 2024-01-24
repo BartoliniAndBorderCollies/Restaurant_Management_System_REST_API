@@ -135,4 +135,15 @@ class MenuRecordServiceTest {
         //Assert
         assertIterableEquals(expected, actual);
     }
+
+    @Test
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
+        //Arrange
+        MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(1L, ingredients, Category.FOR_KIDS, true);
+
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.update(1L, menuRecordDTORequest1));
+    }
+
+
 }
