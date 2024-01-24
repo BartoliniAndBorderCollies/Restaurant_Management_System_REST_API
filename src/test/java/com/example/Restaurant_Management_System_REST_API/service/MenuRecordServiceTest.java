@@ -170,7 +170,13 @@ class MenuRecordServiceTest {
             //Assert
             assertEquals(menuRecordDTOResponse1, actual);
         }
+
+        @Test
+        public void delete_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
+            //Assert
+            assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.delete(id));
+        }
+
+
     }
-
-
 }
