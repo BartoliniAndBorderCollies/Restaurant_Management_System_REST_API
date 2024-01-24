@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -187,6 +189,18 @@ class MenuRecordServiceTest {
             verify(menuRecordRepository, times(1)).delete(menuRecord);
         }
 
+        @Test
+        public void delete_ShouldReturnResponsEntityWithStatusOkAndAppropriateMessage_WhenMenuRecordIsDeleted()
+                throws NotFoundInDatabaseException {
+            //Arrange
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
 
+            //Act
+            ResponseEntity<?> actualResponse = menuRecordService.delete(id);
+
+            //Assert
+            assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
+            assertEquals("Menu record has been deleted!", actualResponse.getBody());
+        }
     }
 }
