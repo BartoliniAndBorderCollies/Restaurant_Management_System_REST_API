@@ -99,6 +99,22 @@ class MenuRecordServiceTest {
     }
 
     @Test
+    public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsFound() throws NotFoundInDatabaseException {
+        //Arrange
+        Long id = 1L;
+        MenuRecord menuRecord1 = new MenuRecord(id, ingredients, Category.DESSERT, true);
+        MenuRecordDTOResponse expected = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
+
+        when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
+        when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(expected);
+        //Act
+        MenuRecordDTOResponse actual = menuRecordService.findById(id);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void findAll_ShouldReturnListOfMenuRecordDTOResponse_WhenTheyExistInDatabase() {
         //Arrange
         MenuRecord menuRecord1 = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
