@@ -149,8 +149,27 @@ class MenuRecordServiceTest {
             //Arrange
             MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(1L, ingredients, Category.FOR_KIDS, true);
 
-        //Assert
-        assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.update(1L, menuRecordDTORequest1));
+            //Assert
+            assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.update(1L, menuRecordDTORequest1));
+        }
+
+        @Test
+        public void update_ShouldReturnExpectedDTOResponse_WhenIdAndDTOAreGiven() throws NotFoundInDatabaseException {
+            //Arrange - takes from setUp()
+            MenuRecord menuRecord1 = new MenuRecord(id, ingredients, Category.DESSERT, true);
+            MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(id, ingredients, Category.DESSERT, true);
+
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
+            when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
+            when(modelMapper.map(menuRecordDTOResponse1, MenuRecord.class)).thenReturn(menuRecord1);
+            when(menuRecordRepository.save(menuRecord1)).thenReturn(menuRecord1);
+
+            //Act
+            MenuRecordDTOResponse actual = menuRecordService.update(id, menuRecordDTORequest1);
+
+            //Assert
+            assertEquals(menuRecordDTOResponse1, actual);
+        }
     }
 
 
