@@ -26,6 +26,8 @@ class MenuRecordServiceTest {
     private MenuRecord menuRecord;
     private MenuRecordDTOResponse menuRecordDTOResponse;
     private Set<String> ingredients;
+    private Long id;
+    private MenuRecordDTOResponse menuRecordDTOResponse1;
 
     @BeforeEach
     public void generalSetUp() {
@@ -93,53 +95,59 @@ class MenuRecordServiceTest {
         }
     }
 
-    @Test
-    public void findById_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
-        assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.findById(1L));
-    }
+    @Nested
+    class otherTestMethods {
 
-    @Test
-    public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsFound() throws NotFoundInDatabaseException {
-        //Arrange
-        Long id = 1L;
-        MenuRecord menuRecord1 = new MenuRecord(id, ingredients, Category.DESSERT, true);
-        MenuRecordDTOResponse expected = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
+        @BeforeEach
+        public void setUp() {
+            id = 1L;
+            menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
+        }
 
-        when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
-        when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(expected);
-        //Act
-        MenuRecordDTOResponse actual = menuRecordService.findById(id);
+        @Test
+        public void findById_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
+            assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.findById(id));
+        }
 
-        //Assert
-        assertEquals(expected, actual);
-    }
+        @Test
+        public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsFound() throws NotFoundInDatabaseException {
+            //Arrange
+            MenuRecord menuRecord1 = new MenuRecord(id, ingredients, Category.DESSERT, true);
 
-    @Test
-    public void findAll_ShouldReturnListOfMenuRecordDTOResponse_WhenTheyExistInDatabase() {
-        //Arrange
-        MenuRecord menuRecord1 = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
-        MenuRecord menuRecord2 = new MenuRecord(2L, ingredients, Category.BEVERAGE, true);
-        List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord1, menuRecord2);
-        when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
+            when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
+            //Act
+            MenuRecordDTOResponse actual = menuRecordService.findById(id);
 
-        MenuRecordDTOResponse menuRecordDTOResponse1 = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, true);
-        MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, ingredients, Category.BEVERAGE, true);
-        when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
-        when(modelMapper.map(menuRecord2, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse2);
+            //Assert
+            assertEquals(menuRecordDTOResponse1, actual);
+        }
 
-        List<MenuRecordDTOResponse> expected = Arrays.asList(menuRecordDTOResponse1, menuRecordDTOResponse2);
+        @Test
+        public void findAll_ShouldReturnListOfMenuRecordDTOResponse_WhenTheyExistInDatabase() {
+            //Arrange
+            MenuRecord menuRecord1 = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
+            MenuRecord menuRecord2 = new MenuRecord(2L, ingredients, Category.BEVERAGE, true);
+            List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord1, menuRecord2);
+            when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
 
-        //Act
-        List<MenuRecordDTOResponse> actual = menuRecordService.findAll();
+            MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, ingredients, Category.BEVERAGE, true);
+            when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
+            when(modelMapper.map(menuRecord2, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse2);
 
-        //Assert
-        assertIterableEquals(expected, actual);
-    }
+            List<MenuRecordDTOResponse> expected = Arrays.asList(menuRecordDTOResponse1, menuRecordDTOResponse2);
 
-    @Test
-    public void update_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
-        //Arrange
-        MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(1L, ingredients, Category.FOR_KIDS, true);
+            //Act
+            List<MenuRecordDTOResponse> actual = menuRecordService.findAll();
+
+            //Assert
+            assertIterableEquals(expected, actual);
+        }
+
+        @Test
+        public void update_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
+            //Arrange
+            MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(1L, ingredients, Category.FOR_KIDS, true);
 
         //Assert
         assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.update(1L, menuRecordDTORequest1));
