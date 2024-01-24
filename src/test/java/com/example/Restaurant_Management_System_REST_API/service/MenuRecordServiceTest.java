@@ -177,6 +177,19 @@ class MenuRecordServiceTest {
             assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.delete(id));
         }
 
+        @Test
+        public void delete_ShouldCallOnRepoExactlyOnce_WhenMenuRecordIsGiven() throws NotFoundInDatabaseException {
+            //Arrange
+            MenuRecord menuRecord1 = new MenuRecord();
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
+
+            //Act
+            menuRecordService.delete(id);
+
+            //Assert
+            verify(menuRecordRepository, times(1)).delete(menuRecord1);
+        }
+
 
     }
 }
