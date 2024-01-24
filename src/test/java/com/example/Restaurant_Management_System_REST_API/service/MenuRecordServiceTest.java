@@ -88,8 +88,14 @@ class MenuRecordServiceTest {
             //Act
             menuRecordService.create(menuRecordDTORequest);
 
-        //Assert
-        verify(menuRecordRepository, times(1)).save(menuRecord);
+            //Assert
+            verify(menuRecordRepository, times(1)).save(menuRecord);
+        }
+    }
+
+    @Test
+    public void findById_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
+        assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.findById(1L));
     }
 
 }
