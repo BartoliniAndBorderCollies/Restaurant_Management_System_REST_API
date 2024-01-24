@@ -102,6 +102,7 @@ class MenuRecordServiceTest {
         public void setUp() {
             id = 1L;
             menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
+            menuRecord = new MenuRecord(id, ingredients, Category.DESSERT, true);
         }
 
         @Test
@@ -111,11 +112,10 @@ class MenuRecordServiceTest {
 
         @Test
         public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsFound() throws NotFoundInDatabaseException {
-            //Arrange
-            MenuRecord menuRecord1 = new MenuRecord(id, ingredients, Category.DESSERT, true);
+            //Arrange - takes from setUp()
 
-            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
-            when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
+            when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
             //Act
             MenuRecordDTOResponse actual = menuRecordService.findById(id);
 
@@ -126,13 +126,12 @@ class MenuRecordServiceTest {
         @Test
         public void findAll_ShouldReturnListOfMenuRecordDTOResponse_WhenTheyExistInDatabase() {
             //Arrange
-            MenuRecord menuRecord1 = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
             MenuRecord menuRecord2 = new MenuRecord(2L, ingredients, Category.BEVERAGE, true);
-            List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord1, menuRecord2);
+            List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord, menuRecord2);
             when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
 
             MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, ingredients, Category.BEVERAGE, true);
-            when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
+            when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
             when(modelMapper.map(menuRecord2, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse2);
 
             List<MenuRecordDTOResponse> expected = Arrays.asList(menuRecordDTOResponse1, menuRecordDTOResponse2);
@@ -156,13 +155,12 @@ class MenuRecordServiceTest {
         @Test
         public void update_ShouldReturnExpectedDTOResponse_WhenIdAndDTOAreGiven() throws NotFoundInDatabaseException {
             //Arrange - takes from setUp()
-            MenuRecord menuRecord1 = new MenuRecord(id, ingredients, Category.DESSERT, true);
             MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(id, ingredients, Category.DESSERT, true);
 
-            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
-            when(modelMapper.map(menuRecord1, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
-            when(modelMapper.map(menuRecordDTOResponse1, MenuRecord.class)).thenReturn(menuRecord1);
-            when(menuRecordRepository.save(menuRecord1)).thenReturn(menuRecord1);
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
+            when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
+            when(modelMapper.map(menuRecordDTOResponse1, MenuRecord.class)).thenReturn(menuRecord);
+            when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
 
             //Act
             MenuRecordDTOResponse actual = menuRecordService.update(id, menuRecordDTORequest1);
@@ -180,14 +178,13 @@ class MenuRecordServiceTest {
         @Test
         public void delete_ShouldCallOnRepoExactlyOnce_WhenMenuRecordIsGiven() throws NotFoundInDatabaseException {
             //Arrange
-            MenuRecord menuRecord1 = new MenuRecord();
-            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord1));
+            when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
 
             //Act
             menuRecordService.delete(id);
 
             //Assert
-            verify(menuRecordRepository, times(1)).delete(menuRecord1);
+            verify(menuRecordRepository, times(1)).delete(menuRecord);
         }
 
 
