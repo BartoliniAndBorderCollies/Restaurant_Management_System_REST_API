@@ -12,6 +12,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRe
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "/application-test.properties")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MenuRecordControllerIntegrationTest {
 
     private Set<String> ingredients;
