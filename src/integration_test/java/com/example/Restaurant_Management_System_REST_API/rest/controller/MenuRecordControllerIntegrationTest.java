@@ -83,6 +83,9 @@ class MenuRecordControllerIntegrationTest {
                             assertIterableEquals(menuRecordDTORequest.getIngredients(), menuDTOResponse.getIngredients());
                             assertEquals(menuRecordDTORequest.getCategory(), menuDTOResponse.getCategory());
                             assertEquals(menuRecordDTORequest.getIsAvailable(), menuDTOResponse.getIsAvailable());
+                            assertEquals(menuRecordDTORequest.getName(), menuDTOResponse.getName());
+                            assertEquals(menuRecordDTORequest.getDescription(), menuDTOResponse.getDescription());
+                            assertEquals(menuRecordDTORequest.getPrice(), menuDTOResponse.getPrice());
                         }
                 );
     }
