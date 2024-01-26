@@ -2,10 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.DTO;
 
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
@@ -13,6 +10,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class MenuRecordDTOResponse extends CatalogItem {
 
     private Long id;
