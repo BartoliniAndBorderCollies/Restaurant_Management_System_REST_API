@@ -25,12 +25,12 @@ public class MenuRecordController {
     }
 
     @GetMapping("/{id}") // this will be done by all roles
-    public MenuRecordDTOResponse readById (@PathVariable Long id) throws NotFoundInDatabaseException {
+    public MenuRecordDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return menuRecordService.findById(id);
     }
 
     @GetMapping // this will be done by all roles
-    public List<MenuRecordDTOResponse> readAll () {
+    public List<MenuRecordDTOResponse> findAll() {
         return menuRecordService.findAll();
     }
 
