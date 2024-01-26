@@ -8,6 +8,8 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +33,52 @@ class MenuRecordControllerIntegrationTest {
     private Set<String> ingredients;
     @Autowired
     private WebTestClient webTestClient;
-    private String basicAuthHeader;
+    private String basicAuthHeaderOwner;
+    private String basicAuthHeaderStaff;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private AuthorityRepository authorityRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private MenuRecordRepository menuRecordRepository;
+
+    @BeforeAll
+    public void setUpRolesAuthoritiesAndCustomers() {
+
+        String originalPassword = "lala";
+        String encodedPassword = passwordEncoder.encode(originalPassword); //I use PasswordEncoder in SecurityConfig therefore it expects encoded password
+
+        //Creation of different authorities and saving it to database
+        Authority authorityOwner = new Authority(null, "ROLE_OWNER");
+        Authority authorityStaff = new Authority(null, "ROLE_STAFF");
+        authorityRepository.save(authorityOwner);
+        authorityRepository.save(authorityStaff);
+
+        //Creation of Sets and adding authorities to Sets
+        Set<Authority> authoritiesManagement = new HashSet<>();
+        Set<Authority> authoritiesStaff = new HashSet<>();
+        authoritiesManagement.add(authorityOwner);
+        authoritiesStaff.add(authorityStaff);
+
+        //Creation of customers and saving it to database
+        Customer owner = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
+                true, true, true, true, "owner@wp.pl",
+                authoritiesManagement);
+        Customer staff = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
+                true, true, true, true, "staff@wp.pl",
+                authoritiesStaff);
+        customerRepository.save(owner);
+        customerRepository.save(staff);
+
+        //Defining basicAuthHeader required for authorization in the integration test
+        basicAuthHeaderOwner = "Basic " + Base64.getEncoder()
+                .encodeToString((owner.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
+
+        basicAuthHeaderStaff = "Basic " + Base64.getEncoder()
+                .encodeToString((staff.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
+    }
 
     @BeforeEach
     public void setUp() {
@@ -45,21 +86,6 @@ class MenuRecordControllerIntegrationTest {
         ingredients.add("water");
         ingredients.add("hops");
         ingredients.add("barley");
-
-        //this block is for logging purpose
-        String originalPassword = "lala";
-        String encodedPassword = passwordEncoder.encode(originalPassword); //I use PasswordEncoder in SecurityConfig therefore it expects encoded password
-        Authority authority = new Authority(null, "ROLE_OWNER");
-        authorityRepository.save(authority);
-        Set<Authority> authorities = new HashSet<>();
-        authorities.add(authority);
-        Customer owner = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
-                true, true, true, true, "lala@wp.pl",
-                authorities);
-        customerRepository.save(owner);
-
-        basicAuthHeader = "Basic " + Base64.getEncoder()
-                .encodeToString((owner.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
     }
 
     @Test
