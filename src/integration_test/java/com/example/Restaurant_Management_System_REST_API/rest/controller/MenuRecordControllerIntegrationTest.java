@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTORespon
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,4 +90,33 @@ class MenuRecordControllerIntegrationTest {
                         }
                 );
     }
+
+
+    @Test
+    public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsGiven() {
+        MenuRecord menuRecord = new MenuRecord(null, ingredients, Category.SNACKS, true);
+        menuRecord.setName("Lovely snacks");
+        menuRecord.setDescription("omnomomomom");
+        menuRecord.setPrice(3.0);
+        menuRecordRepository.save(menuRecord);
+
+
+        webTestClient.get()
+                .uri("/api/menu/record/" + menuRecord.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(MenuRecordDTOResponse.class)
+                .consumeWith(response -> {
+                    MenuRecordDTOResponse menuDTOResponse = response.getResponseBody();
+                    assertNotNull(menuDTOResponse);
+                    assertEquals(menuRecord.getName(), menuDTOResponse.getName());
+                    assertEquals(menuRecord.getDescription(), menuDTOResponse.getDescription());
+                    assertEquals(menuRecord.getPrice(), menuDTOResponse.getPrice());
+                    assertIterableEquals(menuRecord.getIngredients(), menuDTOResponse.getIngredients());
+                    assertEquals(menuRecord.getCategory(), menuDTOResponse.getCategory());
+                    assertEquals(menuRecord.getIsAvailable(), menuDTOResponse.getIsAvailable());
+                });
+    }
+
 }
