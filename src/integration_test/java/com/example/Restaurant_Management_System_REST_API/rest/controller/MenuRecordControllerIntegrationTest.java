@@ -9,10 +9,7 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -89,6 +86,11 @@ class MenuRecordControllerIntegrationTest {
         ingredients.add("water");
         ingredients.add("hops");
         ingredients.add("barley");
+    }
+
+    @AfterEach
+    public void clearDatabase() {
+        menuRecordRepository.deleteAll();
     }
 
     @Test
