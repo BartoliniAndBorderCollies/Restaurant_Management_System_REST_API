@@ -18,9 +18,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -96,11 +95,8 @@ class MenuRecordControllerIntegrationTest {
     @Test
     public void create_ShouldAddMenuRecordToDatabaseAndReturnDTOResponse_WhenDTORequestIsGiven() {
 
-        MenuRecordDTORequest menuRecordDTORequest = new MenuRecordDTORequest(1L, ingredients, Category.BEVERAGE, true);
-        //I don't have constructor for CatalogItem (DTORequest extends it) therefore I add the required fields below as follows:
-        menuRecordDTORequest.setName("Beverage Name");
-        menuRecordDTORequest.setDescription("Beverage Description");
-        menuRecordDTORequest.setPrice(10.0);
+        MenuRecordDTORequest menuRecordDTORequest = new MenuRecordDTORequest("DTO request", "DTO description", 10.0, null,
+                ingredients, Category.FOR_KIDS, true);
 
         webTestClient.post()
                 .uri("/api/menu/record/add")
@@ -125,10 +121,8 @@ class MenuRecordControllerIntegrationTest {
 
     @Test
     public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsGiven() {
-        MenuRecord menuRecord = new MenuRecord(null, ingredients, Category.SNACKS, true);
-        menuRecord.setName("Lovely snacks");
-        menuRecord.setDescription("omnomomomom");
-        menuRecord.setPrice(3.0);
+        MenuRecord menuRecord = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+                3.0, true);
         menuRecordRepository.save(menuRecord);
 
 
@@ -141,6 +135,7 @@ class MenuRecordControllerIntegrationTest {
                 .consumeWith(response -> {
                     MenuRecordDTOResponse menuDTOResponse = response.getResponseBody();
                     assertNotNull(menuDTOResponse);
+                    assertEquals(menuRecord.getId(), menuDTOResponse.getId());
                     assertEquals(menuRecord.getName(), menuDTOResponse.getName());
                     assertEquals(menuRecord.getDescription(), menuDTOResponse.getDescription());
                     assertEquals(menuRecord.getPrice(), menuDTOResponse.getPrice());
