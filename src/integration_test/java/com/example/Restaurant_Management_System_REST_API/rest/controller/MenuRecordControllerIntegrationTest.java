@@ -175,6 +175,19 @@ class MenuRecordControllerIntegrationTest {
                     List<MenuRecordDTOResponse> responseList = response.getResponseBody();
                     assertNotNull(responseList);
                     assertIterableEquals(expected, responseList);
+
+                    for (int i = 0; i < responseList.size(); i++) {
+                        MenuRecordDTOResponse actual = responseList.get(i);
+                        MenuRecordDTOResponse exp = expected.get(i);
+
+                        assertEquals(exp.getId(), actual.getId());
+                        assertEquals(exp.getName(), actual.getName());
+                        assertEquals(exp.getDescription(), actual.getDescription());
+                        assertEquals(exp.getPrice(), actual.getPrice());
+                        assertEquals(exp.getCategory(), actual.getCategory());
+                        assertEquals(exp.getIngredients(), actual.getIngredients());
+                        assertEquals(exp.getIsAvailable(), actual.getIsAvailable());
+                    }
                 });
     }
 
