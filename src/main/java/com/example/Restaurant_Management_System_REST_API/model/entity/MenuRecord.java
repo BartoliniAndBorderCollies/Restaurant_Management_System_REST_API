@@ -15,9 +15,16 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class MenuRecord extends CatalogItem {
+
+    public MenuRecord(Set<String> ingredients, Category category, String name, String description, Double price, Boolean isAvailable) {
+        super(name, description, price); // This calls the constructor in CatalogItem
+        this.ingredients = ingredients;
+        this.category = category;
+        this.isAvailable = isAvailable;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
