@@ -10,6 +10,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRep
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
 import org.junit.jupiter.api.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -42,6 +43,8 @@ class MenuRecordControllerIntegrationTest {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MenuRecordRepository menuRecordRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @BeforeAll
     public void setUpRolesAuthoritiesAndCustomers() {
@@ -142,6 +145,36 @@ class MenuRecordControllerIntegrationTest {
                     assertIterableEquals(menuRecord.getIngredients(), menuDTOResponse.getIngredients());
                     assertEquals(menuRecord.getCategory(), menuDTOResponse.getCategory());
                     assertEquals(menuRecord.getIsAvailable(), menuDTOResponse.getIsAvailable());
+                });
+    }
+
+    @Test
+    public void findAll_ShouldReturnMenuRecordDTOResponseList_WhenMenuRecordsExist() {
+
+        List<MenuRecord> menuRecords = Arrays.asList(
+                new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+                        3.0, true),
+                new MenuRecord(ingredients, Category.BEVERAGE, "Lovely drink", "thirsty!", 5.0,
+                        true)
+        );
+
+        List<MenuRecordDTOResponse> expected = menuRecords.stream()
+                .map(record -> {
+                    menuRecordRepository.save(record);
+                    return modelMapper.map(record, MenuRecordDTOResponse.class);
+                })
+                .collect(Collectors.toList());
+
+        webTestClient.get()
+                .uri("/api/menu/record")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(MenuRecordDTOResponse.class)
+                .consumeWith(response -> {
+                    List<MenuRecordDTOResponse> responseList = response.getResponseBody();
+                    assertNotNull(responseList);
+                    assertIterableEquals(expected, responseList);
                 });
     }
 
