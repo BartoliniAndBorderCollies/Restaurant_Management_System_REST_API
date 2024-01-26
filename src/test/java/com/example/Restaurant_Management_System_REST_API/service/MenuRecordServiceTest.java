@@ -49,8 +49,10 @@ class MenuRecordServiceTest {
 
         @BeforeEach
         public void setUpForCreateMethods() {
-            menuRecordDTORequest = new MenuRecordDTORequest(1L, ingredients, Category.BEVERAGE, true);
-            menuRecord = new MenuRecord(1L, ingredients, Category.BEVERAGE, true);
+            menuRecordDTORequest = new MenuRecordDTORequest("DTO request", "DTO description", 10.0, null,
+                    ingredients, Category.FOR_KIDS, true);
+            menuRecord = new MenuRecord(ingredients, Category.BEVERAGE, "Drink", "Thirsty very much!",
+                    6.0, true);
             menuRecordDTOResponse = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, false);
         }
 
@@ -104,7 +106,8 @@ class MenuRecordServiceTest {
         public void setUp() {
             id = 1L;
             menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
-            menuRecord = new MenuRecord(id, ingredients, Category.DESSERT, true);
+            menuRecord = new MenuRecord(ingredients, Category.DESSERT, "Lovely dessert!", "mhmmm",
+                    6.5, true);
         }
 
         @Test
@@ -128,7 +131,8 @@ class MenuRecordServiceTest {
         @Test
         public void findAll_ShouldReturnListOfMenuRecordDTOResponse_WhenTheyExistInDatabase() {
             //Arrange
-            MenuRecord menuRecord2 = new MenuRecord(2L, ingredients, Category.BEVERAGE, true);
+            MenuRecord menuRecord2 = new MenuRecord(ingredients, Category.BEVERAGE, "Little drink",
+                    "So good", 4.39, true);
             List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord, menuRecord2);
             when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
 
@@ -148,7 +152,8 @@ class MenuRecordServiceTest {
         @Test
         public void update_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordIdIsNotFound() {
             //Arrange
-            MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(1L, ingredients, Category.FOR_KIDS, true);
+            MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest("DTO request", "DTO description", 10.0, null,
+                    ingredients, Category.FOR_KIDS, true);
 
             //Assert
             assertThrows(NotFoundInDatabaseException.class, () -> menuRecordService.update(1L, menuRecordDTORequest1));
@@ -157,7 +162,8 @@ class MenuRecordServiceTest {
         @Test
         public void update_ShouldReturnExpectedDTOResponse_WhenIdAndDTOAreGiven() throws NotFoundInDatabaseException {
             //Arrange - takes from setUp()
-            MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest(id, ingredients, Category.DESSERT, true);
+            MenuRecordDTORequest menuRecordDTORequest1 = new MenuRecordDTORequest("DTO request",
+                    "DTO description", 10.0, null, ingredients, Category.FOR_KIDS, true);
 
             when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
             when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
