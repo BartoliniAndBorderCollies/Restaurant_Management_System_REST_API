@@ -72,7 +72,7 @@ class MenuRecordControllerIntegrationTest {
 
         webTestClient.post()
                 .uri("/api/menu/record/add")
-                .header(HttpHeaders.AUTHORIZATION, basicAuthHeader)
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .bodyValue(menuRecordDTORequest)
                 .exchange()
                 .expectStatus().isOk()
