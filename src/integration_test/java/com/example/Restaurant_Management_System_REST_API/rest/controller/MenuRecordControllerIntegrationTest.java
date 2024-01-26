@@ -29,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "/application-test.properties")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) //JUnit will create only one instance of the test class
+// (this is called per-class test instance lifecycle), and the @BeforeAll method doesn’t need to be static.
 class MenuRecordControllerIntegrationTest {
 
     private Set<String> ingredients;
