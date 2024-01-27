@@ -121,13 +121,11 @@ class MenuRecordControllerIntegrationTest {
                 );
     }
 
-
     @Test
     public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsGiven() {
         MenuRecord menuRecord = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
                 3.0, true);
         menuRecordRepository.save(menuRecord);
-
 
         webTestClient.get()
                 .uri("/api/menu/record/" + menuRecord.getId())
@@ -189,6 +187,36 @@ class MenuRecordControllerIntegrationTest {
                         assertEquals(exp.getIsAvailable(), actual.getIsAvailable());
                     }
                 });
+    }
+
+    @Test
+    public void update_ShouldUpdateMenuRecordAndMapAndReturnMenuRecordDTOResponse_WhenMenuRecordDTORequestAndIdAreGiven() {
+
+        MenuRecord menuRecordOld = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+                3.0, true);
+        MenuRecordDTORequest menuRecordDTORequest = new MenuRecordDTORequest("Updated name", "This is updated description",
+                100.00, null, ingredients, Category.FOR_KIDS, true);
+
+        menuRecordRepository.save(menuRecordOld);
+
+        webTestClient.put()
+                .uri("/api/menu/record/update/" + menuRecordOld.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .bodyValue(menuRecordDTORequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(MenuRecordDTOResponse.class)
+                .consumeWith(response -> {
+                    MenuRecordDTOResponse DTOResponse = response.getResponseBody();
+                    assertNotNull(DTOResponse);
+                    assertEquals(menuRecordOld.getId(), DTOResponse.getId());
+                    assertEquals(menuRecordDTORequest.getName(), DTOResponse.getName());
+                    assertEquals(menuRecordDTORequest.getDescription(), DTOResponse.getDescription());
+                    assertEquals(menuRecordDTORequest.getPrice(), DTOResponse.getPrice());
+                    assertEquals(menuRecordDTORequest.getCategory(), DTOResponse.getCategory());
+                    assertIterableEquals(menuRecordDTORequest.getIngredients(), DTOResponse.getIngredients());
+                    assertEquals(menuRecordDTORequest.getIsAvailable(), DTOResponse.getIsAvailable());
+        });
     }
 
 }
