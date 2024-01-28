@@ -219,4 +219,26 @@ class MenuRecordControllerIntegrationTest {
         });
     }
 
+    @Test
+    public void delete_ShouldDeleteMenuRecordAndReturnResponseEntity_WhenIdIsGiven() {
+
+        MenuRecord menuRecord = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+                3.0, true);
+        menuRecordRepository.save(menuRecord);
+
+        webTestClient.delete()
+                .uri("/api/menu/record/delete/" + menuRecord.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String responseBody = response.getResponseBody();
+                    assertEquals("Menu record has been deleted!", responseBody);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+                    Optional<MenuRecord> shouldBeEmpty = menuRecordRepository.findById(menuRecord.getId());
+                    assertTrue(shouldBeEmpty.isEmpty());
+                });
+    }
+
 }
