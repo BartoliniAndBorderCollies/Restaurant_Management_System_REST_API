@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTORespon
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.MenuRecordService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ public class MenuRecordController {
     //TODO: Junit tests, integrations tests. Merge to develop branch!
 
     @PostMapping("/add") // This will be done only by owner and manager
+    @ResponseStatus(HttpStatus.CREATED)
     public MenuRecordDTOResponse create(@RequestBody MenuRecordDTORequest menuRecordDTORequest) {
         return menuRecordService.create(menuRecordDTORequest);
     }

@@ -107,7 +107,7 @@ class MenuRecordControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .bodyValue(menuRecordDTORequest)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus().isCreated()
                 .expectBody(MenuRecordDTOResponse.class)
                 .consumeWith(response -> {
                             MenuRecordDTOResponse menuDTOResponse = response.getResponseBody();
