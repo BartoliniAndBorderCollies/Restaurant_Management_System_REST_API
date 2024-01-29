@@ -18,7 +18,6 @@ public class MenuRecordController {
 
     private MenuRecordService menuRecordService;
 
-    //TODO: Junit tests, integrations tests. Merge to develop branch!
 
     @PostMapping("/add") // This will be done only by owner and manager
     @ResponseStatus(HttpStatus.CREATED)
