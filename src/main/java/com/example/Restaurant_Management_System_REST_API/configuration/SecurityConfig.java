@@ -24,11 +24,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(mvc.pattern("/api/admin/**")) //TODO: update path with appropriate mapping
                         .hasRole("ADMIN")
-                        .requestMatchers(mvc.pattern("/api/owner/**")) //TODO: update path with appropriate mapping
+                        .requestMatchers(mvc.pattern("/api/owner/**"))
                         .hasRole("OWNER")
-                        .requestMatchers(mvc.pattern("/api/manager/**")) //TODO: update path with appropriate mapping
+                        .requestMatchers(mvc.pattern("/api/manager/**"))
                         .hasRole("MANAGER")
-                        .requestMatchers(mvc.pattern("/api/staff/**")) //TODO: update path with appropriate mapping
+                        .requestMatchers(mvc.pattern("/api/staff/**"))
                         .hasRole("STAFF")
                         .anyRequest()
                         .permitAll())
