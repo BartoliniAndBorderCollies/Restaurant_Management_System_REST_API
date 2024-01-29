@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/menu/record/add"), mvc.pattern("/api/menu/record/update/**"),
                                  mvc.pattern("/api/menu/record/delete/**"))
                         .hasAnyRole("OWNER", "MANAGER")
-                        .requestMatchers(mvc.pattern("/api/staff/**")) //TODO: update path with appropriate mapping
-                        .hasRole("STAFF")
+                        .requestMatchers(mvc.pattern("/api/menu/record/find/**"), mvc.pattern("/api/menu/record/findAll"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
                         .anyRequest()
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
