@@ -129,7 +129,7 @@ class MenuRecordControllerIntegrationTest {
         menuRecordRepository.save(menuRecord);
 
         webTestClient.get()
-                .uri("/api/menu/record/" + menuRecord.getId())
+                .uri("/api/menu/record/find/" + menuRecord.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
                 .exchange()
                 .expectStatus().isOk()
@@ -165,7 +165,7 @@ class MenuRecordControllerIntegrationTest {
                 .collect(Collectors.toList());
 
         webTestClient.get()
-                .uri("/api/menu/record")
+                .uri("/api/menu/record/findAll")
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
                 .exchange()
                 .expectStatus().isOk()
