@@ -1,4 +1,4 @@
-package com.example.Restaurant_Management_System_REST_API.DTO;
+package com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs;
 
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
