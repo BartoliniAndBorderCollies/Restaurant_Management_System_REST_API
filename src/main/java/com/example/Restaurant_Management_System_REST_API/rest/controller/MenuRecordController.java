@@ -1,7 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.MenuRecordService;
 import lombok.AllArgsConstructor;
