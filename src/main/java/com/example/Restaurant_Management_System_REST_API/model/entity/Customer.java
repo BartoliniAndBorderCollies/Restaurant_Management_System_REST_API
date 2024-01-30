@@ -40,7 +40,7 @@ public class Customer implements UserDetails {
     private Boolean credentialsNonExpired;
     private Boolean enabled;
     private String emailAddress;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "customer_authorities", joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities;
