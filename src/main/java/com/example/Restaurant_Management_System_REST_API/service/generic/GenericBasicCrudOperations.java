@@ -1,4 +1,4 @@
-package com.example.Restaurant_Management_System_REST_API.service;
+package com.example.Restaurant_Management_System_REST_API.service.generic;
 
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import org.springframework.http.ResponseEntity;
