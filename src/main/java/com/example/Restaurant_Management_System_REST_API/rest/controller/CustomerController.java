@@ -20,6 +20,11 @@ public class CustomerController {
         return customerService.create(customerDTORequest);
     }
 
+    @GetMapping("/find/{id}") // this will be done by owner, manager and staff
+    public CustomerDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
+        return customerService.findById(id);
+    }
+
     @DeleteMapping("/delete/{id}") // this will be done only by the owner and manager
     public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return customerService.delete(id);
