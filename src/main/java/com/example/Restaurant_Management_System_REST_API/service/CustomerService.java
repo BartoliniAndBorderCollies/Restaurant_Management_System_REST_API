@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,7 +41,14 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
 
     @Override
     public List<CustomerDTOResponse> findAll() {
-        return null;
+        Iterable<Customer> customers = customerRepository.findAll();
+        List<CustomerDTOResponse> customerDTOList = new ArrayList<>();
+
+        for (Customer customer: customers) {
+            customerDTOList.add(modelMapper.map(customer, CustomerDTOResponse.class));
+        }
+
+        return customerDTOList;
     }
 
     @Override
