@@ -8,6 +8,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepo
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,11 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
 
     @Override
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
-        return null;
+        Customer customerToDelete = customerRepository.findById(id).orElseThrow( ()->
+                new NotFoundInDatabaseException(Customer.class));
+        customerRepository.delete(customerToDelete);
+
+        return new ResponseEntity<>("Customer: " + customerToDelete.getUsername() + " has been successfully deleted!",
+                HttpStatus.OK);
     }
 }
