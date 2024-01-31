@@ -34,7 +34,8 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
 
     @Override
     public CustomerDTOResponse findById(Long id) throws NotFoundInDatabaseException {
-        return null;
+        Customer customer = customerRepository.findById(id).orElseThrow( ()-> new NotFoundInDatabaseException(Customer.class));
+        return modelMapper.map(customer, CustomerDTOResponse.class);
     }
 
     @Override
