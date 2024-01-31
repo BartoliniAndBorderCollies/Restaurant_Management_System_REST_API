@@ -27,7 +27,7 @@ public class CustomerController {
         return customerService.findById(id);
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/findAll") // this will be done by owner, manager and staff
     public List<CustomerDTOResponse> findAll() {
         return customerService.findAll();
     }
