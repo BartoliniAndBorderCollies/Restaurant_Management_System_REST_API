@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/customer")
 @AllArgsConstructor
@@ -23,6 +25,11 @@ public class CustomerController {
     @GetMapping("/find/{id}") // this will be done by owner, manager and staff
     public CustomerDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return customerService.findById(id);
+    }
+
+    @GetMapping("/findAll")
+    public List<CustomerDTOResponse> findAll() {
+        return customerService.findAll();
     }
 
     @DeleteMapping("/delete/{id}") // this will be done only by the owner and manager
