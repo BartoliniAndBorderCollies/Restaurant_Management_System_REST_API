@@ -8,6 +8,9 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -29,9 +32,17 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
     private AuthorityRepository authorityRepository;
     private ModelMapper modelMapper;
     private PasswordEncoder passwordEncoder;
+    private Validator validator;
     
     @Override
     public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) {
+
+        // First I Validate the CustomerDTORequest
+        Set<ConstraintViolation<CustomerDTORequest>> violations = validator.validate(customerDTORequest);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
         Customer customer = modelMapper.map(customerDTORequest, Customer.class);
         customer.setPassword(passwordEncoder.encode(customerDTORequest.getPassword()));
 
