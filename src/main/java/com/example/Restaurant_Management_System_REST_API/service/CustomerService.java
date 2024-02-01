@@ -3,7 +3,9 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
@@ -16,12 +18,15 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CustomerService implements GenericBasicCrudOperations<CustomerDTOResponse, CustomerDTORequest, Long> {
 
     private CustomerRepository customerRepository;
+    private AuthorityRepository authorityRepository;
     private ModelMapper modelMapper;
     private PasswordEncoder passwordEncoder;
     
@@ -29,6 +34,22 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
     public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) {
         Customer customer = modelMapper.map(customerDTORequest, Customer.class);
         customer.setPassword(passwordEncoder.encode(customerDTORequest.getPassword()));
+
+        // Fetch the authorities from the database
+        // this is necessary because I don't want to have cascade in Customer, because I just want to have 4 roles in total
+        Set<Authority> authorities = customerDTORequest.getAuthorities().stream()
+                .map(authorityDTO -> {
+                    String authorityName = authorityDTO.getName();
+                    try {
+                        return authorityRepository.findByName(authorityName)
+                                .orElseThrow(() -> new NotFoundInDatabaseException(Authority.class));
+                    } catch (NotFoundInDatabaseException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        customer.setAuthorities(authorities);
         customerRepository.save(customer);
 
         return modelMapper.map(customer, CustomerDTOResponse.class);
