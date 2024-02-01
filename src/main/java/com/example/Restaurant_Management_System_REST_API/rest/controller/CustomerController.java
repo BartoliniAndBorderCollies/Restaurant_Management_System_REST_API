@@ -32,7 +32,7 @@ public class CustomerController {
         return customerService.findAll();
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{id}") //this will be done only by the owner and manager
     public CustomerDTOResponse update(@PathVariable Long id, @RequestBody CustomerDTORequest customerDTORequest)
             throws NotFoundInDatabaseException {
         return customerService.update(id, customerDTORequest);
