@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller.advice;
 
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.PropertyValueException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,5 +20,11 @@ public class GlobalCustomExceptionHandler {
     public ResponseEntity<String> handlePropertyValueException (PropertyValueException ex) {
         return new ResponseEntity<>("Something is missing! You didn't specified a required field in your request: "
                 + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<?> handleConstraintViolationException (ConstraintViolationException ex) {
+        return new ResponseEntity<>("You haven't gone through all validations! See what is missing here: " +
+                ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
