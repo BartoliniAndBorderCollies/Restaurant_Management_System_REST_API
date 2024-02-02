@@ -35,7 +35,6 @@ public class Customer implements UserDetails {
     private ContactDetails contactDetails;
 
     //Below are fields for security issues
-    @NotBlank(message = "Password must be set!")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{5,}$", message =
             "Password must have at least 5 characters, one small letter, one big letter, and a special character")
     private String password;
