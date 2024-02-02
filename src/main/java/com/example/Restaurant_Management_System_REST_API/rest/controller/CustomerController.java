@@ -18,7 +18,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping("/add") //this will be done only by owner and manager
-    public CustomerDTOResponse create(@RequestBody CustomerDTORequest customerDTORequest) {
+    public CustomerDTOResponse create(@RequestBody CustomerDTORequest customerDTORequest) throws NotFoundInDatabaseException {
         return customerService.create(customerDTORequest);
     }
 

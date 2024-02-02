@@ -12,6 +12,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
+import org.hibernate.PropertyValueException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
     private Validator validator;
     
     @Override
-    public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) {
+    public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) throws NotFoundInDatabaseException {
 
         // First I Validate the CustomerDTORequest
         Set<ConstraintViolation<CustomerDTORequest>> violations = validator.validate(customerDTORequest);
@@ -45,6 +46,11 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
 
         Customer customer = modelMapper.map(customerDTORequest, Customer.class);
         customer.setPassword(passwordEncoder.encode(customerDTORequest.getPassword())); //TODO: Szymon - this prevents password validation,why?
+
+        if(customerDTORequest.getAuthorities() == null) {
+            throw new PropertyValueException("The authorities field in your request is null", "You tried to create a Customer",
+                    " But the missing field is: authorities.");
+        }
 
         // Fetch the authorities from the database
         // this is necessary because I don't want to have cascade in Customer, because I just want to have 4 roles in total
