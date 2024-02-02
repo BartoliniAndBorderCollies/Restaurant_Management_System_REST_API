@@ -36,7 +36,7 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
     private Validator validator;
     
     @Override
-    public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) throws NotFoundInDatabaseException {
+    public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) {
 
         // First I Validate the CustomerDTORequest
         Set<ConstraintViolation<CustomerDTORequest>> violations = validator.validate(customerDTORequest);
