@@ -44,7 +44,7 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
         }
 
         Customer customer = modelMapper.map(customerDTORequest, Customer.class);
-        customer.setPassword(passwordEncoder.encode(customerDTORequest.getPassword()));
+        customer.setPassword(passwordEncoder.encode(customerDTORequest.getPassword())); //TODO: Szymon - this prevents password validation,why?
 
         // Fetch the authorities from the database
         // this is necessary because I don't want to have cascade in Customer, because I just want to have 4 roles in total
