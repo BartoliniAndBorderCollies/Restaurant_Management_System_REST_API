@@ -23,13 +23,24 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(mvc.pattern("")) //TODO: update path with appropriate mapping
-                        .hasRole("ADMIN")
+                        .requestMatchers(mvc.pattern("/api/admin/customer/add")) //TODO: update path with appropriate mapping
+                        .authenticated()
+
+                        //Menu records
                         .requestMatchers(mvc.pattern("/api/menu/record/add"), mvc.pattern("/api/menu/record/update/**"),
                                  mvc.pattern("/api/menu/record/delete/**"))
                         .hasAnyRole("OWNER", "MANAGER")
                         .requestMatchers(mvc.pattern("/api/menu/record/find/**"), mvc.pattern("/api/menu/record/findAll"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
+
+                        //Customer
+                        .requestMatchers(mvc.pattern("/api/customer/add"), mvc.pattern("/api/customer/update/**"),
+                                mvc.pattern("/api/customer/delete/**"))
+                        .hasAnyRole("OWNER", "MANAGER")
+                        .requestMatchers(mvc.pattern("/api/customer/find/**"), mvc.pattern("/api/customer/findAll"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
+
+                        //The rest
                         .anyRequest()
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
