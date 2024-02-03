@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
@@ -27,10 +28,9 @@ import java.util.Set;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 
 
 class CustomerServiceTest {
@@ -79,7 +79,7 @@ class CustomerServiceTest {
         when(customerDTORequest.getAuthorities()).thenReturn(null);
 
         //Act
-        Exception exception = assertThrows(PropertyValueException.class, ()-> customerService.create(customerDTORequest));
+        Exception exception = assertThrows(PropertyValueException.class, () -> customerService.create(customerDTORequest));
 
         //Assert
         assertTrue(exception.getMessage().contains(expectedExceptionMessage));
@@ -112,5 +112,15 @@ class CustomerServiceTest {
 
         //Assert
         assertIterableEquals(expected, customerDTOResponseActual.getAuthorities());
+    }
+
+    @Test
+    public void findById_ShouldThrowNotFoundInDatabaseException_WhenCustomerIdIsNotFound() {
+        //Arrange
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, () -> customerService.findById(1L));
     }
 }
