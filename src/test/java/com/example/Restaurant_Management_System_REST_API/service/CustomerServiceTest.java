@@ -84,4 +84,33 @@ class CustomerServiceTest {
         //Assert
         assertTrue(exception.getMessage().contains(expectedExceptionMessage));
     }
+
+    @Test
+    public void create_ShouldStreamAndMapAndFindAndReturnAuthoritySet_WhenAuthoritiesExist() {
+        //Arrange
+        Set<Authority> expected = new HashSet<>();
+        Authority authority = new Authority(1L, "ROLE_OWNER");
+        expected.add(authority);
+
+        Customer customer = new Customer(1L, LocalDateTime.now(), null, null, "lala",
+                true, true, true, true, "customer@wp.pl",
+                expected);
+        CustomerDTOResponse customerDTOResponse = new CustomerDTOResponse();
+        CustomerDTORequest customerDTORequest1 = new CustomerDTORequest();
+
+        customerDTORequest1.setAuthorities(expected);
+        customerDTOResponse.setAuthorities(expected);
+
+        when(modelMapper.map(customerDTORequest1, Customer.class)).thenReturn(customer);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(authorityRepository.findByName(authority.getName())).thenReturn(Optional.of(authority));
+        when(customerRepository.save(customer)).thenReturn(customer);
+        when(modelMapper.map(customer, CustomerDTOResponse.class)).thenReturn(customerDTOResponse);
+
+        //Act
+        CustomerDTOResponse customerDTOResponseActual = customerService.create(customerDTORequest1);
+
+        //Assert
+        assertIterableEquals(expected, customerDTOResponseActual.getAuthorities());
+    }
 }
