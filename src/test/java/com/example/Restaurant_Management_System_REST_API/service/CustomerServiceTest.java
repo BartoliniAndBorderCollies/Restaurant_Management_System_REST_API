@@ -144,4 +144,14 @@ class CustomerServiceTest {
         //Assert
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenCustomerIdIsNotFound() throws NotFoundInDatabaseException {
+        //Arrange
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, () -> customerService.update(1L, customerDTORequest));
+    }
 }
