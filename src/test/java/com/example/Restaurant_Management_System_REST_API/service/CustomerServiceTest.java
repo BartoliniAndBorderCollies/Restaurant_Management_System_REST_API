@@ -22,9 +22,7 @@ import javax.xml.validation.Validator;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,5 +120,28 @@ class CustomerServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, () -> customerService.findById(1L));
+    }
+
+    @Test
+    public void findAll_ShouldReturnCustomerDTOResponseList_WhenCustomersExist() {
+        //Arrange
+        Customer customer = new Customer();
+        Customer customer2 = new Customer();
+        Iterable<Customer> iterable = Arrays.asList(customer, customer2);
+
+        CustomerDTOResponse customerDTOResponse1 = new CustomerDTOResponse();
+        CustomerDTOResponse customerDTOResponse2 = new CustomerDTOResponse();
+
+        List<CustomerDTOResponse> expected = Arrays.asList(customerDTOResponse1, customerDTOResponse2);
+
+        when(customerRepository.findAll()).thenReturn(iterable);
+        when(modelMapper.map(customer, CustomerDTOResponse.class)).thenReturn(customerDTOResponse1);
+        when(modelMapper.map(customer2, CustomerDTOResponse.class)).thenReturn(customerDTOResponse2);
+
+        //Act
+         List<CustomerDTOResponse> actual = customerService.findAll();
+
+        //Assert
+        assertEquals(expected, actual);
     }
 }
