@@ -146,12 +146,22 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void update_ShouldThrowNotFoundInDatabaseException_WhenCustomerIdIsNotFound() throws NotFoundInDatabaseException {
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenCustomerIdIsNotFound() {
         //Arrange
         when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, () -> customerService.update(1L, customerDTORequest));
+    }
+
+    @Test
+    public void delete_ShouldThrowNotFoundInDatabaseException_WhenCustomerIdIsNotFound() {
+        //Arrange
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> customerService.delete(1L));
     }
 }
