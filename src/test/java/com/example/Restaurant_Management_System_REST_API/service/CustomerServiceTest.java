@@ -14,6 +14,8 @@ import org.hibernate.PropertyValueException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.xml.sax.SAXException;
 
@@ -163,5 +165,20 @@ class CustomerServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, ()-> customerService.delete(1L));
+    }
+
+    @Test
+    public void delete_ShouldReturnResponseEntityWithStatusOKAndAppropriateMessage_WhenCustomerIdIsFound()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Customer customer = mock(Customer.class);
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+
+        //Act
+        ResponseEntity<?> actual = customerService.delete(customer.getId());
+
+        //Assert
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertEquals("Customer: " + customer.getUsername() + " has been successfully deleted!", actual.getBody());
     }
 }
