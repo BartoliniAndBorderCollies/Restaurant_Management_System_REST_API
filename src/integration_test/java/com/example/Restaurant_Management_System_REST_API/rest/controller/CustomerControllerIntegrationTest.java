@@ -45,19 +45,36 @@ class CustomerControllerIntegrationTest {
 
     @BeforeAll
     public void createAndSaveAuthority() {
+        //Creation and saving of Authority
         authorityOwner = new Authority(null, "ROLE_OWNER");
-        authorityRepository.save(authorityOwner);
-        authorities.add(authorityOwner);
+        authorityStaff = new Authority(null, "ROLE_STAFF");
 
+        authorityRepository.save(authorityOwner);
+        authorityRepository.save(authorityStaff);
+
+        //Adding Authority to Set<Authority>
+        authoritiesManagement.add(authorityOwner);
+        authoritiesStaff.add(authorityStaff);
+
+        //Setting and encoding password
         originalPassword = "lala";
         encodedPassword = passwordEncoder.encode(originalPassword);
 
+        //Creation and saving of customers
         Customer customerOwner = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
-                true, true, true, true,"customer@test.eu", authorities);
+                true, true, true, true,"customer@test.eu", authoritiesManagement);
         customerRepository.save(customerOwner);
 
+        Customer customerStaff = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, true, true, true, true,
+                "staff@test.eu", authoritiesStaff);
+        customerRepository.save(customerStaff);
+
+        //Creation of headers
         basicAuthHeaderOwner = "Basic " + Base64.getEncoder()
                 .encodeToString((customerOwner.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
+
+        basicAuthHeaderStaff = "Basic " + Base64.getEncoder().
+                encodeToString((customerStaff.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
     }
 
     @Test
