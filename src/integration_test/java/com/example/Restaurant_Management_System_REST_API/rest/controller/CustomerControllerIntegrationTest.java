@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -37,11 +38,17 @@ class CustomerControllerIntegrationTest {
     private CustomerRepository customerRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private final Set<Authority> authorities = new HashSet<>();
+    @Autowired
+    private ModelMapper modelMapper;
+    private final Set<Authority> authoritiesManagement = new HashSet<>();
+    private final Set<Authority> authoritiesStaff = new HashSet<>();
     private String basicAuthHeaderOwner;
+    private String basicAuthHeaderStaff;
     private String encodedPassword;
     private String originalPassword;
     private Authority authorityOwner;
+    private Authority authorityStaff;
+    private CustomerDTORequest customerDTORequest;
 
     @BeforeAll
     public void createAndSaveAuthority() {
@@ -107,6 +114,39 @@ class CustomerControllerIntegrationTest {
                     assertEquals(customerDTORequest.getEnabled(), actualDTOResponse.getEnabled());
                     assertEquals(customerDTORequest.getEmailAddress(), actualDTOResponse.getEmailAddress());
                     assertIterableEquals(customerDTORequest.getAuthorities(), actualDTOResponse.getAuthorities());
+                });
+    }
+
+    @Test
+    public void findById_ShouldReturnAppropriateCustomerDTOResponse_WhenCustomerExistAndIdIsGiven() {
+
+        String rawPassword = "laleczkaD1%";
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+
+        Customer customer = new Customer(null, LocalDateTime.now(), null,
+                null, encodedPassword, true, true, true,
+                true, "owner@test.eu", authoritiesStaff);
+        customerRepository.save(customer);
+
+        webTestClient.get()
+                .uri("/api/customer/find/" + customer.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CustomerDTOResponse.class)
+                .consumeWith(response -> {
+                    CustomerDTOResponse actualResponseDTO = response.getResponseBody();
+                    assertNotNull(actualResponseDTO);
+                   assertEquals(customer.getId(), actualResponseDTO.getId());
+                   assertEquals(customer.getReservation(), actualResponseDTO.getReservation());
+                   assertEquals(customer.getContactDetails(), actualResponseDTO.getContactDetails());
+                    assertTrue(passwordEncoder.matches(rawPassword, actualResponseDTO.getPassword()));
+                   assertEquals(customer.getAccountNonExpired(), actualResponseDTO.getAccountNonExpired());
+                   assertEquals(customer.getAccountNonLocked(), actualResponseDTO.getAccountNonLocked());
+                   assertEquals(customer.getCredentialsNonExpired(), actualResponseDTO.getCredentialsNonExpired());
+                   assertEquals(customer.getEnabled(), actualResponseDTO.getEnabled());
+                   assertEquals(customer.getEmailAddress(), actualResponseDTO.getEmailAddress());
+                   assertIterableEquals(customer.getAuthorities(), actualResponseDTO.getAuthorities());
                 });
     }
 
