@@ -77,12 +77,16 @@ class CustomerControllerIntegrationTest {
                 encodeToString((customerStaff.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
     }
 
+    @BeforeEach
+    public void createCustomerDTORequest() {
+        customerDTORequest = new CustomerDTORequest(null, LocalDateTime.now(), null,
+                null, "laleczkaD1%", true, true, true,
+                true, "owner@test.eu", authoritiesStaff);
+    }
+
     @Test
     public void create_ShouldAddCustomerToDatabaseAndReturnCustomerDTO_WhenCustomerDTORequestIsGiven() {
-
-        CustomerDTORequest customerDTORequest = new CustomerDTORequest(null, LocalDateTime.now(), null,
-                null, "laleczka", true, true, true,
-                true, "owner@test.eu", authorities);
+        //Arrange - takes from @BeforeEach and @BeforeAll methods
 
         webTestClient.post()
                 .uri("/api/customer/add")
