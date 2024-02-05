@@ -35,16 +35,7 @@ public class Customer implements UserDetails {
     private ContactDetails contactDetails;
 
     //Below are fields for security issues
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{5,}$", message =
-            "Password must have at least 5 characters, one small letter, one big letter, and a special character")
-    private String password;
-
-//            (?=.*[0-9]) ensures there is at least one digit.
-//            (?=.*[a-z]) ensures there is at least one lowercase letter.
-//            (?=.*[A-Z]) ensures there is at least one uppercase letter.
-//            (?=.*[@#$%^&+=]) ensures there is at least one special character.
-//            (?=\\S+$) ensures there are no spaces.
-//.           {5,} ensures there are at least 5 characters.
+    private String password; //validation for this field is provided in CustomerDTORequest
     private Boolean accountNonExpired;//to avoid hardcoding I established these fields
     private Boolean accountNonLocked;
     private Boolean credentialsNonExpired;
