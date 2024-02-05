@@ -47,24 +47,18 @@ class CustomerControllerIntegrationTest {
     public void createAndSaveAuthority() {
         authorityOwner = new Authority(null, "ROLE_OWNER");
         authorityRepository.save(authorityOwner);
+        authorities.add(authorityOwner);
 
         originalPassword = "lala";
         encodedPassword = passwordEncoder.encode(originalPassword);
-    }
-
-    @BeforeEach
-    public void setUp() {
-        authorities.add(authorityOwner);
 
         Customer customerOwner = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
-                true, true, true, true,
-                "customer@test.eu", authorities);
+                true, true, true, true,"customer@test.eu", authorities);
         customerRepository.save(customerOwner);
 
         basicAuthHeaderOwner = "Basic " + Base64.getEncoder()
                 .encodeToString((customerOwner.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
     }
-
 
     @Test
     public void create_ShouldAddCustomerToDatabaseAndReturnCustomerDTO_WhenCustomerDTORequestIsGiven() {
