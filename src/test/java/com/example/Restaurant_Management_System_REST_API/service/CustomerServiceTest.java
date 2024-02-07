@@ -17,12 +17,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.xml.sax.SAXException;
 
-import javax.xml.transform.Source;
-import javax.xml.validation.Validator;
+import jakarta.validation.Validator;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -49,25 +46,24 @@ class CustomerServiceTest {
         authorityRepository = mock(AuthorityRepository.class);
         modelMapper = mock(ModelMapper.class);
         passwordEncoder = mock(PasswordEncoder.class);
-//        validator = mock(Validator.class);
-        customerService = new CustomerService(customerRepository, authorityRepository, modelMapper, passwordEncoder,
-                (jakarta.validation.Validator) validator);
+        validator = mock(jakarta.validation.Validator.class);
+        customerService = new CustomerService(customerRepository, authorityRepository, modelMapper, passwordEncoder, validator);
 
         customerDTORequest = mock(CustomerDTORequest.class);
     }
 
-//    @Test //TODO: finish this senior!
-//    public void create_ShouldThrowConstraintViolationException_WhenViolationSetIsNotEmpty() {
-//        //Arrange
-//        ConstraintViolation<CustomerDTORequest> violation = mock(ConstraintViolation.class);
-//        Set<ConstraintViolation<CustomerDTORequest>> violations = new HashSet<>();
-//        violations.add(violation);
-//        when(validator.validate(customerDTORequest)).thenReturn(violations);
-//
-//        //Act
-//        //Assert
-//        assertThrows(ConstraintViolationException.class, ()-> customerService.create(customerDTORequest));
-//    }
+    @Test
+    public void create_ShouldThrowConstraintViolationException_WhenViolationSetIsNotEmpty() {
+        //Arrange
+        ConstraintViolation<CustomerDTORequest> violation = mock(ConstraintViolation.class);
+        Set<ConstraintViolation<CustomerDTORequest>> violations = new HashSet<>();
+        violations.add(violation);
+        when(validator.validate(customerDTORequest)).thenReturn(violations);
+
+        //Act
+        //Assert
+        assertThrows(ConstraintViolationException.class, ()-> customerService.create(customerDTORequest));
+    }
 
     @Test
     public void create_ShouldThrowPropertyValueException_WhenAuthoritiesAreNull() {
