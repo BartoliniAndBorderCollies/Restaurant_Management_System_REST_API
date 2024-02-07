@@ -56,7 +56,7 @@ class CustomerServiceTest {
         customerDTORequest = mock(CustomerDTORequest.class);
     }
 
-//    @Test
+//    @Test //TODO: finish this senior!
 //    public void create_ShouldThrowConstraintViolationException_WhenViolationSetIsNotEmpty() {
 //        //Arrange
 //        ConstraintViolation<CustomerDTORequest> violation = mock(ConstraintViolation.class);
