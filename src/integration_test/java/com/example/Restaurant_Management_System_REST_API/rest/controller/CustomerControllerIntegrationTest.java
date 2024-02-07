@@ -19,9 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,6 +47,8 @@ class CustomerControllerIntegrationTest {
     private Authority authorityOwner;
     private Authority authorityStaff;
     private CustomerDTORequest customerDTORequest;
+    private Customer customerOwner;
+    private Customer customerStaff;
 
     @BeforeAll
     public void createAndSaveAuthority() {
@@ -68,11 +68,11 @@ class CustomerControllerIntegrationTest {
         encodedPassword = passwordEncoder.encode(originalPassword);
 
         //Creation and saving of customers
-        Customer customerOwner = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
-                true, true, true, true,"customer@test.eu", authoritiesManagement);
+        customerOwner = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, //here should be encoded password
+                true, true, true, true, "customer@test.eu", authoritiesManagement);
         customerRepository.save(customerOwner);
 
-        Customer customerStaff = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, true, true, true, true,
+        customerStaff = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, true, true, true, true,
                 "staff@test.eu", authoritiesStaff);
         customerRepository.save(customerStaff);
 
@@ -137,17 +137,53 @@ class CustomerControllerIntegrationTest {
                 .consumeWith(response -> {
                     CustomerDTOResponse actualResponseDTO = response.getResponseBody();
                     assertNotNull(actualResponseDTO);
-                   assertEquals(customer.getId(), actualResponseDTO.getId());
-                   assertEquals(customer.getReservation(), actualResponseDTO.getReservation());
-                   assertEquals(customer.getContactDetails(), actualResponseDTO.getContactDetails());
+                    assertEquals(customer.getId(), actualResponseDTO.getId());
+                    assertEquals(customer.getReservation(), actualResponseDTO.getReservation());
+                    assertEquals(customer.getContactDetails(), actualResponseDTO.getContactDetails());
                     assertTrue(passwordEncoder.matches(rawPassword, actualResponseDTO.getPassword()));
-                   assertEquals(customer.getAccountNonExpired(), actualResponseDTO.getAccountNonExpired());
-                   assertEquals(customer.getAccountNonLocked(), actualResponseDTO.getAccountNonLocked());
-                   assertEquals(customer.getCredentialsNonExpired(), actualResponseDTO.getCredentialsNonExpired());
-                   assertEquals(customer.getEnabled(), actualResponseDTO.getEnabled());
-                   assertEquals(customer.getEmailAddress(), actualResponseDTO.getEmailAddress());
-                   assertIterableEquals(customer.getAuthorities(), actualResponseDTO.getAuthorities());
+                    assertEquals(customer.getAccountNonExpired(), actualResponseDTO.getAccountNonExpired());
+                    assertEquals(customer.getAccountNonLocked(), actualResponseDTO.getAccountNonLocked());
+                    assertEquals(customer.getCredentialsNonExpired(), actualResponseDTO.getCredentialsNonExpired());
+                    assertEquals(customer.getEnabled(), actualResponseDTO.getEnabled());
+                    assertEquals(customer.getEmailAddress(), actualResponseDTO.getEmailAddress());
+                    assertIterableEquals(customer.getAuthorities(), actualResponseDTO.getAuthorities());
                 });
+    }
+
+    @Test
+    public void findAll_ShouldReturnCustomerDTOResponseList_WhenCustomersExist() {
+        List<CustomerDTOResponse> expected = new ArrayList<>();
+
+        expected.add(modelMapper.map(customerOwner, CustomerDTOResponse.class));
+        expected.add(modelMapper.map(customerStaff, CustomerDTOResponse.class));
+
+
+        webTestClient.get()
+                .uri("/api/customer/findAll")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(CustomerDTOResponse.class)
+                .consumeWith(response -> {
+                            List<CustomerDTOResponse> actualResponse = response.getResponseBody();
+                            assertNotNull(actualResponse);
+
+                            for (int i = 0; i < actualResponse.size(); i++) {
+                                CustomerDTOResponse actual = actualResponse.get(i);
+                                CustomerDTOResponse exp = expected.get(i);
+
+                                assertEquals(exp.getEnabled(), actual.getEnabled());
+                                assertEquals(exp.getAuthorities(), actual.getAuthorities());
+                                assertEquals(exp.getEmailAddress(), actual.getEmailAddress());
+                                assertEquals(exp.getContactDetails(), actual.getContactDetails());
+                                assertEquals(exp.getAccountNonExpired(), actual.getAccountNonExpired());
+                                assertEquals(exp.getAccountNonLocked(), actual.getAccountNonLocked());
+                                assertEquals(exp.getCredentialsNonExpired(), actual.getCredentialsNonExpired());
+                                assertEquals(exp.getPassword(), actual.getPassword());
+                                assertEquals(exp.getReservation(), actual.getReservation());
+                            }
+                        }
+                );
     }
 
 }
