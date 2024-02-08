@@ -88,7 +88,7 @@ class CustomerControllerIntegrationTest {
     public void createCustomerDTORequest() {
         customerDTORequest = new CustomerDTORequest(null, LocalDateTime.now(), null,
                 null, "laleczkaD1%", true, true, true,
-                true, "owner@test.eu", authoritiesStaff);
+                true, "owner@test.eu", authoritiesManagement);
     }
 
     @Test
@@ -184,6 +184,30 @@ class CustomerControllerIntegrationTest {
                             }
                         }
                 );
+    }
+
+    @Test
+    public void update_ShouldUpdateCustomerOnDatabaseAndReturnCustomerDTOResponse_WhenCustomerDTORequestIsGiven() {
+
+        webTestClient.put()
+                .uri("/api/customer/update/" + customerStaff.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .bodyValue(customerDTORequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CustomerDTOResponse.class)
+                .consumeWith(response -> {
+                    CustomerDTOResponse actualDTOResponse = response.getResponseBody();
+                    assertNotNull(actualDTOResponse);
+                    assertEquals(customerDTORequest.getAuthorities(), actualDTOResponse.getAuthorities());
+                    assertEquals(customerDTORequest.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
+                    assertEquals(customerDTORequest.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
+                    assertEquals(customerDTORequest.getEnabled(), actualDTOResponse.getEnabled());
+                    assertEquals(customerDTORequest.getContactDetails(), actualDTOResponse.getContactDetails());
+                    assertEquals(customerDTORequest.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
+                    assertEquals(customerDTORequest.getEmailAddress(), actualDTOResponse.getEmailAddress());
+                    assertTrue(passwordEncoder.matches(customerDTORequest.getPassword(), actualDTOResponse.getPassword()));
+                });
     }
 
 }
