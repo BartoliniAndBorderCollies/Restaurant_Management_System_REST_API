@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -210,4 +211,25 @@ class CustomerControllerIntegrationTest {
                 });
     }
 
+    @Test
+    public void delete_ShouldDeleteCustomerOnDatabaseAndReturnResponseEntity_WhenCustomerIdIsGiven() {
+        Customer customerToDelete = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, true, true, true, true,
+                "staff@test.eu", authoritiesStaff);
+        customerRepository.save(customerToDelete);
+
+        webTestClient.delete()
+                .uri("/api/customer/delete/" + customerToDelete.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String responseMessage = response.getResponseBody();
+                    assertEquals("Customer: " + customerToDelete.getUsername() + " has been successfully deleted!",
+                            responseMessage);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+                    Optional<Customer> shouldBeEmpty = customerRepository.findById(customerToDelete.getId());
+                    assertTrue(shouldBeEmpty.isEmpty());
+                });
+    }
 }
