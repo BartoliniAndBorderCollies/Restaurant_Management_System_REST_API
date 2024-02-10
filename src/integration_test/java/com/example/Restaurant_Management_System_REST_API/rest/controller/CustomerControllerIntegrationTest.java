@@ -100,6 +100,32 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
+    public void create_ShouldAddCustomerToDatabaseAndReturnCustomerDTO_WhenCustomerDTORequestIsGiven() {
+        //Arrange - takes from @BeforeEach and @BeforeAll methods
+
+        webTestClient.post()
+                .uri("/api/customer/add")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .bodyValue(customerDTORequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CustomerDTOResponse.class)
+                .consumeWith(response -> {
+                    CustomerDTOResponse actualDTOResponse = response.getResponseBody();
+                    assertNotNull(actualDTOResponse);
+                    assertEquals(customerDTORequest.getReservation(), actualDTOResponse.getReservation());
+                    assertEquals(customerDTORequest.getContactDetails(), actualDTOResponse.getContactDetails());
+                    assertTrue(passwordEncoder.matches(customerDTORequest.getPassword(), actualDTOResponse.getPassword()));
+                    assertEquals(customerDTORequest.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
+                    assertEquals(customerDTORequest.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
+                    assertEquals(customerDTORequest.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
+                    assertEquals(customerDTORequest.getEnabled(), actualDTOResponse.getEnabled());
+                    assertEquals(customerDTORequest.getEmailAddress(), actualDTOResponse.getEmailAddress());
+                    assertIterableEquals(customerDTORequest.getAuthorities(), actualDTOResponse.getAuthorities());
+                });
+    }
+
+    @Test
     public void findById_ShouldReturnAppropriateCustomerDTOResponse_WhenCustomerExistAndIdIsGiven() {
 
         String rawPassword = "laleczkaD1%";
