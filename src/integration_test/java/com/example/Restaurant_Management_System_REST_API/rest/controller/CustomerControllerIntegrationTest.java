@@ -185,26 +185,35 @@ class CustomerControllerIntegrationTest {
 
     @Test
     public void update_ShouldUpdateCustomerOnDatabaseAndReturnCustomerDTOResponse_WhenCustomerDTORequestIsGiven() {
+        Customer customerToUpdate = new Customer(null, LocalDateTime.now(), null, null,
+                "jajko1#", true, false, false, false,
+                "jaja@test.eu", authoritiesManagement);
+        customerRepository.save(customerToUpdate);
+
+        CustomerDTORequest  customerDTORequest2 = new CustomerDTORequest(null, LocalDateTime.now(), null,
+                null, "laleD3%", true, true, true,
+                true, "fiku@test.eu", authoritiesManagement);
 
         webTestClient.put()
-                .uri("/api/customer/update/" + customerStaff.getId())
+                .uri("/api/customer/update/" + customerToUpdate.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
-                .bodyValue(customerDTORequest)
+                .bodyValue(customerDTORequest2)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(CustomerDTOResponse.class)
                 .consumeWith(response -> {
                     CustomerDTOResponse actualDTOResponse = response.getResponseBody();
                     assertNotNull(actualDTOResponse);
-                    assertEquals(customerDTORequest.getAuthorities(), actualDTOResponse.getAuthorities());
-                    assertEquals(customerDTORequest.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
-                    assertEquals(customerDTORequest.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
-                    assertEquals(customerDTORequest.getEnabled(), actualDTOResponse.getEnabled());
-                    assertEquals(customerDTORequest.getContactDetails(), actualDTOResponse.getContactDetails());
-                    assertEquals(customerDTORequest.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
-                    assertEquals(customerDTORequest.getEmailAddress(), actualDTOResponse.getEmailAddress());
-                    assertTrue(passwordEncoder.matches(customerDTORequest.getPassword(), actualDTOResponse.getPassword()));
+                    assertEquals(customerDTORequest2.getAuthorities(), actualDTOResponse.getAuthorities());
+                    assertEquals(customerDTORequest2.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
+                    assertEquals(customerDTORequest2.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
+                    assertEquals(customerDTORequest2.getEnabled(), actualDTOResponse.getEnabled());
+                    assertEquals(customerDTORequest2.getContactDetails(), actualDTOResponse.getContactDetails());
+                    assertEquals(customerDTORequest2.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
+                    assertEquals(customerDTORequest2.getEmailAddress(), actualDTOResponse.getEmailAddress());
+                    assertTrue(passwordEncoder.matches(customerDTORequest2.getPassword(), actualDTOResponse.getPassword()));
                 });
+        customerRepository.delete(customerToUpdate);
     }
 
     @Test
