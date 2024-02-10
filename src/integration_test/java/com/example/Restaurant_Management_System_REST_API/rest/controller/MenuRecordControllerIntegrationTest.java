@@ -96,6 +96,12 @@ class MenuRecordControllerIntegrationTest {
         menuRecordRepository.deleteAll();
     }
 
+    @AfterAll
+    public void clearRolesAndCustomers() {
+        customerRepository.deleteAll();
+        authorityRepository.deleteAll();
+    }
+
     @Test
     public void create_ShouldAddMenuRecordToDatabaseAndReturnDTOResponse_WhenDTORequestIsGiven() {
 
