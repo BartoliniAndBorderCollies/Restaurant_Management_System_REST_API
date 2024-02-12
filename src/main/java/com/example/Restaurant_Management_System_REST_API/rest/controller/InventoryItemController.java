@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.InventoryItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,8 @@ public class InventoryItemController {
     private InventoryItemService inventoryItemService;
 
     @PostMapping("/add")
-    public InventoryItemDTOResponse create (@RequestBody InventoryItemDTORequest inventoryItemDTORequest) {
+    public InventoryItemDTOResponse create (@RequestBody InventoryItemDTORequest inventoryItemDTORequest)
+            throws NotFoundInDatabaseException {
         return inventoryItemService.create(inventoryItemDTORequest);
     }
 }
