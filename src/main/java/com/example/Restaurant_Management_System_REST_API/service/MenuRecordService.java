@@ -46,7 +46,6 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
         for (MenuRecord menuRecord : iterable) {
             list.add(modelMapper.map(menuRecord, MenuRecordDTOResponse.class));
         }
-//        iterable.forEach(list::add); a shorter version
         return list;
     }
 
