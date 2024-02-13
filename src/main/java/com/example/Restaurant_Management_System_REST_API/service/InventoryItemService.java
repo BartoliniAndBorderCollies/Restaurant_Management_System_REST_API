@@ -40,4 +40,24 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
         return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
     }
+
+    @Override
+    public InventoryItemDTOResponse findById(Long id) throws NotFoundInDatabaseException {
+        return null;
+    }
+
+    @Override
+    public List<InventoryItemDTOResponse> findAll() {
+        return null;
+    }
+
+    @Override
+    public InventoryItemDTOResponse update(Long id, InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+        return null;
+    }
 }
