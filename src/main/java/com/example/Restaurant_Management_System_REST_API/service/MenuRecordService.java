@@ -19,8 +19,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordDTOResponse, MenuRecordDTORequest, Long> {
 
-    private MenuRecordRepository menuRecordRepository;
-    private ModelMapper modelMapper;
+    private final MenuRecordRepository menuRecordRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public MenuRecordDTOResponse create(MenuRecordDTORequest menuRecordDTORequest) {

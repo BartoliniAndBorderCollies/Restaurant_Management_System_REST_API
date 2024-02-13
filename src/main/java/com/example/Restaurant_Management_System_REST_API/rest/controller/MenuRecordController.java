@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MenuRecordController {
 
-    private MenuRecordService menuRecordService;
+    private final MenuRecordService menuRecordService;
 
 
     @PostMapping("/add") // This will be done only by owner and manager
