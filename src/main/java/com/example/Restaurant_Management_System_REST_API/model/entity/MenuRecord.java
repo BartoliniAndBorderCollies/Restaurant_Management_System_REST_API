@@ -35,7 +35,7 @@ public class MenuRecord extends CatalogItem {
     @NotNull (message = "Category is missing!")
     @Column(nullable = false)
     private Category category;
-    @NotNull(message = "Is available is missing!")
+    @NotNull(message = "Availability is missing!")
     @Column(nullable = false)
     private Boolean isAvailable; //I use object to be able to hold null values (for updating process, I want to update
     //just fields which hold values, if some are skipped they should not be changed on db. if it was a primitive data type
