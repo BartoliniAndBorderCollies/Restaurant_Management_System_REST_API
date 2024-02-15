@@ -43,7 +43,10 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
     @Override
     public InventoryItemDTOResponse findById(Long id) throws NotFoundInDatabaseException {
-        return null;
+        InventoryItem inventoryItem = inventoryItemRepository.findById(id).orElseThrow(()->
+                new NotFoundInDatabaseException(InventoryItem.class));
+
+        return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
     }
 
     @Override
