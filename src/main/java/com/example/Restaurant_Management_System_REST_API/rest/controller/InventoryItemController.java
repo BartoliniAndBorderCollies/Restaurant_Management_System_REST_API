@@ -16,13 +16,13 @@ public class InventoryItemController {
 
     private InventoryItemService inventoryItemService;
 
-    @PostMapping("/add")
+    @PostMapping("/add") // This will be done only by owner, manager and staff
     public InventoryItemDTOResponse create (@RequestBody InventoryItemDTORequest inventoryItemDTORequest)
             throws NotFoundInDatabaseException {
         return inventoryItemService.create(inventoryItemDTORequest);
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/find/{id}") // This will be done only by owner, manager and staff
     public InventoryItemDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return inventoryItemService.findById(id);
     }
