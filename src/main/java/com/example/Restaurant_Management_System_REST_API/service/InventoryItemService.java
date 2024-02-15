@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,7 +52,12 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
     @Override
     public List<InventoryItemDTOResponse> findAll() {
-        return null;
+        List<InventoryItemDTOResponse> listInventoryDTOs = new ArrayList<>();
+
+        inventoryItemRepository.findAll().forEach(inventoryItem ->
+                listInventoryDTOs.add(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)));
+
+        return listInventoryDTOs;
     }
 
     @Override
