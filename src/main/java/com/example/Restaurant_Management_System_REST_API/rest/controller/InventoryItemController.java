@@ -5,10 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.I
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.InventoryItemService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/inventory/")
@@ -22,4 +19,10 @@ public class InventoryItemController {
             throws NotFoundInDatabaseException {
         return inventoryItemService.create(inventoryItemDTORequest);
     }
+
+    @GetMapping("/find/{id}")
+    public InventoryItemDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
+        return inventoryItemService.findById(id);
+    }
+
 }
