@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.I
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.InventoryItemService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,11 @@ public class InventoryItemController {
     @GetMapping("/findAll") // This will be done only by owner, manager and staff
     public List<InventoryItemDTOResponse> findAll() {
         return inventoryItemService.findAll();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
+        return inventoryItemService.delete(id);
     }
 
 }
