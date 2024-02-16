@@ -10,6 +10,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepo
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +68,10 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
     @Override
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
-        return null;
+        InventoryItem inventoryToDelete = inventoryItemRepository.findById(id).orElseThrow(()->
+                new NotFoundInDatabaseException(InventoryItem.class));
+        inventoryItemRepository.delete(inventoryToDelete);
+
+        return new ResponseEntity<>("Inventory item: " + inventoryToDelete.getName() + " has been deleted!", HttpStatus.OK);
     }
 }
