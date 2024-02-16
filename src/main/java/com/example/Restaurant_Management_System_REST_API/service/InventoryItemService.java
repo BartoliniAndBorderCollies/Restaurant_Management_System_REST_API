@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -62,8 +63,20 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
     }
 
     @Override
-    public InventoryItemDTOResponse update(Long id, InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {
-        return null;
+    public InventoryItemDTOResponse update(Long id, InventoryItemDTORequest inventoryItemDTORequest)
+            throws NotFoundInDatabaseException {
+        InventoryItemDTOResponse inventoryDTOToBeUpdated = findById(id);
+
+        Optional.ofNullable(inventoryItemDTORequest.getDeliveryDate()).ifPresent(inventoryDTOToBeUpdated::setDeliveryDate);
+        Optional.of(inventoryItemDTORequest.getStockAmount()).ifPresent(inventoryDTOToBeUpdated::setStockAmount);
+        Optional.ofNullable(inventoryItemDTORequest.getSupplier()).ifPresent(inventoryDTOToBeUpdated::setSupplier);
+        Optional.ofNullable(inventoryItemDTORequest.getName()).ifPresent(inventoryDTOToBeUpdated::setName);
+        Optional.ofNullable(inventoryItemDTORequest.getDescription()).ifPresent(inventoryDTOToBeUpdated::setDescription);
+        Optional.of(inventoryItemDTORequest.getPrice()).ifPresent(inventoryDTOToBeUpdated::setPrice);
+
+        inventoryItemRepository.save(modelMapper.map(inventoryDTOToBeUpdated, InventoryItem.class));
+
+        return inventoryDTOToBeUpdated;
     }
 
     @Override
