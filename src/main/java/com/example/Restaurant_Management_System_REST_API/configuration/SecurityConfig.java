@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @EnableWebSecurity
 @Configuration
@@ -22,18 +23,22 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(mvc.pattern("/api/admin/**")) //TODO: update path with appropriate mapping
+                        .requestMatchers(mvc.pattern("")) //TODO: update path with appropriate mapping
                         .hasRole("ADMIN")
-                        .requestMatchers(mvc.pattern("/api/owner/**"))
-                        .hasRole("OWNER")
-                        .requestMatchers(mvc.pattern("/api/manager/**"))
-                        .hasRole("MANAGER")
-                        .requestMatchers(mvc.pattern("/api/staff/**"))
-                        .hasRole("STAFF")
+                        .requestMatchers(mvc.pattern("/api/menu/record/add"), mvc.pattern("/api/menu/record/update/**"),
+                                 mvc.pattern("/api/menu/record/delete/**"))
+                        .hasAnyRole("OWNER", "MANAGER")
+                        .requestMatchers(mvc.pattern("/api/menu/record/find/**"), mvc.pattern("/api/menu/record/findAll"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
                         .anyRequest()
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .build();
+    }
+
+    @Bean
+    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
     }
 
     @Bean
