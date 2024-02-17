@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class InventoryItem extends CatalogItem {
     @Column(name = "id", nullable = false)
     private Long id;
     private LocalDateTime deliveryDate;
+    @Positive(message = "Stock amount must be above zero!")
     private int stockAmount;
     @ManyToOne
     @JoinColumn(name = "supplier_id")
