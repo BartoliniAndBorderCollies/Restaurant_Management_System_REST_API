@@ -41,6 +41,10 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/customer/find/**"), mvc.pattern("/api/customer/findAll"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
+                        //Inventory item
+                        .requestMatchers(mvc.pattern("/api/inventory/**"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
+
                         //Permit all other requests
                         .anyRequest()
                         .permitAll())
