@@ -33,13 +33,13 @@ public class InventoryItemController {
         return inventoryItemService.findAll();
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{id}") // This will be done only by owner, manager and staff
     public InventoryItemDTOResponse update(@PathVariable Long id, @RequestBody InventoryItemDTORequest inventoryItemDTORequest)
             throws NotFoundInDatabaseException {
         return inventoryItemService.update(id, inventoryItemDTORequest);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}") // This will be done only by owner, manager and staff
     public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return inventoryItemService.delete(id);
     }
