@@ -39,22 +39,27 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
     public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) {
 
         // First I Validate the CustomerDTORequest
-        Set<ConstraintViolation<CustomerDTORequest>> violations = validator.validate(customerDTORequest);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
+        validate(customerDTORequest);
 
+        //then I check if request is provided with authorities -> it should be, otherwise it throws an exception
+        checkIfAuthoritiesAreNull(customerDTORequest);
+
+        // Now I fetch the authorities from the database
+        // this is necessary because I don't want to have cascade in Customer, because I just want to have 4 roles in total
+        Set<Authority> authorities = getAuthorities(customerDTORequest);
+
+        //then I map to Customer and I encode the password to be hashed in database
         Customer customer = modelMapper.map(customerDTORequest, Customer.class);
         customer.setPassword(passwordEncoder.encode(customerDTORequest.getPassword()));
 
-        if(customerDTORequest.getAuthorities() == null) {
-            throw new PropertyValueException("The authorities field in your request is null", "You tried to create a Customer",
-                    " But the missing field is: authorities.");
-        }
+        customer.setAuthorities(authorities);
+        customerRepository.save(customer);
 
-        // Fetch the authorities from the database
-        // this is necessary because I don't want to have cascade in Customer, because I just want to have 4 roles in total
-        Set<Authority> authorities = customerDTORequest.getAuthorities().stream()
+        return modelMapper.map(customer, CustomerDTOResponse.class);
+    }
+
+    private Set<Authority> getAuthorities(CustomerDTORequest customerDTORequest) {
+        return customerDTORequest.getAuthorities().stream()
                 .map(authorityDTO -> {
                     String authorityName = authorityDTO.getName();
                     try {
@@ -65,11 +70,20 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
                     }
                 })
                 .collect(Collectors.toSet());
+    }
 
-        customer.setAuthorities(authorities);
-        customerRepository.save(customer);
+    private static void checkIfAuthoritiesAreNull(CustomerDTORequest customerDTORequest) {
+        if(customerDTORequest.getAuthorities() == null) {
+            throw new PropertyValueException("The authorities field in your request is null", "You tried to create a Customer",
+                    " But the missing field is: authorities.");
+        }
+    }
 
-        return modelMapper.map(customer, CustomerDTOResponse.class);
+    private void validate(CustomerDTORequest customerDTORequest) {
+        Set<ConstraintViolation<CustomerDTORequest>> violations = validator.validate(customerDTORequest);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
     }
 
     @Override
