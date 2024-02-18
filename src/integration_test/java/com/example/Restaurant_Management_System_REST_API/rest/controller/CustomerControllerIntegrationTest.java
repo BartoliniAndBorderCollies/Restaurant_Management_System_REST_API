@@ -86,8 +86,8 @@ class CustomerControllerIntegrationTest {
     @BeforeEach
     public void createCustomerDTORequest() {
         customerDTORequest = new CustomerDTORequest(null, LocalDateTime.now(), null,
-                null, "laleczkaD1%", true, true, true,
-                true, "owner@test.eu", authoritiesManagement);
+                null, "laleczkaD1%", "owner@test.eu", authoritiesManagement, true, true, true,
+                true);
     }
 
     @AfterAll
@@ -191,8 +191,8 @@ class CustomerControllerIntegrationTest {
         customerRepository.save(customerToUpdate);
 
         CustomerDTORequest  customerDTORequest2 = new CustomerDTORequest(null, LocalDateTime.now(), null,
-                null, "laleD3%", true, true, true,
-                true, "fiku@test.eu", authoritiesManagement);
+                null, "laleD3%", "fiku@test.eu", authoritiesManagement, true, true, true,
+                true);
 
         webTestClient.put()
                 .uri("/api/customer/update/" + customerToUpdate.getId())
