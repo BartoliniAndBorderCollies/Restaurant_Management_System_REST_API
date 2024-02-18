@@ -24,6 +24,7 @@ public class CustomerDTOResponse {
     private ContactDetails contactDetails;
 
     //Below are fields for security issues
+    private String password;
     private Boolean accountNonExpired;//to avoid hardcoding I established these fields
     private Boolean accountNonLocked;
     private Boolean credentialsNonExpired;
