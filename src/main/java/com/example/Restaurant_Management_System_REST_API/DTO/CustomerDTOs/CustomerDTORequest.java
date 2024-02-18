@@ -25,7 +25,8 @@ public class CustomerDTORequest {
 
     //Below are fields for security issues
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{5,}$", message =
-            "Password must have at least 5 characters, one digit, one small letter, one big letter, and a special character")
+            "Password must have at least 5 characters, one digit, one lowercase letter, one uppercase letter, and " +
+                    "a special character")
     private String password;
     //            (?=.*[0-9]) ensures there is at least one digit.
 //            (?=.*[a-z]) ensures there is at least one lowercase letter.
