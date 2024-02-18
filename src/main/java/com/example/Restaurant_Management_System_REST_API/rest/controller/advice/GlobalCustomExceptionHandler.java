@@ -25,6 +25,6 @@ public class GlobalCustomExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolationException (ConstraintViolationException ex) {
         return new ResponseEntity<>("You haven't gone through all validations! See what is missing here: " +
-                ex.getMessage(), HttpStatus.BAD_REQUEST);
+                ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
