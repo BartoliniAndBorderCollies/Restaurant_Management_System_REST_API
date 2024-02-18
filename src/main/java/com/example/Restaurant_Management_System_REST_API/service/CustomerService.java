@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CustomerService implements GenericBasicCrudOperations<CustomerDTOResponse, CustomerDTORequest, Long> {
 
-    private CustomerRepository customerRepository;
-    private AuthorityRepository authorityRepository;
-    private ModelMapper modelMapper;
-    private PasswordEncoder passwordEncoder;
-    private Validator validator;
+    private final CustomerRepository customerRepository;
+    private final AuthorityRepository authorityRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final Validator validator;
     
     @Override
     public CustomerDTOResponse create(CustomerDTORequest customerDTORequest) {
