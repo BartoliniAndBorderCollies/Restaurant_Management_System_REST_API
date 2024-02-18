@@ -34,10 +34,13 @@ public class CustomerDTORequest {
 //            (?=.*[@#$%^&+=]) ensures there is at least one special character.
 //            (?=\\S+$) ensures there are no spaces.
 //.           {5,} ensures there are at least 5 characters.
-    private Boolean accountNonExpired;//to avoid hardcoding I established these fields
+    private String emailAddress;
+    private Set<Authority> authorities;
+
+    //to avoid hardcoding I established these below fields
+    private Boolean accountNonExpired;
     private Boolean accountNonLocked;
     private Boolean credentialsNonExpired;
     private Boolean enabled;
-    private String emailAddress;
-    private Set<Authority> authorities;
+
 }
