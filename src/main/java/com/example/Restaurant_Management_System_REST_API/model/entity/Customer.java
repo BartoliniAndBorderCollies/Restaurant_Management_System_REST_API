@@ -40,8 +40,8 @@ public class Customer implements UserDetails {
     private Boolean accountNonLocked;
     private Boolean credentialsNonExpired;
     private Boolean enabled;
-    @NotBlank(message = "Email is missing!")
-    @Email(regexp=".+@.+\\..+", message = "Email address must be as email: example@example.pl")
+    @NotBlank(message = "Please provide an email address!")
+    @Email(regexp=".+@.+\\..+", message = "Please enter a valid email address in the format: yourname@example.com")
     private String emailAddress;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "customer_authorities", joinColumns = @JoinColumn(name = "customer_id"),
