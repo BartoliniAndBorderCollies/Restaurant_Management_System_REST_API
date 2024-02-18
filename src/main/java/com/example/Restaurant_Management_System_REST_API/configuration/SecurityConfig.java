@@ -26,14 +26,14 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/admin/customer/add")) //TODO: update path with appropriate mapping
                         .authenticated()
 
-                        //Menu records
+                        //Menu records secured paths
                         .requestMatchers(mvc.pattern("/api/menu/record/add"), mvc.pattern("/api/menu/record/update/**"),
                                  mvc.pattern("/api/menu/record/delete/**"))
                         .hasAnyRole("OWNER", "MANAGER")
                         .requestMatchers(mvc.pattern("/api/menu/record/find/**"), mvc.pattern("/api/menu/record/findAll"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
-                        //Customer
+                        //Customer secured paths
                         .requestMatchers(mvc.pattern("/api/customer/add"), mvc.pattern("/api/customer/update/**"),
                                 mvc.pattern("/api/customer/delete/**"))
                         .hasAnyRole("OWNER", "MANAGER")
