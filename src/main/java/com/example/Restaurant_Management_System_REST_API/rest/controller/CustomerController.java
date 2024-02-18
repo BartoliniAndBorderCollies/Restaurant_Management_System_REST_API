@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CustomerController {
 
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
     @PostMapping("/add") //this will be done only by owner and manager
     public CustomerDTOResponse create(@RequestBody CustomerDTORequest customerDTORequest) {
