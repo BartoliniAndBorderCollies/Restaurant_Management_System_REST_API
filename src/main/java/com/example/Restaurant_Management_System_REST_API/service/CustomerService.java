@@ -72,7 +72,7 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
                 .collect(Collectors.toSet());
     }
 
-    private static void checkIfAuthoritiesAreNull(CustomerDTORequest customerDTORequest) {
+    private void checkIfAuthoritiesAreNull(CustomerDTORequest customerDTORequest) {
         if(customerDTORequest.getAuthorities() == null) {
             throw new PropertyValueException("The authorities field in your request is null", "You tried to create a Customer",
                     " But the missing field is: authorities.");
