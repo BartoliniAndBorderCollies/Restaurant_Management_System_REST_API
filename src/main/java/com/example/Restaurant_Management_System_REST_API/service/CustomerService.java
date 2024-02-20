@@ -111,8 +111,6 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
         Optional.ofNullable(customerDTORequest.getCreationTime()).ifPresent(customerToUpdate::setCreationTime);
         Optional.ofNullable(customerDTORequest.getReservation()).ifPresent(customerToUpdate::setReservation);
         Optional.ofNullable(customerDTORequest.getContactDetails()).ifPresent(customerToUpdate::setContactDetails);
-        Optional.ofNullable(customerDTORequest.getPassword()).ifPresent(password ->
-                customerToUpdate.setPassword(passwordEncoder.encode(password)));
         Optional.ofNullable(customerDTORequest.getAccountNonExpired()).ifPresent(customerToUpdate::setAccountNonExpired);
         Optional.ofNullable(customerDTORequest.getAccountNonLocked()).ifPresent(customerToUpdate::setAccountNonLocked);
         Optional.ofNullable(customerDTORequest.getCredentialsNonExpired()).ifPresent(customerToUpdate::setCredentialsNonExpired);
@@ -120,9 +118,14 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
         Optional.ofNullable(customerDTORequest.getEmailAddress()).ifPresent(customerToUpdate::setEmailAddress);
         Optional.ofNullable(customerDTORequest.getAuthorities()).ifPresent(customerToUpdate::setAuthorities);
 
-        customerRepository.save(modelMapper.map(customerToUpdate, Customer.class));
+        Customer customer = modelMapper.map(customerToUpdate, Customer.class);
 
-        return customerToUpdate;
+        Optional.ofNullable(customerDTORequest.getPassword()).ifPresent(password ->
+                customer.setPassword(passwordEncoder.encode(password)));
+
+        customerRepository.save(customer);
+
+        return modelMapper.map(customer, CustomerDTOResponse.class);
     }
 
     @Override
