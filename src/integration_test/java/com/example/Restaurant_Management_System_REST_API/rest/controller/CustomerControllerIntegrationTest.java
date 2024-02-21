@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
@@ -110,15 +111,21 @@ class CustomerControllerIntegrationTest {
                 .consumeWith(response -> {
                     CustomerDTOResponse actualDTOResponse = response.getResponseBody();
                     assertNotNull(actualDTOResponse);
-                    assertEquals(customerDTORequest.getReservation(), actualDTOResponse.getReservation());
-                    assertEquals(customerDTORequest.getContactDetails(), actualDTOResponse.getContactDetails());
-                    assertTrue(passwordEncoder.matches(customerDTORequest.getPassword(), actualDTOResponse.getPassword()));
-                    assertEquals(customerDTORequest.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
-                    assertEquals(customerDTORequest.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
-                    assertEquals(customerDTORequest.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
-                    assertEquals(customerDTORequest.getEnabled(), actualDTOResponse.getEnabled());
-                    assertEquals(customerDTORequest.getEmailAddress(), actualDTOResponse.getEmailAddress());
-                    assertIterableEquals(customerDTORequest.getAuthorities(), actualDTOResponse.getAuthorities());
+
+                    Optional<Customer> optionalCustomer = customerRepository.findByEmailAddress(actualDTOResponse.getEmailAddress());
+                    optionalCustomer.ifPresentOrElse(customer -> {
+                        assertEquals(customerDTORequest.getReservation(), actualDTOResponse.getReservation());
+                        assertEquals(customerDTORequest.getContactDetails(), actualDTOResponse.getContactDetails());
+                        assertTrue(passwordEncoder.matches(customerDTORequest.getPassword(), customer.getPassword()));
+                        assertEquals(customerDTORequest.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
+                        assertEquals(customerDTORequest.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
+                        assertEquals(customerDTORequest.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
+                        assertEquals(customerDTORequest.getEnabled(), actualDTOResponse.getEnabled());
+                        assertEquals(customerDTORequest.getEmailAddress(), actualDTOResponse.getEmailAddress());
+                        assertIterableEquals(customerDTORequest.getAuthorities(), actualDTOResponse.getAuthorities());
+                    }, () -> {
+                        throw new RuntimeException(new NotFoundInDatabaseException(Customer.class));
+                    });
                 });
     }
 
