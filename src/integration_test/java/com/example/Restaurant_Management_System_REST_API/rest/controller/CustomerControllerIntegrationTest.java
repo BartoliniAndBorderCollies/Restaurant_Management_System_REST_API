@@ -42,9 +42,6 @@ class CustomerControllerIntegrationTest {
     private String basicAuthHeaderOwner;
     private String basicAuthHeaderStaff;
     private String encodedPassword;
-    private String originalPassword;
-    private Authority authorityOwner;
-    private Authority authorityStaff;
     private CustomerDTORequest customerDTORequest;
     private Customer customerOwner;
     private Customer customerStaff;
@@ -52,8 +49,8 @@ class CustomerControllerIntegrationTest {
     @BeforeAll
     public void createAndSaveAuthority() {
         //Creation and saving of Authority
-        authorityOwner = new Authority(null, "ROLE_OWNER");
-        authorityStaff = new Authority(null, "ROLE_STAFF");
+        Authority authorityOwner = new Authority(null, "ROLE_OWNER");
+        Authority authorityStaff = new Authority(null, "ROLE_STAFF");
 
         authorityRepository.save(authorityOwner);
         authorityRepository.save(authorityStaff);
@@ -63,7 +60,7 @@ class CustomerControllerIntegrationTest {
         authoritiesStaff.add(authorityStaff);
 
         //Setting and encoding password
-        originalPassword = "lala";
+        String originalPassword = "lala";
         encodedPassword = passwordEncoder.encode(originalPassword);
 
         //Creation and saving of customers
