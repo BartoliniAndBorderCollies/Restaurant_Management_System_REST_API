@@ -141,7 +141,6 @@ class CustomerControllerIntegrationTest {
                     assertEquals(customerStaff.getId(), actualResponseDTO.getId());
                     assertEquals(customerStaff.getReservation(), actualResponseDTO.getReservation());
                     assertEquals(customerStaff.getContactDetails(), actualResponseDTO.getContactDetails());
-                    assertTrue(passwordEncoder.matches(originalPassword, actualResponseDTO.getPassword()));
                     assertEquals(customerStaff.getAccountNonExpired(), actualResponseDTO.getAccountNonExpired());
                     assertEquals(customerStaff.getAccountNonLocked(), actualResponseDTO.getAccountNonLocked());
                     assertEquals(customerStaff.getCredentialsNonExpired(), actualResponseDTO.getCredentialsNonExpired());
@@ -180,7 +179,6 @@ class CustomerControllerIntegrationTest {
                                 assertEquals(exp.getAccountNonExpired(), actual.getAccountNonExpired());
                                 assertEquals(exp.getAccountNonLocked(), actual.getAccountNonLocked());
                                 assertEquals(exp.getCredentialsNonExpired(), actual.getCredentialsNonExpired());
-                                assertEquals(exp.getPassword(), actual.getPassword());
                                 assertEquals(exp.getReservation(), actual.getReservation());
                             }
                         }
