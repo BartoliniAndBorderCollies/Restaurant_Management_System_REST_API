@@ -192,7 +192,7 @@ class CustomerControllerIntegrationTest {
                 "jaja@test.eu", authoritiesManagement);
         customerRepository.save(customerToUpdate);
 
-        CustomerDTORequest  customerDTORequest2 = new CustomerDTORequest(null, LocalDateTime.now(), null,
+        CustomerDTORequest customerDTORequest2 = new CustomerDTORequest(null, LocalDateTime.now(), null,
                 null, "laleD3%", "fiku@test.eu", authoritiesManagement, true, true, true,
                 true);
 
@@ -206,14 +206,21 @@ class CustomerControllerIntegrationTest {
                 .consumeWith(response -> {
                     CustomerDTOResponse actualDTOResponse = response.getResponseBody();
                     assertNotNull(actualDTOResponse);
-                    assertEquals(customerDTORequest2.getAuthorities(), actualDTOResponse.getAuthorities());
-                    assertEquals(customerDTORequest2.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
-                    assertEquals(customerDTORequest2.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
-                    assertEquals(customerDTORequest2.getEnabled(), actualDTOResponse.getEnabled());
-                    assertEquals(customerDTORequest2.getContactDetails(), actualDTOResponse.getContactDetails());
-                    assertEquals(customerDTORequest2.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
-                    assertEquals(customerDTORequest2.getEmailAddress(), actualDTOResponse.getEmailAddress());
-                    assertTrue(passwordEncoder.matches(customerDTORequest2.getPassword(), actualDTOResponse.getPassword()));
+
+                    Optional<Customer> customerOptional = customerRepository.findByEmailAddress(customerDTORequest2.getEmailAddress());
+                    customerOptional.ifPresentOrElse(customer -> {
+
+                        assertEquals(customerDTORequest2.getAuthorities(), actualDTOResponse.getAuthorities());
+                        assertEquals(customerDTORequest2.getAccountNonLocked(), actualDTOResponse.getAccountNonLocked());
+                        assertEquals(customerDTORequest2.getAccountNonExpired(), actualDTOResponse.getAccountNonExpired());
+                        assertEquals(customerDTORequest2.getEnabled(), actualDTOResponse.getEnabled());
+                        assertEquals(customerDTORequest2.getContactDetails(), actualDTOResponse.getContactDetails());
+                        assertEquals(customerDTORequest2.getCredentialsNonExpired(), actualDTOResponse.getCredentialsNonExpired());
+                        assertEquals(customerDTORequest2.getEmailAddress(), actualDTOResponse.getEmailAddress());
+                        assertTrue(passwordEncoder.matches(customerDTORequest2.getPassword(), customer.getPassword()));
+                    }, () -> {
+                        throw new RuntimeException(new NotFoundInDatabaseException(Customer.class));
+                    });
                 });
         customerRepository.delete(customerToUpdate);
     }
