@@ -16,9 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class InventoryItemServiceTest {
 
@@ -71,6 +69,24 @@ class InventoryItemServiceTest {
 
         //Assert
         assertEquals(expected, inventoryItemDTOResponse);
+    }
+
+    @Test
+    public void create_ShouldCallExactlyOnceOnInventoryItemRepo_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        InventoryItem inventoryItem = mock(InventoryItem.class);
+        InventoryItemDTORequest inventoryItemDTORequest = mock(InventoryItemDTORequest.class);
+        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
+
+        when(modelMapper.map(inventoryItemDTORequest, InventoryItem.class)).thenReturn(inventoryItem);
+        when(inventoryItemRepository.save(inventoryItem)).thenReturn(inventoryItem);
+        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+
+        //Act
+        InventoryItemDTOResponse inventoryItemDTOResponse = inventoryItemService.create(inventoryItemDTORequest);
+
+        //Assert
+        verify(inventoryItemRepository, times(1)).save(inventoryItem);
     }
 
 }
