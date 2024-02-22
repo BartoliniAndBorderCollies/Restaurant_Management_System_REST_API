@@ -3,7 +3,9 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class InventoryItem extends CatalogItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
