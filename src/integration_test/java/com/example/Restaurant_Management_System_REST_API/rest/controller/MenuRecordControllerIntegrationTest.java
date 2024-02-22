@@ -1,7 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -94,6 +94,12 @@ class MenuRecordControllerIntegrationTest {
     @AfterEach
     public void clearDatabase() {
         menuRecordRepository.deleteAll();
+    }
+
+    @AfterAll
+    public void clearRolesAndCustomers() {
+        customerRepository.deleteAll();
+        authorityRepository.deleteAll();
     }
 
     @Test

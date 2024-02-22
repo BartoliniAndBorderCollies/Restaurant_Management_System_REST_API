@@ -1,10 +1,11 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
+import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;

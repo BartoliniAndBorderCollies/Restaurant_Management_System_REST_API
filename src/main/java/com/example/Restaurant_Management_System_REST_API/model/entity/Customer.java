@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,15 +35,18 @@ public class Customer implements UserDetails {
     private ContactDetails contactDetails;
 
     //Below are fields for security issues
-    private String password;
+    private String password; //validation for this field is provided in CustomerDTORequest
     private Boolean accountNonExpired;//to avoid hardcoding I established these fields
     private Boolean accountNonLocked;
     private Boolean credentialsNonExpired;
     private Boolean enabled;
+    @NotBlank(message = "Please provide an email address!")
+    @Email(regexp=".+@.+\\..+", message = "Please enter a valid email address in the format: yourname@example.com")
     private String emailAddress;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "customer_authorities", joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
+    @NotEmpty(message = "Must have at least one authority (role)!")
     private Set<Authority> authorities;
 
     @Override
