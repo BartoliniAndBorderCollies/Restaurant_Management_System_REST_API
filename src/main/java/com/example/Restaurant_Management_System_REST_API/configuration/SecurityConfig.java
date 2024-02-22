@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/customer/find/**"), mvc.pattern("/api/customer/findAll"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
-                        //Inventory item
+                        //Secured paths for Inventory item operations
                         .requestMatchers(mvc.pattern("/api/inventory/**"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
