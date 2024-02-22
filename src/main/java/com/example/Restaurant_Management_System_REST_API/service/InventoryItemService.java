@@ -32,16 +32,20 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
         //TODO: prepare SupplierController and service and check if below works with existing suppliers
        //Checking if provided supplier exists in database - if not -> throwing an exception
-        if(inventoryItemDTORequest.getSupplier() != null) {
-            supplierRepository.findByContactDetails_NameAndContactDetails_Street(inventoryItemDTORequest.getSupplier().getContactDetails().getName(),
-                    inventoryItemDTORequest.getSupplier().getContactDetails().getStreet()).orElseThrow(() ->
-                    new NotFoundInDatabaseException(Supplier.class));
-        }
+        checkIfSupplierExist(inventoryItemDTORequest);
 
         InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
         inventoryItemRepository.save(inventoryItem);
 
         return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
+    }
+
+    private void checkIfSupplierExist(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {
+        if(inventoryItemDTORequest.getSupplier() != null) {
+            supplierRepository.findByContactDetails_NameAndContactDetails_Street(inventoryItemDTORequest.getSupplier().getContactDetails().getName(),
+                    inventoryItemDTORequest.getSupplier().getContactDetails().getStreet()).orElseThrow(() ->
+                    new NotFoundInDatabaseException(Supplier.class));
+        }
     }
 
     @Override
