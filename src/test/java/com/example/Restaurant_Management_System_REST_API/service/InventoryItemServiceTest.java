@@ -98,4 +98,20 @@ class InventoryItemServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> inventoryItemService.findById(nonExistentId));
     }
 
+    @Test
+    public void findById_ShouldReturnInventoryItemDTOResponse_WhenCorrectInventoryIdIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        InventoryItem inventoryItem = new InventoryItem(); //I instantiate to avoid mocking because I would get id null
+        inventoryItem.setId(1000L);
+        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
+        when(inventoryItemRepository.findById(inventoryItem.getId())).thenReturn(Optional.of(inventoryItem));
+        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+
+        //Act
+        InventoryItemDTOResponse actual = inventoryItemService.findById(inventoryItem.getId());
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
 }
