@@ -34,7 +34,7 @@ class InventoryItemServiceTest {
     }
 
     @Test
-    public void create_ShouldThrowNotFoundInDatabaseException_WhenInventoryItemDoesNotExist() {
+    public void create_ShouldThrowNotFoundInDatabaseException_WhenSupplierDoesNotExist() {
         //Arrange
         InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest();
         Supplier supplier = new Supplier();
