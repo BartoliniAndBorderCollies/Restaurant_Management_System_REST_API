@@ -76,7 +76,7 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         Optional.ofNullable(inventoryItemDTORequest.getSupplier()).ifPresent(inventoryDTOToBeUpdated::setSupplier);
         Optional.ofNullable(inventoryItemDTORequest.getName()).ifPresent(inventoryDTOToBeUpdated::setName);
         Optional.ofNullable(inventoryItemDTORequest.getDescription()).ifPresent(inventoryDTOToBeUpdated::setDescription);
-        Optional.of(inventoryItemDTORequest.getPrice()).ifPresent(inventoryDTOToBeUpdated::setPrice);
+        Optional.ofNullable(inventoryItemDTORequest.getPrice()).ifPresent(inventoryDTOToBeUpdated::setPrice);
 
         inventoryItemRepository.save(modelMapper.map(inventoryDTOToBeUpdated, InventoryItem.class));
 
