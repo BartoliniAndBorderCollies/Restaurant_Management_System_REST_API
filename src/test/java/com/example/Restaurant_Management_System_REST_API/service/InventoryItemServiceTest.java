@@ -89,4 +89,13 @@ class InventoryItemServiceTest {
         verify(inventoryItemRepository, times(1)).save(inventoryItem);
     }
 
+    @Test
+    public void findById_ShouldThrowNotFoundInDatabaseException_WhenInventoryDoesNotExist() {
+        //Arrange
+        Long nonExistentId = 9999L; // This should be an id that doesn't exist in the database
+
+        //Act & Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> inventoryItemService.findById(nonExistentId));
+    }
+
 }
