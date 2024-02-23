@@ -145,4 +145,23 @@ class InventoryItemServiceTest {
                 inventoryItemDTORequest));
     }
 
+    @Test
+    public void update_ShouldReturnInventoryItemDTOResponse_WhenInventoryItemDTORequestAndItsIdAreGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest();
+        inventoryItemDTORequest.setId(1000L);
+
+        InventoryItem inventoryItem = mock(InventoryItem.class);
+        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
+        when(inventoryItemRepository.findById(inventoryItemDTORequest.getId())).thenReturn(Optional.of(inventoryItem));
+        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+
+        //Act
+        InventoryItemDTOResponse actual = inventoryItemService.update(inventoryItemDTORequest.getId(), inventoryItemDTORequest);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
 }
