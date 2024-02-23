@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,6 +114,24 @@ class InventoryItemServiceTest {
 
         //Assert
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void findAll_ShouldReturnInventoryItemDTOResponseList_WhenInventoriesExist() {
+        //Arrange
+        InventoryItem inventoryItem = mock(InventoryItem.class);
+        InventoryItemDTOResponse expectedResponse = mock(InventoryItemDTOResponse.class);
+        List<InventoryItem> inventoryItems = Arrays.asList(inventoryItem);
+
+        when(inventoryItemRepository.findAll()).thenReturn(inventoryItems);
+        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expectedResponse);
+
+        //Act
+        List<InventoryItemDTOResponse> actual = inventoryItemService.findAll();
+
+        //Assert
+        assertEquals(1, actual.size());
+        assertEquals(expectedResponse, actual.get(0));
     }
 
 }
