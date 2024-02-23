@@ -134,4 +134,15 @@ class InventoryItemServiceTest {
         assertEquals(expectedResponse, actual.get(0));
     }
 
+    @Test
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenInventoryDoesNotExist() {
+        //Arrange
+        InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest();
+        inventoryItemDTORequest.setId(1000L);
+
+        //Act & Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> inventoryItemService.update(inventoryItemDTORequest.getId(),
+                inventoryItemDTORequest));
+    }
+
 }
