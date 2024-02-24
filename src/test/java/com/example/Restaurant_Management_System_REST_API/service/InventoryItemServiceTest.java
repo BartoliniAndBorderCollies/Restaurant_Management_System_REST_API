@@ -28,6 +28,9 @@ class InventoryItemServiceTest {
     private InventoryItemRepository inventoryItemRepository;
     private SupplierRepository supplierRepository;
     private ModelMapper modelMapper;
+    private InventoryItem inventoryItemMock;
+    private InventoryItemDTOResponse inventoryItemDTOResponseMock;
+    private InventoryItem inventoryItemInstance;
 
     @BeforeEach
     public void generalSetUp() {
@@ -35,6 +38,13 @@ class InventoryItemServiceTest {
         modelMapper = mock(ModelMapper.class);
         supplierRepository = mock(SupplierRepository.class);
         inventoryItemService = new InventoryItemService(inventoryItemRepository, supplierRepository, modelMapper);
+    }
+
+    @BeforeEach
+    public void setUpInstances() {
+        inventoryItemMock = mock(InventoryItem.class);
+        inventoryItemDTOResponseMock = mock(InventoryItemDTOResponse.class);
+        inventoryItemInstance = new InventoryItem(1L, null, 100, null);
     }
 
     @Test
@@ -60,37 +70,33 @@ class InventoryItemServiceTest {
     @Test
     public void create_ShouldInteractWithDependenciesCorrectly_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException {
         //Arrange
-        InventoryItem inventoryItem = mock(InventoryItem.class);
         InventoryItemDTORequest inventoryItemDTORequest = mock(InventoryItemDTORequest.class);
-        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
 
-        when(modelMapper.map(inventoryItemDTORequest, InventoryItem.class)).thenReturn(inventoryItem);
-        when(inventoryItemRepository.save(inventoryItem)).thenReturn(inventoryItem);
-        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+        when(modelMapper.map(inventoryItemDTORequest, InventoryItem.class)).thenReturn(inventoryItemMock);
+        when(inventoryItemRepository.save(inventoryItemMock)).thenReturn(inventoryItemMock);
+        when(modelMapper.map(inventoryItemMock, InventoryItemDTOResponse.class)).thenReturn(inventoryItemDTOResponseMock);
 
         //Act
         InventoryItemDTOResponse inventoryItemDTOResponse = inventoryItemService.create(inventoryItemDTORequest);
 
         //Assert
-        assertEquals(expected, inventoryItemDTOResponse);
+        assertEquals(inventoryItemDTOResponseMock, inventoryItemDTOResponse);
     }
 
     @Test
     public void create_ShouldCallExactlyOnceOnInventoryItemRepo_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException {
         //Arrange
-        InventoryItem inventoryItem = mock(InventoryItem.class);
         InventoryItemDTORequest inventoryItemDTORequest = mock(InventoryItemDTORequest.class);
-        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
 
-        when(modelMapper.map(inventoryItemDTORequest, InventoryItem.class)).thenReturn(inventoryItem);
-        when(inventoryItemRepository.save(inventoryItem)).thenReturn(inventoryItem);
-        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+        when(modelMapper.map(inventoryItemDTORequest, InventoryItem.class)).thenReturn(inventoryItemMock);
+        when(inventoryItemRepository.save(inventoryItemMock)).thenReturn(inventoryItemMock);
+        when(modelMapper.map(inventoryItemMock, InventoryItemDTOResponse.class)).thenReturn(inventoryItemDTOResponseMock);
 
         //Act
-        InventoryItemDTOResponse inventoryItemDTOResponse = inventoryItemService.create(inventoryItemDTORequest);
+        inventoryItemService.create(inventoryItemDTORequest);
 
         //Assert
-        verify(inventoryItemRepository, times(1)).save(inventoryItem);
+        verify(inventoryItemRepository, times(1)).save(inventoryItemMock);
     }
 
     @Test
@@ -105,35 +111,30 @@ class InventoryItemServiceTest {
     @Test
     public void findById_ShouldReturnInventoryItemDTOResponse_WhenCorrectInventoryIdIsGiven() throws NotFoundInDatabaseException {
         //Arrange
-        InventoryItem inventoryItem = new InventoryItem(); //I instantiate to avoid mocking because I would get id null
-        inventoryItem.setId(1000L);
-        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
-        when(inventoryItemRepository.findById(inventoryItem.getId())).thenReturn(Optional.of(inventoryItem));
-        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+        when(inventoryItemRepository.findById(inventoryItemInstance.getId())).thenReturn(Optional.of(inventoryItemInstance));
+        when(modelMapper.map(inventoryItemInstance, InventoryItemDTOResponse.class)).thenReturn(inventoryItemDTOResponseMock);
 
         //Act
-        InventoryItemDTOResponse actual = inventoryItemService.findById(inventoryItem.getId());
+        InventoryItemDTOResponse actual = inventoryItemService.findById(inventoryItemInstance.getId());
 
         //Assert
-        assertEquals(expected, actual);
+        assertEquals(inventoryItemDTOResponseMock, actual);
     }
 
     @Test
     public void findAll_ShouldReturnInventoryItemDTOResponseList_WhenInventoriesExist() {
         //Arrange
-        InventoryItem inventoryItem = mock(InventoryItem.class);
-        InventoryItemDTOResponse expectedResponse = mock(InventoryItemDTOResponse.class);
-        List<InventoryItem> inventoryItems = Arrays.asList(inventoryItem);
+        List<InventoryItem> inventoryItems = Arrays.asList(inventoryItemMock);
 
         when(inventoryItemRepository.findAll()).thenReturn(inventoryItems);
-        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expectedResponse);
+        when(modelMapper.map(inventoryItemMock, InventoryItemDTOResponse.class)).thenReturn(inventoryItemDTOResponseMock);
 
         //Act
         List<InventoryItemDTOResponse> actual = inventoryItemService.findAll();
 
         //Assert
         assertEquals(1, actual.size());
-        assertEquals(expectedResponse, actual.get(0));
+        assertEquals(inventoryItemDTOResponseMock, actual.get(0));
     }
 
     @Test
@@ -154,16 +155,14 @@ class InventoryItemServiceTest {
         InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest();
         inventoryItemDTORequest.setId(1000L);
 
-        InventoryItem inventoryItem = mock(InventoryItem.class);
-        InventoryItemDTOResponse expected = mock(InventoryItemDTOResponse.class);
-        when(inventoryItemRepository.findById(inventoryItemDTORequest.getId())).thenReturn(Optional.of(inventoryItem));
-        when(modelMapper.map(inventoryItem, InventoryItemDTOResponse.class)).thenReturn(expected);
+        when(inventoryItemRepository.findById(inventoryItemDTORequest.getId())).thenReturn(Optional.of(inventoryItemMock));
+        when(modelMapper.map(inventoryItemMock, InventoryItemDTOResponse.class)).thenReturn(inventoryItemDTOResponseMock);
 
         //Act
         InventoryItemDTOResponse actual = inventoryItemService.update(inventoryItemDTORequest.getId(), inventoryItemDTORequest);
 
         //Assert
-        assertEquals(expected, actual);
+        assertEquals(inventoryItemDTOResponseMock, actual);
     }
 
     @Test
@@ -178,29 +177,26 @@ class InventoryItemServiceTest {
     @Test
     public void delete_ShouldCallOnInventoryRepoExactlyOnce_WhenCorrectInventoryIdIsGiven() throws NotFoundInDatabaseException {
         //Arrange
-        InventoryItem inventoryItem = new InventoryItem(1L, null, 100, null);
-        when(inventoryItemRepository.findById(inventoryItem.getId())).thenReturn(Optional.of(inventoryItem));
+        when(inventoryItemRepository.findById(inventoryItemInstance.getId())).thenReturn(Optional.of(inventoryItemInstance));
 
         //Act
-        inventoryItemService.delete(inventoryItem.getId());
+        inventoryItemService.delete(inventoryItemInstance.getId());
 
         //Assert
-        verify(inventoryItemRepository, times(1)).delete(inventoryItem);
+        verify(inventoryItemRepository, times(1)).delete(inventoryItemInstance);
     }
 
     @Test
     public void delete_ShouldReturnResponseEntityWithAppropriateStatusCodeAndMessage_WhenCorrectInventoryIdIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
-        InventoryItem inventoryItem = new InventoryItem(1L, null, 100, null);
-        when(inventoryItemRepository.findById(inventoryItem.getId())).thenReturn(Optional.of(inventoryItem));
+        when(inventoryItemRepository.findById(inventoryItemInstance.getId())).thenReturn(Optional.of(inventoryItemInstance));
 
         //Act
-        ResponseEntity<?> actualResponse = inventoryItemService.delete(inventoryItem.getId());
+        ResponseEntity<?> actualResponse = inventoryItemService.delete(inventoryItemInstance.getId());
 
         //Assert
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        assertEquals("Inventory item: " + inventoryItem.getName() + " has been deleted!", actualResponse.getBody());
+        assertEquals("Inventory item: " + inventoryItemInstance.getName() + " has been deleted!", actualResponse.getBody());
     }
-
 }
