@@ -164,4 +164,13 @@ class InventoryItemServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void delete_ShouldThrowNotFoundInDatabaseException_WhenInventoryIdDoesNotExist() {
+        //Arrange
+        Long nonExistentId = 9999L; // This should be an id that doesn't exist in the database
+
+        //Act & Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> inventoryItemService.delete(nonExistentId));
+    }
+
 }
