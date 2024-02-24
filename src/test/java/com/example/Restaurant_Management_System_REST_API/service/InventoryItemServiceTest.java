@@ -173,4 +173,17 @@ class InventoryItemServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> inventoryItemService.delete(nonExistentId));
     }
 
+    @Test
+    public void delete_ShouldCallOnInventoryRepoExactlyOnce_WhenCorrectInventoryIdIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        InventoryItem inventoryItem = new InventoryItem(1L, null, 100, null);
+        when(inventoryItemRepository.findById(inventoryItem.getId())).thenReturn(Optional.of(inventoryItem));
+
+        //Act
+        inventoryItemService.delete(inventoryItem.getId());
+
+        //Assert
+        verify(inventoryItemRepository, times(1)).delete(inventoryItem);
+    }
+
 }
