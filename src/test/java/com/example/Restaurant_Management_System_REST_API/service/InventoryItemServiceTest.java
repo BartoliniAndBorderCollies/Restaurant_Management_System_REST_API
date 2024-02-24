@@ -11,6 +11,8 @@ import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepo
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -184,6 +186,21 @@ class InventoryItemServiceTest {
 
         //Assert
         verify(inventoryItemRepository, times(1)).delete(inventoryItem);
+    }
+
+    @Test
+    public void delete_ShouldReturnResponseEntityWithAppropriateStatusCodeAndMessage_WhenCorrectInventoryIdIsGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        InventoryItem inventoryItem = new InventoryItem(1L, null, 100, null);
+        when(inventoryItemRepository.findById(inventoryItem.getId())).thenReturn(Optional.of(inventoryItem));
+
+        //Act
+        ResponseEntity<?> actualResponse = inventoryItemService.delete(inventoryItem.getId());
+
+        //Assert
+        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
+        assertEquals("Inventory item: " + inventoryItem.getName() + " has been deleted!", actualResponse.getBody());
     }
 
 }
