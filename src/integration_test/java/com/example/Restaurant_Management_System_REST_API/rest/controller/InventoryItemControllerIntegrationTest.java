@@ -4,8 +4,10 @@ import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.I
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -38,6 +40,8 @@ class InventoryItemControllerIntegrationTest {
     @Autowired
     private CustomerRepository customerRepository;
     private String basicAuthHeaderStaff;
+    @Autowired
+    private InventoryItemRepository inventoryItemRepository;
 
     @BeforeAll
     void setUpRolesAndCustomers() {
@@ -91,4 +95,33 @@ class InventoryItemControllerIntegrationTest {
                 });
     }
 
+    @Test
+    public void findById_ShouldReturnInventoryItemDTOResponse_WhenInventoryItemIdExist() {
+        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 26, 14, 29, 20);
+
+        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+                "Pepper", "Black pepper", 0.19);
+        inventoryItemRepository.save(inventoryItem);
+
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, fixedDateTime, 55, null,
+                "Pepper", "Black pepper", 0.19);
+
+        webTestClient.get()
+                .uri("/api/inventory/find/" + inventoryItem.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(InventoryItemDTOResponse.class)
+                .consumeWith(response-> {
+                    InventoryItemDTOResponse actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.getDeliveryDate(), actualResponse.getDeliveryDate());
+                    assertNotNull(actualResponse.getId());
+                    assertEquals(expected.getStockAmount(), actualResponse.getStockAmount());
+                    assertEquals(expected.getName(), actualResponse.getName());
+                    assertEquals(expected.getDescription(), actualResponse.getDescription());
+                    assertEquals(expected.getPrice(), actualResponse.getPrice());
+                });
+        inventoryItemRepository.deleteAll();
+    }
 }
