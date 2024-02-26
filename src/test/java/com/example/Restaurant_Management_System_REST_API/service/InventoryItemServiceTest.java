@@ -44,7 +44,8 @@ class InventoryItemServiceTest {
     public void setUpInstances() {
         inventoryItemMock = mock(InventoryItem.class);
         inventoryItemDTOResponseMock = mock(InventoryItemDTOResponse.class);
-        inventoryItemInstance = new InventoryItem(1L, null, 100, null);
+        inventoryItemInstance = new InventoryItem(1L, null, 100, null, "Onion",
+                "Onion", 0.39 );
     }
 
     @Test
