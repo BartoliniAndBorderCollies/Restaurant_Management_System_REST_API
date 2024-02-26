@@ -12,8 +12,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class InventoryItemDTOResponse extends CatalogItem {
+
+    public InventoryItemDTOResponse(Long id, LocalDateTime deliveryDate, int stockAmount, Supplier supplier,
+                                    String name, String description, Double price) {
+        super(name, description, price);
+        this.id = id;
+        this.deliveryDate = deliveryDate;
+        this.stockAmount = stockAmount;
+        this.supplier = supplier;
+    }
 
     private Long id;
     private LocalDateTime deliveryDate;
