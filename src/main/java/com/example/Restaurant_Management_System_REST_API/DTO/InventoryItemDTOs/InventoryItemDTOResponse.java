@@ -2,12 +2,10 @@ package com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs;
 
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,4 +25,12 @@ public class InventoryItemDTOResponse extends CatalogItem {
     private LocalDateTime deliveryDate;
     private int stockAmount;
     private Supplier supplier;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InventoryItemDTOResponse that = (InventoryItemDTOResponse) o;
+        return Objects.equals(id, that.id);
+    }
 }
