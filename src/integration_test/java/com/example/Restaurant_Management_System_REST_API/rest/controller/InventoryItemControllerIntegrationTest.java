@@ -11,6 +11,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.InventoryIte
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +20,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +43,8 @@ class InventoryItemControllerIntegrationTest {
     private String basicAuthHeaderStaff;
     @Autowired
     private InventoryItemRepository inventoryItemRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @BeforeAll
     void setUpRolesAndCustomers() {
@@ -121,6 +124,37 @@ class InventoryItemControllerIntegrationTest {
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
+                });
+        inventoryItemRepository.deleteAll();
+    }
+
+    @Test
+    public void findAll_ShouldReturnInventoryItemDTOResponseList_WhenInventoryExist() {
+        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 27, 9, 28);
+
+        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+                "Pepper", "Black pepper", 0.19);
+        InventoryItem inventoryItem2 = new InventoryItem(null, fixedDateTime, 100, null,
+                "Salt", "Sea salt", 0.49);
+
+        inventoryItemRepository.saveAll(Arrays.asList(inventoryItem, inventoryItem2));
+
+        List<InventoryItemDTOResponse> expected = Arrays.asList(
+                modelMapper.map(inventoryItem, InventoryItemDTOResponse.class),
+                modelMapper.map(inventoryItem2, InventoryItemDTOResponse.class)
+        );
+
+        webTestClient.get()
+                .uri("/api/inventory/findAll")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(InventoryItemDTOResponse.class)
+                .consumeWith(response -> {
+                    List<InventoryItemDTOResponse> actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+
                 });
         inventoryItemRepository.deleteAll();
     }
