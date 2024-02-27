@@ -31,6 +31,11 @@ public class InventoryItemDTOResponse extends CatalogItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InventoryItemDTOResponse that = (InventoryItemDTOResponse) o;
-        return Objects.equals(id, that.id);
+        return stockAmount == that.stockAmount && Objects.equals(id, that.id) && Objects.equals(deliveryDate, that.deliveryDate) && Objects.equals(supplier, that.supplier);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, deliveryDate, stockAmount, supplier);
     }
 }
