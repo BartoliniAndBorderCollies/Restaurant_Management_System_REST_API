@@ -191,5 +191,6 @@ class InventoryItemControllerIntegrationTest {
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
                 });
+        inventoryItemRepository.deleteAll();
     }
 }
