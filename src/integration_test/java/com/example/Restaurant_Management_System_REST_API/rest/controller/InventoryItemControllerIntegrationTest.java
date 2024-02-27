@@ -158,4 +158,38 @@ class InventoryItemControllerIntegrationTest {
                 });
         inventoryItemRepository.deleteAll();
     }
+
+    @Test
+    public void update_ShouldUpdateInventoryItemAndReturnInventoryDTOResponse_WhenIdAndInventoryItemDTORequestAreGiven() {
+        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 27, 9, 28);
+
+        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+                "Pepper", "Black pepper", 0.19);
+        inventoryItemRepository.save(inventoryItem);
+
+        InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest(999L,
+                LocalDateTime.of(2024, 3, 1, 10,2, 59), 1000,
+                null, "Updated pepper","So nice updated pepper", 0.99);
+
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(999L,
+                LocalDateTime.of(2024, 3, 1, 10,2, 59), 1000,
+                null, "Updated pepper","So nice updated pepper", 0.99);
+
+        webTestClient.put()
+                .uri("/api/inventory/update/" + inventoryItem.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .bodyValue(inventoryItemDTORequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(InventoryItemDTOResponse.class)
+                .consumeWith(response -> {
+                    InventoryItemDTOResponse actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.getDeliveryDate(), actualResponse.getDeliveryDate());
+                    assertEquals(expected.getStockAmount(), actualResponse.getStockAmount());
+                    assertEquals(expected.getName(), actualResponse.getName());
+                    assertEquals(expected.getDescription(), actualResponse.getDescription());
+                    assertEquals(expected.getPrice(), actualResponse.getPrice());
+                });
+    }
 }
