@@ -8,6 +8,7 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryI
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -69,6 +70,13 @@ class InventoryItemControllerIntegrationTest {
         //Defining basicAuthHeader required for authorization in the integration test
         basicAuthHeaderStaff = "Basic " + Base64.getEncoder()
                 .encodeToString((staff.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
+    }
+
+    @AfterAll
+    public void clearRolesAndCustomers() {
+        customerRepository.deleteAll();
+        authorityRepository.deleteAll();
+        inventoryItemRepository.deleteAll();
     }
 
     @Test
