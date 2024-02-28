@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -200,5 +201,28 @@ class InventoryItemControllerIntegrationTest {
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
                 });
         inventoryItemRepository.deleteAll();
+    }
+
+    @Test
+    public void delete_ShouldDeleteInventoryItemAndReturnResponseEntity_WhenIdIsGiven() {
+        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 27, 9, 28);
+
+        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+                "Pepper", "Black pepper", 0.19);
+        inventoryItemRepository.save(inventoryItem);
+
+        webTestClient.delete()
+                .uri("/api/inventory/delete/" + inventoryItem.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String actualResponse = response.getResponseBody();
+                    assertEquals("Inventory item: " + inventoryItem.getName() + " has been deleted!", actualResponse);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+                    Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findById(inventoryItem.getId());
+                    assertTrue(optionalInventoryItem.isEmpty());
+                });
     }
 }
