@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SupplierController {
 
     private final SupplierService supplierService;
-    
+
     //This will be done only by owner, manager and staff
     @PostMapping("/add")
     public SupplierDTOResponse add(@RequestBody SupplierDTORequest supplierDTORequest) {
