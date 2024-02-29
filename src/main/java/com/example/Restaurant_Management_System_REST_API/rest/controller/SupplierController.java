@@ -4,10 +4,9 @@ import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.Suppli
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.service.SupplierService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/supplier")
@@ -20,6 +19,11 @@ public class SupplierController {
     @PostMapping("/add")
     public SupplierDTOResponse add(@RequestBody SupplierDTORequest supplierDTORequest) {
         return supplierService.add(supplierDTORequest);
+    }
+
+    @GetMapping("/findAll")
+    public List<SupplierDTOResponse> findAll() {
+        return supplierService.findAll();
     }
 
 }
