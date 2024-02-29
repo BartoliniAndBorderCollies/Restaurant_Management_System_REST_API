@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class SupplierService {
@@ -20,6 +23,15 @@ public class SupplierService {
         supplierRepository.save(supplier);
 
         return modelMapper.map(supplier, SupplierDTOResponse.class);
+    }
+
+    public List<SupplierDTOResponse> findAll () {
+        List<SupplierDTOResponse> DTOlist = new ArrayList<>();
+
+        supplierRepository.findAll().forEach(supplier ->
+            DTOlist.add(modelMapper.map(supplier, SupplierDTOResponse.class)));
+
+        return DTOlist;
     }
 
 }
