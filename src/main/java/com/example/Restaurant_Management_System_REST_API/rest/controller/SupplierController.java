@@ -23,11 +23,13 @@ public class SupplierController {
         return supplierService.add(supplierDTORequest);
     }
 
+    //This will be done only by owner, manager and staff
     @GetMapping("/findAll")
     public List<SupplierDTOResponse> findAll() {
         return supplierService.findAll();
     }
 
+    //This will be done only by owner, manager and staff
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return supplierService.deleteById(id);
