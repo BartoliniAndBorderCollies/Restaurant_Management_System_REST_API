@@ -23,9 +23,9 @@ import java.util.Optional;
 public class InventoryItemService implements GenericBasicCrudOperations<InventoryItemDTOResponse, InventoryItemDTORequest,
         Long> {
 
-    private InventoryItemRepository inventoryItemRepository;
-    private SupplierRepository supplierRepository;
-    private ModelMapper modelMapper;
+    private final InventoryItemRepository inventoryItemRepository;
+    private final SupplierRepository supplierRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public InventoryItemDTOResponse create(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {

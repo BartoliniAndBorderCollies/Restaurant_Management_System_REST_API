@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class InventoryItemController {
 
-    private InventoryItemService inventoryItemService;
+    private final InventoryItemService inventoryItemService;
 
     @PostMapping("/add") // This will be done only by owner, manager and staff
     public InventoryItemDTOResponse create (@RequestBody InventoryItemDTORequest inventoryItemDTORequest)
