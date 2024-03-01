@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ public class Supplier {
     @Column(name = "id", nullable = false)
     private Long id;
     @Embedded
+    @Valid
     private ContactDetails contactDetails;
 
     @OneToMany(mappedBy = "supplier")
