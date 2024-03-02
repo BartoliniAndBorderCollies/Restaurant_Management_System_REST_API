@@ -26,5 +26,5 @@ public class InventoryItemDTORequest extends CatalogItem {
     private Long id;
     private LocalDateTime deliveryDate;
     private int stockAmount;
-    private Supplier supplier;
+    private Supplier supplier;//TODO: change to DTO
 }
