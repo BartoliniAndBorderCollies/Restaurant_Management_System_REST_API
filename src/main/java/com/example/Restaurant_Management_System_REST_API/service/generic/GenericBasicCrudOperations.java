@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface GenericBasicCrudOperations<T, K, ID> {
 
-    public T create(K object);
+    public T create(K object) throws NotFoundInDatabaseException;
     public T findById(ID id) throws NotFoundInDatabaseException;
     public List<T> findAll();
     public T update(ID id, K object) throws NotFoundInDatabaseException;
