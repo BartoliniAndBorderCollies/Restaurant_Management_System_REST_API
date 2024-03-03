@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
 import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepository;
 import lombok.AllArgsConstructor;
@@ -21,11 +22,19 @@ public class SupplierService {
     private final SupplierRepository supplierRepository;
     private final ModelMapper modelMapper;
 
-    public SupplierDTOResponse add(SupplierDTORequest supplierDTORequest) {
+    public SupplierDTOResponse add(SupplierDTORequest supplierDTORequest) throws ObjectAlreadyExistException {
         Supplier supplier = modelMapper.map(supplierDTORequest, Supplier.class);
+        checkIfSupplierExist(supplier);
         supplierRepository.save(supplier);
 
         return modelMapper.map(supplier, SupplierDTOResponse.class);
+    }
+
+    private void checkIfSupplierExist(Supplier supplier) throws ObjectAlreadyExistException {
+        if(supplierRepository.findByContactDetails_NameAndContactDetails_Street(supplier.getContactDetails().getName(),
+                supplier.getContactDetails().getStreet()).isPresent()) {
+            throw new ObjectAlreadyExistException(Supplier.class);
+        }
     }
 
     public List<SupplierDTOResponse> findAll () {
