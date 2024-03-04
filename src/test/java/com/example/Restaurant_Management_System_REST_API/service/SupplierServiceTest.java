@@ -50,4 +50,22 @@ class SupplierServiceTest {
         assertThrows(ObjectAlreadyExistException.class, () -> supplierService.add(supplierDTORequest));
     }
 
+    @Test
+    public void add_ShouldInteractWithDependenciesCorrectly_WhenSupplierDTORequestIsGiven() throws ObjectAlreadyExistException {
+        //Arrange
+        when(modelMapper.map(supplierDTORequest, Supplier.class)).thenReturn(supplier);
+        when(supplierRepository.findByContactDetails_NameAndContactDetails_Street(supplier.getContactDetails().getName(),
+                supplier.getContactDetails().getStreet())).thenReturn(Optional.empty());
+        when(supplierRepository.save(supplier)).thenReturn(supplier);
+        when(modelMapper.map(supplier, SupplierDTOResponse.class)).thenReturn(supplierDTOResponse);
+
+        SupplierDTOResponse expected = new SupplierDTOResponse(1L, contactDetails, null);
+
+        //Act
+        SupplierDTOResponse actualResponse = supplierService.add(supplierDTORequest);
+
+        //Assert
+        assertEquals(expected, actualResponse);
+    }
+
 }
