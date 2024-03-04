@@ -2,12 +2,16 @@ package com.example.Restaurant_Management_System_REST_API.model;
 
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
 public class ContactDetails {
     @NotBlank(message = "Name must be provided.")
     private String name;
