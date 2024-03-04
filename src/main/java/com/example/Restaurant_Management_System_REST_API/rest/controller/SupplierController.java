@@ -18,22 +18,40 @@ public class SupplierController {
 
     private final SupplierService supplierService;
 
-    //This will be done only by owner, manager and staff
+    /**
+     * This method is used to add a supplier.
+     * Access is restricted to the owner and manager.
+     *
+     * @param supplierDTORequest The request body containing the details of the supplier to be added.
+     * @return The response body containing the details of the added supplier.
+     * @throws ObjectAlreadyExistException If the supplier already exists.
+     */
     @PostMapping("/add")
     public SupplierDTOResponse add(@RequestBody SupplierDTORequest supplierDTORequest) throws ObjectAlreadyExistException {
         return supplierService.add(supplierDTORequest);
     }
 
-    //This will be done only by owner, manager and staff
+    /**
+     * This method is used to find all suppliers.
+     * Access is granted to the owner, manager, and staff.
+     *
+     * @return A list containing the details of all suppliers.
+     */
     @GetMapping("/findAll")
     public List<SupplierDTOResponse> findAll() {
         return supplierService.findAll();
     }
 
-    //This will be done only by owner, manager and staff
+    /**
+     * This method is used to delete a supplier by its ID.
+     * Access is restricted to the owner and manager.
+     *
+     * @param id The ID of the supplier to be deleted.
+     * @return The response entity after deleting the supplier.
+     * @throws NotFoundInDatabaseException If the supplier is not found in the database.
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return supplierService.deleteById(id);
     }
-
 }
