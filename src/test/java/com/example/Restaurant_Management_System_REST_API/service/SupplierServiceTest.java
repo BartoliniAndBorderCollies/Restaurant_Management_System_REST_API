@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,6 +68,22 @@ class SupplierServiceTest {
 
         //Assert
         assertEquals(expected, actualResponse);
+    }
+
+    @Test
+    public void findAll_ShouldReturnSupplierDTOResponseList_WhenSuppliersExist() {
+        //Arrange
+        List<Supplier> supplierList = Arrays.asList(supplier);
+
+        when(supplierRepository.findAll()).thenReturn(supplierList);
+        when(modelMapper.map(supplier, SupplierDTOResponse.class)).thenReturn(supplierDTOResponse);
+
+        //Act
+        List<SupplierDTOResponse> actual = supplierService.findAll();
+
+        //Assert
+        assertEquals(1, actual.size());
+        assertEquals(supplierDTOResponse, actual.get(0));
     }
 
 }
