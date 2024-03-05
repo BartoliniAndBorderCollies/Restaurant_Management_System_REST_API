@@ -98,4 +98,17 @@ class SupplierServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> supplierService.deleteById(notExistedId));
     }
 
+    @Test
+    public void deleteById_ShouldCallOnSupplierRepositoryExactlyOnce_WhenSupplierIdIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        supplierRepository.save(supplier);
+        when(supplierRepository.findById(supplier.getId())).thenReturn(Optional.of(supplier));
+
+        //Act
+        supplierService.deleteById(supplier.getId());
+
+        //Assert
+        verify(supplierRepository, times(1)).delete(supplier);
+    }
+
 }
