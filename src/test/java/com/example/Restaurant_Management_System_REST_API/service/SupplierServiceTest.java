@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
@@ -84,6 +85,17 @@ class SupplierServiceTest {
         //Assert
         assertEquals(1, actual.size());
         assertEquals(supplierDTOResponse, actual.get(0));
+    }
+
+    @Test
+    public void deleteById_ShouldThrowNotFoundInDatabaseException_WhenSupplierDoesNotExist() {
+        //Arrange
+        Long notExistedId = 999L;
+        when(supplierRepository.findById(notExistedId)).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> supplierService.deleteById(notExistedId));
     }
 
 }
