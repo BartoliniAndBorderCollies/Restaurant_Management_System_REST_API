@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -125,4 +126,26 @@ class SupplierControllerIntegrationTest {
         supplierRepository.deleteAll();
     }
 
+    @Test
+    public void deleteById_ShouldDeleteSupplierInDbAndReturnResponseEntity_WhenSupplierIdIsGiven() {
+        ContactDetails contactDetails = new ContactDetails("test name", "test street", "test houseNumber",
+                "test city", "test postalCode", "test telephoneNumber");
+        Supplier supplier = new Supplier(null, contactDetails, null);
+        supplierRepository.save(supplier);
+
+        webTestClient.delete()
+                .uri("/api/supplier/delete/" + supplier.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals("Supplier: " + supplier.getId() + " has been deleted!", actualResponse);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+                    Optional<Supplier> optionalSupplier = supplierRepository.findById(supplier.getId());
+                    assertTrue(optionalSupplier.isEmpty());
+                });
+    }
 }
