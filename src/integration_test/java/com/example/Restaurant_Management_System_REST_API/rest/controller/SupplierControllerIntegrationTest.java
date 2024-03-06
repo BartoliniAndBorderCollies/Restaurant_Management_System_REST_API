@@ -9,9 +9,7 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +42,8 @@ class SupplierControllerIntegrationTest {
     private SupplierRepository supplierRepository;
     @Autowired
     private ModelMapper modelMapper;
+    private ContactDetails contactDetails;
+    private Supplier supplier;
 
     @BeforeAll
     public void setUpRolesAndCustomers() {
@@ -69,12 +69,23 @@ class SupplierControllerIntegrationTest {
                 .encodeToString((owner.getEmailAddress() + ":" + rawPassword).getBytes()); // here I need to provide a raw password
     }
 
+    @BeforeEach
+    public void prepareSupplier() {
+        contactDetails = new ContactDetails("test name", "test street", "test houseNumber",
+                "test city", "test postalCode", "test telephoneNumber");
+        supplier = new Supplier(null, contactDetails, null);
+        supplierRepository.save(supplier);
+    }
+
+    @AfterEach
+    public void cleanDatabase() {
+        supplierRepository.deleteAll();
+    }
+
 
     @Test
     public void add_ShouldCreateSupplierAndSaveItInDatabaseAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
-        ContactDetails contactDetails = new ContactDetails("test name", "test street", "test houseNumber",
-                "test city", "test postalCode", "test telephoneNumber");
-
+        supplierRepository.deleteAll();
         SupplierDTORequest supplierDTORequest = new SupplierDTORequest(null, contactDetails, null);
         SupplierDTOResponse expected = new SupplierDTOResponse(null, contactDetails, null);
 
@@ -95,15 +106,10 @@ class SupplierControllerIntegrationTest {
                     assertEquals(expected.getContactDetails().getPostalCode(), actualResponse.getContactDetails().getPostalCode());
                     assertEquals(expected.getContactDetails().getTelephoneNumber(), actualResponse.getContactDetails().getTelephoneNumber());
                 });
-        supplierRepository.deleteAll();
     }
 
     @Test
     public void findAll_ShouldReturnSupplierDTOResponseList_WhenSupplierExist() {
-        ContactDetails contactDetails = new ContactDetails("test name", "test street", "test houseNumber",
-                "test city", "test postalCode", "test telephoneNumber");
-        Supplier supplier = new Supplier(null, contactDetails, null);
-        supplierRepository.save(supplier);
 
         SupplierDTOResponse supplierDTOResponse = modelMapper.map(supplier, SupplierDTOResponse.class);
         supplierDTOResponse.setInventoryItemList(new ArrayList<>()); // set inventoryItemList to an empty list otherwise
@@ -123,15 +129,10 @@ class SupplierControllerIntegrationTest {
                     assertEquals(expected.size(), actualResponse.size());
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
-        supplierRepository.deleteAll();
     }
 
     @Test
     public void deleteById_ShouldDeleteSupplierInDbAndReturnResponseEntity_WhenSupplierIdIsGiven() {
-        ContactDetails contactDetails = new ContactDetails("test name", "test street", "test houseNumber",
-                "test city", "test postalCode", "test telephoneNumber");
-        Supplier supplier = new Supplier(null, contactDetails, null);
-        supplierRepository.save(supplier);
 
         webTestClient.delete()
                 .uri("/api/supplier/delete/" + supplier.getId())
