@@ -12,7 +12,10 @@ import com.example.Restaurant_Management_System_REST_API.service.generic.Generic
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -27,21 +30,30 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException,
             CustomerAlreadyHasReservationException {
         Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
-        setCustomerToReservation(reservation);
+
+        assignCustomerToReservationAndSave(reservation);
 
         return modelMapper.map(reservation, ReservationDTOResponse.class);
     }
 
-    private void setCustomerToReservation(Reservation reservation) throws NotFoundInDatabaseException {
+    private void assignCustomerToReservationAndSave(Reservation reservation) throws NotFoundInDatabaseException,
+            CustomerAlreadyHasReservationException {
 
+        //checking if this customer exists
         if (reservation.getCustomer() != null) {
             String emailAddress = reservation.getCustomer().getEmailAddress();
             Customer customer = customerRepository.findByEmailAddress(emailAddress)
                     .orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
 
+            //checking if this customer already has any reservation (customer cannot have more than one reservation at all)
+            if (customer.getReservation() != null && customer.getReservation().getId() != null) {
+                throw new CustomerAlreadyHasReservationException();
+            }
+
             reservation.setCustomer(customer);
-            reservationRepository.save(reservation);
         }
+
+        reservationRepository.save(reservation);
     }
 
 }
