@@ -22,5 +22,6 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation")
     private ArrayList<Table> tables;
     @OneToOne
+    @JoinColumn(name = "reservation_id")
     private Customer customer;
 }
