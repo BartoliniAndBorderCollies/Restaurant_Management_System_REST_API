@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.ReservationService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class ReservationController {
 
     @PostMapping("/add")
     public ReservationDTOResponse create(@RequestBody ReservationDTORequest reservationDTORequest)
-            throws NotFoundInDatabaseException {
+            throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
         return reservationService.create(reservationDTORequest);
     }
 }

@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
@@ -23,7 +24,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     private final CustomerRepository customerRepository;
 
     @Override
-    public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException {
+    public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException,
+            CustomerAlreadyHasReservationException {
         Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
         setCustomerToReservation(reservation);
 
