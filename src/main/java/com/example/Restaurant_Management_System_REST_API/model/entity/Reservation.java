@@ -22,6 +22,6 @@ public class Reservation {
     @OneToMany(mappedBy = "reservation")
     private List<Table> tables;
     @OneToOne
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 }
