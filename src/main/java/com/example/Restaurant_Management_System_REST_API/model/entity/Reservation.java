@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +20,7 @@ public class Reservation {
     private int peopleAmount;
     private LocalDateTime start;
     @OneToMany(mappedBy = "reservation")
-    private ArrayList<Table> tables;
+    private List<Table> tables;
     @OneToOne
     @JoinColumn(name = "reservation_id")
     private Customer customer;
