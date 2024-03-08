@@ -12,6 +12,7 @@ import com.example.Restaurant_Management_System_REST_API.service.generic.Generic
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +60,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
     @Override
     public ReservationDTOResponse findById(Long id) throws NotFoundInDatabaseException {
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(()->
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
 
         return modelMapper.map(reservation, ReservationDTOResponse.class);
@@ -73,6 +74,16 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
                 reservationDTOResponseList.add(modelMapper.map(reservation, ReservationDTOResponse.class)));
 
         return reservationDTOResponseList;
+    }
+
+    @Override
+    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+        Reservation reservationToDelete = reservationRepository.findById(id).orElseThrow(() ->
+                new NotFoundInDatabaseException(Reservation.class));
+        reservationRepository.delete(reservationToDelete);
+
+        return new ResponseEntity<>("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",
+                HttpStatus.OK);
     }
 
 }
