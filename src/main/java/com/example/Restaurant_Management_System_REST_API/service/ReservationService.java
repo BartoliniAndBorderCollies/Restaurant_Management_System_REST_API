@@ -56,4 +56,12 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         reservationRepository.save(reservation);
     }
 
+    @Override
+    public ReservationDTOResponse findById(Long id) throws NotFoundInDatabaseException {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(()->
+                new NotFoundInDatabaseException(Reservation.class));
+
+        return modelMapper.map(reservation, ReservationDTOResponse.class);
+    }
+
 }
