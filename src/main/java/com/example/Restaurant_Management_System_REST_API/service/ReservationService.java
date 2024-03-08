@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -62,6 +63,16 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
                 new NotFoundInDatabaseException(Reservation.class));
 
         return modelMapper.map(reservation, ReservationDTOResponse.class);
+    }
+
+    @Override
+    public List<ReservationDTOResponse> findAll() {
+        List<ReservationDTOResponse> reservationDTOResponseList = new ArrayList<>();
+
+        reservationRepository.findAll().forEach(reservation ->
+                reservationDTOResponseList.add(modelMapper.map(reservation, ReservationDTOResponse.class)));
+
+        return reservationDTOResponseList;
     }
 
 }
