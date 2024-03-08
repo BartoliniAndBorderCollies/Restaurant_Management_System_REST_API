@@ -6,6 +6,7 @@ import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlrea
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.ReservationService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,12 @@ public class ReservationController {
     @GetMapping("/findAll")
     public List<ReservationDTOResponse> findAll() {
         return reservationService.findAll();
+    }
+
+    // this will be done by owner, manager and staff
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) throws NotFoundInDatabaseException {
+        return reservationService.delete(id);
     }
 
 
