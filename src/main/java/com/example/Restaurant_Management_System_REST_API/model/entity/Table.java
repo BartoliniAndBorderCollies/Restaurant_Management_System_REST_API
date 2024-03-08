@@ -20,7 +20,7 @@ public class Table {
     private LocalDateTime reservationStart;
     private LocalDateTime reservationEnd;
     @OneToMany(mappedBy = "table")
-    private ArrayList<Order> orders;
+    private List<Order> orders;
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
