@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +21,6 @@ public class ReservationDTORequest {
     private String description;
     private int peopleAmount;
     private LocalDateTime start;
-    private ArrayList<Table> tables;
+    private List<Table> tables;
     private CustomerDTOReservationRequest customer;
 }
