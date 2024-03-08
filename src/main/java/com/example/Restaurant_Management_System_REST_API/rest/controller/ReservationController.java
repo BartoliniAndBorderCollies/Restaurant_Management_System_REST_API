@@ -8,6 +8,8 @@ import com.example.Restaurant_Management_System_REST_API.service.ReservationServ
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/reservation/")
 @AllArgsConstructor
@@ -26,6 +28,12 @@ public class ReservationController {
     @GetMapping("/find/{id}")
     public ReservationDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return reservationService.findById(id);
+    }
+
+    // this will be done by owner, manager and staff
+    @GetMapping("/findAll")
+    public List<ReservationDTOResponse> findAll() {
+        return reservationService.findAll();
     }
 
 
