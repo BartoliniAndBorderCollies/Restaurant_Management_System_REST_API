@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@jakarta.persistence.Table(name = "restaurant_tables")
 public class Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
