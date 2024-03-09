@@ -38,10 +38,15 @@ public class ReservationController {
     }
 
     // this will be done by owner, manager and staff
+    @PutMapping("/update/{id}")
+    public ReservationDTOResponse update(@PathVariable Long id, @RequestBody ReservationDTORequest reservationDTORequest)
+            throws NotFoundInDatabaseException {
+        return reservationService.update(id, reservationDTORequest);
+    }
+
+    // this will be done by owner, manager and staff
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) throws NotFoundInDatabaseException {
         return reservationService.delete(id);
     }
-
-
 }
