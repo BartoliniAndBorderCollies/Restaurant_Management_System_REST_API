@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.service.SupplierService;
@@ -22,13 +21,13 @@ public class SupplierController {
      * This method is used to add a supplier.
      * Access is restricted to the owner and manager.
      *
-     * @param supplierDTORequest The request body containing the details of the supplier to be added.
+     * @param supplierDTO The request body containing the details of the supplier to be added.
      * @return The response body containing the details of the added supplier.
      * @throws ObjectAlreadyExistException If the supplier already exists.
      */
     @PostMapping("/add")
-    public SupplierDTOResponse add(@RequestBody SupplierDTORequest supplierDTORequest) throws ObjectAlreadyExistException {
-        return supplierService.add(supplierDTORequest);
+    public SupplierDTO add(@RequestBody SupplierDTO supplierDTO) throws ObjectAlreadyExistException {
+        return supplierService.add(supplierDTO);
     }
 
     /**
@@ -38,7 +37,7 @@ public class SupplierController {
      * @return A list containing the details of all suppliers.
      */
     @GetMapping("/findAll")
-    public List<SupplierDTOResponse> findAll() {
+    public List<SupplierDTO> findAll() {
         return supplierService.findAll();
     }
 

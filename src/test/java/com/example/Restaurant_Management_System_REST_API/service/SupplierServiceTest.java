@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
@@ -27,8 +26,8 @@ class SupplierServiceTest {
     private SupplierRepository supplierRepository;
     private ContactDetails contactDetails;
     private Supplier supplier;
-    private SupplierDTORequest supplierDTORequest;
-    private SupplierDTOResponse supplierDTOResponse;
+    private SupplierDTO supplierDTO;
+
 
     @BeforeEach
     public void generalSetUp() {
@@ -39,35 +38,35 @@ class SupplierServiceTest {
         contactDetails = new ContactDetails("test name", "test street", "test houseNumber", "test city",
                 "test postalCode", "test telephoneNumber");
         supplier = new Supplier(1L, contactDetails, null);
-        supplierDTORequest = new SupplierDTORequest(1L, contactDetails, null);
-        supplierDTOResponse = new SupplierDTOResponse(1L, contactDetails, null);
+        supplierDTO = new SupplierDTO(1L, contactDetails, null);
+        supplierDTO = new SupplierDTO(1L, contactDetails, null);
     }
 
     @Test
     public void add_ShouldThrowObjectAlreadyExistException_WhenSupplierAlreadyExist() {
         //Arrange
-        when(modelMapper.map(supplierDTORequest, Supplier.class)).thenReturn(supplier);
+        when(modelMapper.map(supplierDTO, Supplier.class)).thenReturn(supplier);
         when(supplierRepository.findByContactDetails_NameAndContactDetails_Street(supplier.getContactDetails().getName(),
                 supplier.getContactDetails().getStreet())).thenReturn(Optional.of(supplier));
 
         //Act
         //Assert
-        assertThrows(ObjectAlreadyExistException.class, () -> supplierService.add(supplierDTORequest));
+        assertThrows(ObjectAlreadyExistException.class, () -> supplierService.add(supplierDTO));
     }
 
     @Test
     public void add_ShouldInteractWithDependenciesCorrectly_WhenSupplierDTORequestIsGiven() throws ObjectAlreadyExistException {
         //Arrange
-        when(modelMapper.map(supplierDTORequest, Supplier.class)).thenReturn(supplier);
+        when(modelMapper.map(supplierDTO, Supplier.class)).thenReturn(supplier);
         when(supplierRepository.findByContactDetails_NameAndContactDetails_Street(supplier.getContactDetails().getName(),
                 supplier.getContactDetails().getStreet())).thenReturn(Optional.empty());
         when(supplierRepository.save(supplier)).thenReturn(supplier);
-        when(modelMapper.map(supplier, SupplierDTOResponse.class)).thenReturn(supplierDTOResponse);
+        when(modelMapper.map(supplier, SupplierDTO.class)).thenReturn(supplierDTO);
 
-        SupplierDTOResponse expected = new SupplierDTOResponse(1L, contactDetails, null);
+        SupplierDTO expected = new SupplierDTO(1L, contactDetails, null);
 
         //Act
-        SupplierDTOResponse actualResponse = supplierService.add(supplierDTORequest);
+        SupplierDTO actualResponse = supplierService.add(supplierDTO);
 
         //Assert
         assertEquals(expected, actualResponse);
@@ -79,14 +78,14 @@ class SupplierServiceTest {
         List<Supplier> supplierList = Arrays.asList(supplier);
 
         when(supplierRepository.findAll()).thenReturn(supplierList);
-        when(modelMapper.map(supplier, SupplierDTOResponse.class)).thenReturn(supplierDTOResponse);
+        when(modelMapper.map(supplier, SupplierDTO.class)).thenReturn(supplierDTO);
 
         //Act
-        List<SupplierDTOResponse> actual = supplierService.findAll();
+        List<SupplierDTO> actual = supplierService.findAll();
 
         //Assert
         assertEquals(1, actual.size());
-        assertEquals(supplierDTOResponse, actual.get(0));
+        assertEquals(supplierDTO, actual.get(0));
     }
 
     @Test

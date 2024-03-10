@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -86,8 +85,8 @@ class SupplierControllerIntegrationTest {
     @Test
     public void add_ShouldCreateSupplierAndSaveItInDatabaseAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
         supplierRepository.deleteAll();
-        SupplierDTORequest supplierDTORequest = new SupplierDTORequest(null, contactDetails, null);
-        SupplierDTOResponse expected = new SupplierDTOResponse(null, contactDetails, null);
+        SupplierDTO supplierDTORequest = new SupplierDTO(null, contactDetails, null);
+        SupplierDTO expected = new SupplierDTO(null, contactDetails, null);
 
         webTestClient.post()
                 .uri("/api/supplier/add")
@@ -95,9 +94,9 @@ class SupplierControllerIntegrationTest {
                 .bodyValue(supplierDTORequest)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(SupplierDTOResponse.class)
+                .expectBody(SupplierDTO.class)
                 .consumeWith(response -> {
-                    SupplierDTOResponse actualResponse = response.getResponseBody();
+                    SupplierDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertNotNull(actualResponse.getId());
                     assertEquals(expected.getContactDetails().getName(), actualResponse.getContactDetails().getName());
@@ -111,20 +110,20 @@ class SupplierControllerIntegrationTest {
     @Test
     public void findAll_ShouldReturnSupplierDTOResponseList_WhenSupplierExist() {
 
-        SupplierDTOResponse supplierDTOResponse = modelMapper.map(supplier, SupplierDTOResponse.class);
-        supplierDTOResponse.setInventoryItemList(new ArrayList<>()); // set inventoryItemList to an empty list otherwise
+        SupplierDTO supplierDTO = modelMapper.map(supplier, SupplierDTO.class);
+        supplierDTO.setInventoryItemList(new ArrayList<>()); // set inventoryItemList to an empty list otherwise
         //there is a difference in assertion (null vs empty list)
 
-        List<SupplierDTOResponse> expected = Arrays.asList(supplierDTOResponse);
+        List<SupplierDTO> expected = Arrays.asList(supplierDTO);
 
         webTestClient.get()
                 .uri("/api/supplier/findAll")
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(SupplierDTOResponse.class)
+                .expectBodyList(SupplierDTO.class)
                 .consumeWith(response -> {
-                    List<SupplierDTOResponse> actualResponse = response.getResponseBody();
+                    List<SupplierDTO> actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(expected.size(), actualResponse.size());
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);

@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
@@ -22,12 +21,12 @@ public class SupplierService {
     private final SupplierRepository supplierRepository;
     private final ModelMapper modelMapper;
 
-    public SupplierDTOResponse add(SupplierDTORequest supplierDTORequest) throws ObjectAlreadyExistException {
-        Supplier supplier = modelMapper.map(supplierDTORequest, Supplier.class);
+    public SupplierDTO add(SupplierDTO supplierDTO) throws ObjectAlreadyExistException {
+        Supplier supplier = modelMapper.map(supplierDTO, Supplier.class);
         checkIfSupplierExist(supplier);
         supplierRepository.save(supplier);
 
-        return modelMapper.map(supplier, SupplierDTOResponse.class);
+        return modelMapper.map(supplier, SupplierDTO.class);
     }
 
     private void checkIfSupplierExist(Supplier supplier) throws ObjectAlreadyExistException {
@@ -37,11 +36,11 @@ public class SupplierService {
         }
     }
 
-    public List<SupplierDTOResponse> findAll () {
-        List<SupplierDTOResponse> DTOlist = new ArrayList<>();
+    public List<SupplierDTO> findAll () {
+        List<SupplierDTO> DTOlist = new ArrayList<>();
 
         supplierRepository.findAll().forEach(supplier ->
-            DTOlist.add(modelMapper.map(supplier, SupplierDTOResponse.class)));
+            DTOlist.add(modelMapper.map(supplier, SupplierDTO.class)));
 
         return DTOlist;
     }

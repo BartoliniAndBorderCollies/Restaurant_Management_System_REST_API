@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class SupplierDTOResponse {
+public class SupplierDTO {
 
     private Long id;
     private ContactDetails contactDetails;
