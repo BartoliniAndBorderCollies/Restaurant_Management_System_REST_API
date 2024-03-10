@@ -56,6 +56,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         reservationRepository.save(reservation);
     }
 
+    //TODO this method should be in customerService
     private Customer getCustomerFromReservationByEmailAddress(Reservation reservation) throws NotFoundInDatabaseException {
         String emailAddress = reservation.getCustomer().getEmailAddress();
         return customerRepository.findByEmailAddress(emailAddress)
