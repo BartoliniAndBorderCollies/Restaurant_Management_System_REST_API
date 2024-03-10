@@ -87,6 +87,45 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     }
 
     @Override
+    public ReservationDTOResponse update(Long id, ReservationDTORequest reservationDTORequest)
+            throws NotFoundInDatabaseException {
+        ReservationDTOResponse reservationDTOToBeUpdated = findById(id);
+
+        Optional.ofNullable(reservationDTORequest.getName()).ifPresent(reservationDTOToBeUpdated::setName);
+        Optional.ofNullable(reservationDTORequest.getDescription()).ifPresent(reservationDTOToBeUpdated::setDescription);
+        Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(reservationDTOToBeUpdated::setPeopleAmount);
+        Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(reservationDTOToBeUpdated::setStart);
+        Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(reservationDTOToBeUpdated::setTables);
+        //Because I have different types in field of customer (CustomerDTOReservationResponse and CustomerDTOReservationRequest)
+        //I do like below. I need to use lambda because the ifPresent method expects a Consumer (a lambda that does not return a value).
+        //This way, I'm passing a Consumer lambda to the ifPresent method
+        Optional.ofNullable(reservationDTORequest.getCustomer()).ifPresent(customerRequest -> {
+            try {
+                //checking if customer exists
+                Customer customerFromRequest = getCustomerFromReservationByEmailAddress(modelMapper.map(reservationDTORequest, Reservation.class));
+
+                //checking if this customer already has any reservation
+                checkIfCustomerHasAnyReservation(customerFromRequest);
+
+                //setting new customer to the reservation
+                reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerDTOReservationResponse.class));
+
+            } catch (NotFoundInDatabaseException | CustomerAlreadyHasReservationException e) {
+                //orElseThrow method can potentially throw a NotFoundInDatabaseException or CustomerAlreadyHasReservationException
+                // both are checked exceptions
+                //However, in lambda expression, checked exceptions cannot be thrown directly. that is why
+                //I wrap the checked exception in an unchecked exception, like RuntimeException
+                throw new RuntimeException(e);
+            }
+        });
+
+        //saving new reservation data to database
+        reservationRepository.save(modelMapper.map(reservationDTOToBeUpdated, Reservation.class));
+
+        return reservationDTOToBeUpdated;
+    }
+
+    @Override
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
         Reservation reservationToDelete = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
