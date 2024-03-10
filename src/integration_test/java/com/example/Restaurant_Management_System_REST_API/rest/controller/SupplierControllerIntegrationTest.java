@@ -71,7 +71,7 @@ class SupplierControllerIntegrationTest {
     @BeforeEach
     public void prepareSupplier() {
         contactDetails = new ContactDetails("test name", "test street", "test houseNumber",
-                "test city", "test postalCode", "test telephoneNumber");
+                "test city", "11-015", "123456789");
         supplier = new Supplier(null, contactDetails, null);
         supplierRepository.save(supplier);
     }
