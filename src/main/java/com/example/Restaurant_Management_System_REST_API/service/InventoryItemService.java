@@ -6,7 +6,6 @@ import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDat
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
 import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,30 +23,20 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         Long> {
 
     private final InventoryItemRepository inventoryItemRepository;
-    private final SupplierRepository supplierRepository;
+    private final SupplierService supplierService;
     private final ModelMapper modelMapper;
 
     @Override
     public InventoryItemDTOResponse create(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {
 
        //Checking if provided supplier exists in database - if not -> throwing an exception
-       Supplier supplier = checkIfSupplierExist(inventoryItemDTORequest);
+       Supplier supplier = supplierService.checkIfSupplierExist(inventoryItemDTORequest);
 
         InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
         inventoryItem.setSupplier(supplier);
         inventoryItemRepository.save(inventoryItem);
 
         return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
-    }
-
-    private Supplier checkIfSupplierExist(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {
-        Supplier supplier = null;
-        if(inventoryItemDTORequest.getSupplier() != null) {
-            supplier = supplierRepository.findByContactDetails_NameAndContactDetails_Street(inventoryItemDTORequest.getSupplier().getContactDetails().getName(),
-                    inventoryItemDTORequest.getSupplier().getContactDetails().getStreet()).orElseThrow(() ->
-                    new NotFoundInDatabaseException(Supplier.class));
-        }
-        return supplier;
     }
 
     @Override
