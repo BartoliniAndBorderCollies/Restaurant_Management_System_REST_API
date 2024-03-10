@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -41,21 +43,29 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     private void assignCustomerToReservationAndSave(Reservation reservation) throws NotFoundInDatabaseException,
             CustomerAlreadyHasReservationException {
 
-        //checking if this customer exists
+        //checking if this customer exists and getting him if exists
         if (reservation.getCustomer() != null) {
-            String emailAddress = reservation.getCustomer().getEmailAddress();
-            Customer customer = customerRepository.findByEmailAddress(emailAddress)
-                    .orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
+            Customer customer = getCustomerFromReservationByEmailAddress(reservation);
 
             //checking if this customer already has any reservation (customer cannot have more than one reservation at all)
-            if (customer.getReservation() != null && customer.getReservation().getId() != null) {
-                throw new CustomerAlreadyHasReservationException();
-            }
+            checkIfCustomerHasAnyReservation(customer);
 
             reservation.setCustomer(customer);
         }
 
         reservationRepository.save(reservation);
+    }
+
+    private Customer getCustomerFromReservationByEmailAddress(Reservation reservation) throws NotFoundInDatabaseException {
+        String emailAddress = reservation.getCustomer().getEmailAddress();
+        return customerRepository.findByEmailAddress(emailAddress)
+                .orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
+    }
+
+    private void checkIfCustomerHasAnyReservation(Customer customer) throws CustomerAlreadyHasReservationException {
+        if (customer.getReservation() != null && customer.getReservation().getId() != null) {
+            throw new CustomerAlreadyHasReservationException();
+        }
     }
 
     @Override
