@@ -2,9 +2,11 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
@@ -136,5 +138,11 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
 
         return new ResponseEntity<>("Customer: " + customerToDelete.getUsername() + " has been successfully deleted!",
                 HttpStatus.OK);
+    }
+
+    Customer getCustomerFromReservationByEmailAddress(Reservation reservation) throws NotFoundInDatabaseException {
+        String emailAddress = reservation.getCustomer().getEmailAddress();
+        return customerRepository.findByEmailAddress(emailAddress)
+                .orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
     }
 }
