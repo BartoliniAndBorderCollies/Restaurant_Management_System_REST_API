@@ -145,4 +145,10 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
         return customerRepository.findByEmailAddress(emailAddress)
                 .orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
     }
+
+    void checkIfCustomerHasAnyReservation(Customer customer) throws CustomerAlreadyHasReservationException {
+        if (customer.getReservation() != null && customer.getReservation().getId() != null) {
+            throw new CustomerAlreadyHasReservationException();
+        }
+    }
 }
