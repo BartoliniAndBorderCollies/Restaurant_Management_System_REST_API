@@ -7,7 +7,6 @@ import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlrea
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
-import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
     @Override
     public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException,
@@ -54,19 +53,6 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         }
 
         reservationRepository.save(reservation);
-    }
-
-    //TODO this method should be in customerService
-    private Customer getCustomerFromReservationByEmailAddress(Reservation reservation) throws NotFoundInDatabaseException {
-        String emailAddress = reservation.getCustomer().getEmailAddress();
-        return customerRepository.findByEmailAddress(emailAddress)
-                .orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
-    }
-
-    private void checkIfCustomerHasAnyReservation(Customer customer) throws CustomerAlreadyHasReservationException {
-        if (customer.getReservation() != null && customer.getReservation().getId() != null) {
-            throw new CustomerAlreadyHasReservationException();
-        }
     }
 
     @Override
@@ -103,10 +89,11 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Optional.ofNullable(reservationDTORequest.getCustomer()).ifPresent(customerRequest -> {
             try {
                 //checking if customer exists
-                Customer customerFromRequest = getCustomerFromReservationByEmailAddress(modelMapper.map(reservationDTORequest, Reservation.class));
+                Customer customerFromRequest = customerService.getCustomerFromReservationByEmailAddress
+                        (modelMapper.map(reservationDTORequest, Reservation.class));
 
                 //checking if this customer already has any reservation
-                checkIfCustomerHasAnyReservation(customerFromRequest);
+                customerService.checkIfCustomerHasAnyReservation(customerFromRequest);
 
                 //setting new customer to the reservation
                 reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerDTOReservationResponse.class));
