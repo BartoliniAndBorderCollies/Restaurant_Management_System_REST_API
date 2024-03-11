@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller.advice
 
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import jakarta.validation.ConstraintViolationException;
 import org.hibernate.PropertyValueException;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,11 @@ public class GlobalCustomExceptionHandler {
     public ResponseEntity<?> handleConstraintViolationException (ConstraintViolationException ex) {
         return new ResponseEntity<>("You haven't gone through all validations! See what is missing here: " +
                 ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(ObjectAlreadyExistException.class)
+    public ResponseEntity<?> handleObjectAlreadyExistException (ObjectAlreadyExistException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(CustomerAlreadyHasReservationException.class)

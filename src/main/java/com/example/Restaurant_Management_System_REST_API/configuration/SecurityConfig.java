@@ -45,10 +45,16 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/inventory/**"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
+                        //Secured paths for Supplier operations
+                        .requestMatchers(mvc.pattern("/api/supplier/add"), mvc.pattern("api/supplier/delete/**"))
+                        .hasAnyRole("OWNER", "MANAGER")
+                        .requestMatchers(mvc.pattern("/api/supplier/findAll"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
+
                         //Secured paths for Reservation operations
                         .requestMatchers(mvc.pattern("/api/reservation/**"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
-                        
+
                         //Permit all other requests
                         .anyRequest()
                         .permitAll())
