@@ -37,7 +37,8 @@ class InventoryItemServiceTest {
         inventoryItemRepository = mock(InventoryItemRepository.class);
         modelMapper = mock(ModelMapper.class);
         supplierRepository = mock(SupplierRepository.class);
-        inventoryItemService = new InventoryItemService(inventoryItemRepository, supplierRepository, modelMapper);
+        SupplierService supplierService = new SupplierService(supplierRepository, modelMapper);
+        inventoryItemService = new InventoryItemService(inventoryItemRepository, supplierService, modelMapper);
     }
 
     @BeforeEach
