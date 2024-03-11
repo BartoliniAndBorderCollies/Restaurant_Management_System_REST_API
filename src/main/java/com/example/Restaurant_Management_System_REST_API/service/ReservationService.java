@@ -44,10 +44,10 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
         //checking if this customer exists and getting him if exists
         if (reservation.getCustomer() != null) {
-            Customer customer = getCustomerFromReservationByEmailAddress(reservation);
+            Customer customer = customerService.getCustomerFromReservationByEmailAddress(reservation);
 
             //checking if this customer already has any reservation (customer cannot have more than one reservation at all)
-            checkIfCustomerHasAnyReservation(customer);
+            customerService.checkIfCustomerHasAnyReservation(customer);
 
             reservation.setCustomer(customer);
         }
