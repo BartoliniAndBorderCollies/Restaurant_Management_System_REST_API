@@ -46,21 +46,15 @@ class ReservationServiceTest {
 
 
     @Test
-    public void create_ShouldThrowNotFoundInDatabaseException_WhenCustomerDoesNotExist() throws NotFoundInDatabaseException {
+    public void create_ShouldThrowNotFoundInDatabaseException_WhenCustomerDoesNotExist() {
         //Arrange
         ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
         Customer customer = mock(Customer.class);
         Reservation reservation = mock(Reservation.class);
 
-        String emailAddress = "test@example.com";
-
-
         when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
         when(reservation.getCustomer()).thenReturn(customer);
-        when(customerService.getCustomerFromReservationByEmailAddress(reservation)).thenReturn(customer);
-        when(reservation.getCustomer()).thenReturn(customer);
-        when(reservation.getCustomer().getEmailAddress()).thenReturn(emailAddress);
-        when(customerRepository.findByEmailAddress(emailAddress)).thenReturn(Optional.empty());
+        when(customerService.getCustomerFromReservationByEmailAddress(reservation)).thenReturn(Optional.empty());
 
         //Act
         //Assert
