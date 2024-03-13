@@ -44,7 +44,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
         //checking if this customer exists and getting him if exists
         if (reservation.getCustomer() != null) {
-            Customer customer = customerService.getCustomerFromReservationByEmailAddress(reservation);
+            Customer customer = customerService.getCustomerFromReservationByEmailAddress(reservation).orElseThrow(
+                    () -> new NotFoundInDatabaseException(Customer.class));
 
             //checking if this customer already has any reservation (customer cannot have more than one reservation at all)
             customerService.checkIfCustomerHasAnyReservation(customer);
@@ -90,7 +91,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
             try {
                 //checking if customer exists
                 Customer customerFromRequest = customerService.getCustomerFromReservationByEmailAddress
-                        (modelMapper.map(reservationDTORequest, Reservation.class));
+                        (modelMapper.map(reservationDTORequest, Reservation.class)).orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
 
                 //checking if this customer already has any reservation
                 customerService.checkIfCustomerHasAnyReservation(customerFromRequest);
