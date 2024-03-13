@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
+import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
@@ -59,6 +60,25 @@ class ReservationServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, () -> reservationService.create(reservationDTORequest));
+    }
+
+    @Test
+    public void create_ShouldThrowCustomerAlreadyHasReservationException_WhenReservationIdIsAssignedToCustomer() {
+        //Arrange
+        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
+        Customer customer = mock(Customer.class);
+        Reservation reservation = mock(Reservation.class);
+
+        when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
+        when(reservation.getCustomer()).thenReturn(customer);
+        when(customerService.getCustomerFromReservationByEmailAddress(reservation)).thenReturn(Optional.ofNullable(customer));
+        assert customer != null;
+        when(customer.getReservation()).thenReturn(reservation);
+        when(customer.getReservation().getId()).thenReturn(1L);
+
+        //Act
+        //Assert
+        assertThrows(CustomerAlreadyHasReservationException.class, ()-> reservationService.create(reservationDTORequest));
     }
 
 }
