@@ -17,8 +17,7 @@ import jakarta.validation.Validator;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ReservationServiceTest {
 
@@ -79,6 +78,29 @@ class ReservationServiceTest {
         //Act
         //Assert
         assertThrows(CustomerAlreadyHasReservationException.class, ()-> reservationService.create(reservationDTORequest));
+    }
+
+    @Test
+    public void create_ShouldCallOnReservationRepositoryExactlyOnce_WhenReservationDTORequestIsGiven()
+            throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
+        //Arrange
+        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
+        Customer customer = mock(Customer.class);
+        Reservation reservation = mock(Reservation.class);
+
+        when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
+        when(reservation.getCustomer()).thenReturn(customer);
+        when(customerService.getCustomerFromReservationByEmailAddress(reservation)).thenReturn(Optional.ofNullable(customer));
+        assert customer != null;
+        when(customer.getReservation()).thenReturn(reservation);
+        when(customer.getReservation().getId()).thenReturn(null);
+        when(reservationRepository.save(reservation)).thenReturn(reservation);
+
+        //Act
+        reservationService.create(reservationDTORequest);
+
+        //Assert
+        verify(reservationRepository, times(1)).save(reservation);
     }
 
 }
