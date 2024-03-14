@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -14,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.validation.Validator;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -111,6 +114,27 @@ class ReservationServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, () -> reservationService.findById(nonExistedId));
+    }
+
+    @Test
+    public void findById_ShouldReturnReservationDTOResponse_WhenReservationIdIsGivenAndReservationExists()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Long id = 1L;
+        LocalDateTime time = LocalDateTime.of(2020, 8, 10, 10, 15);
+        ReservationDTOResponse expected = new ReservationDTOResponse(id, "expected", "nice",
+                10, time, null, null);
+        Reservation reservation = new Reservation(id, "expected", "nice",
+                10, time, null, null);
+
+        when(reservationRepository.findById(id)).thenReturn(Optional.of(reservation));
+        when(modelMapper.map(reservation, ReservationDTOResponse.class)).thenReturn(expected);
+
+        //Act
+        ReservationDTOResponse actual = reservationService.findById(id);
+
+        //Assert
+        assertEquals(expected, actual);
     }
 
 }
