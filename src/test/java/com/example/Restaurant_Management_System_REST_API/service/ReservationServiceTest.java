@@ -40,7 +40,7 @@ class ReservationServiceTest {
         validator = mock(Validator.class);
         customerRepository = mock(CustomerRepository.class);
 
-        customerService = new CustomerService(customerRepository, authorityRepository, modelMapper, passwordEncoder, validator );
+        customerService = new CustomerService(customerRepository, authorityRepository, modelMapper, passwordEncoder, validator);
         reservationService = new ReservationService(reservationRepository, modelMapper, customerService);
     }
 
@@ -77,7 +77,7 @@ class ReservationServiceTest {
 
         //Act
         //Assert
-        assertThrows(CustomerAlreadyHasReservationException.class, ()-> reservationService.create(reservationDTORequest));
+        assertThrows(CustomerAlreadyHasReservationException.class, () -> reservationService.create(reservationDTORequest));
     }
 
     @Test
@@ -101,6 +101,16 @@ class ReservationServiceTest {
 
         //Assert
         verify(reservationRepository, times(1)).save(reservation);
+    }
+
+    @Test
+    public void findById_ShouldThrowNotFoundInDatabaseException_WhenReservationDoesNotExist() {
+        //Arrange
+        Long nonExistedId = 999L;
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, () -> reservationService.findById(nonExistedId));
     }
 
 }
