@@ -162,4 +162,14 @@ class ReservationServiceTest {
         assertIterableEquals(expectedList, actual);
     }
 
+    @Test
+    public void delete_ShouldThrowNotFoundInDatabaseException_WhenGivenIdDoesNotExist() {
+        //Arrange
+        Long nonExistedId = 888L;
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> reservationService.delete(nonExistedId));
+    }
+
 }
