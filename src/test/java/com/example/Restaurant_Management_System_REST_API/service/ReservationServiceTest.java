@@ -172,4 +172,21 @@ class ReservationServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> reservationService.delete(nonExistedId));
     }
 
+    @Test
+    public void delete_ShouldCallOnReservationRepoExactlyOnce_WhenCorrectIdIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        Long id = 1L;
+        LocalDateTime time = LocalDateTime.of(2024, 3, 14, 11, 36);
+        Reservation reservation = new Reservation(id, "expected", "nice",
+                10, time, null, null);
+
+        when(reservationRepository.findById(id)).thenReturn(Optional.of(reservation));
+
+        //Act
+        reservationService.delete(reservation.getId());
+
+        //Assert
+        verify(reservationRepository, times(1)).delete(reservation);
+    }
+
 }
