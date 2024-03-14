@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.validation.Validator;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -135,6 +137,29 @@ class ReservationServiceTest {
 
         //Assert
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void findAll_ShouldReturnReservationDTOResponseList_WhenReservationExist() {
+        //Arrange
+        Long id = 1L;
+        LocalDateTime time = LocalDateTime.of(2020, 8, 10, 10, 15);
+        ReservationDTOResponse reservationDTOResponse = new ReservationDTOResponse(id, "expected", "nice",
+                10, time, null, null);
+        Reservation reservation = new Reservation(id, "expected", "nice",
+                10, time, null, null);
+
+        List<ReservationDTOResponse> expectedList = Arrays.asList(reservationDTOResponse);
+        List<Reservation> reservationList = Arrays.asList(reservation);
+
+        when(reservationRepository.findAll()).thenReturn(reservationList);
+        when(modelMapper.map(reservation, ReservationDTOResponse.class)).thenReturn(reservationDTOResponse);
+
+        //Act
+        List<ReservationDTOResponse> actual = reservationService.findAll();
+
+        //Assert
+        assertIterableEquals(expectedList, actual);
     }
 
 }
