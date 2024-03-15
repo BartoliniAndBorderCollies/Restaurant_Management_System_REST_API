@@ -1,5 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationRequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
@@ -171,6 +173,37 @@ class ReservationServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, ()-> reservationService.update(nonExistedId, reservationDTORequest));
+    }
+
+    @Test
+    public void update_ShouldInteractWithDependenciesCorrectly_WhenReservationIdAndDTORequestAreGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Long id = 1L;
+        LocalDateTime time = LocalDateTime.of(2020, 8, 10, 10, 15);
+        CustomerDTOReservationRequest customerDTO = mock(CustomerDTOReservationRequest.class);
+        CustomerDTOReservationResponse customerDTOResponse = mock(CustomerDTOReservationResponse.class);
+        Reservation reservation = mock(Reservation.class);
+        Customer customer = mock(Customer.class);
+        String email = "example@example.eu";
+
+        ReservationDTOResponse expected = new ReservationDTOResponse(id, "expected", "nice",
+                10, time, null, customerDTOResponse);
+        ReservationDTORequest reservationDTORequest = new ReservationDTORequest(id, "expected", "nice",
+                10, time, null, customerDTO);
+
+        when(reservationRepository.findById(id)).thenReturn(Optional.of(reservation));
+        when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
+        when(reservation.getCustomer()).thenReturn(customer);
+        when(reservation.getCustomer().getEmailAddress()).thenReturn(email);
+        when(customerRepository.findByEmailAddress(email)).thenReturn(Optional.of(customer));
+        when(modelMapper.map(reservation, ReservationDTOResponse.class)).thenReturn(expected);
+
+        //Act
+        ReservationDTOResponse actual = reservationService.update(id, reservationDTORequest);
+
+        //Assert
+        assertEquals(expected, actual);
     }
 
     @Test
