@@ -163,6 +163,17 @@ class ReservationServiceTest {
     }
 
     @Test
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenGivenReservationIdDoesNotExist() {
+        //Arrange
+        Long nonExistedId = 999L;
+        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> reservationService.update(nonExistedId, reservationDTORequest));
+    }
+
+    @Test
     public void delete_ShouldThrowNotFoundInDatabaseException_WhenGivenIdDoesNotExist() {
         //Arrange
         Long nonExistedId = 888L;
