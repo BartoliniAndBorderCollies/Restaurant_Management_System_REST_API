@@ -2,10 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class ReservationDTOResponse {
 
     private Long id;
