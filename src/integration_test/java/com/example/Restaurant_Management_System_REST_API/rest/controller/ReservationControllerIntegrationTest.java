@@ -76,7 +76,7 @@ class ReservationControllerIntegrationTest {
     }
 
     @BeforeEach
-    public void prepareCustomer() {
+    public void prepareRestaurantClient() {
         time = LocalDateTime.of(2024, 3, 18, 21, 15);
         customerContactDetails = new ContactDetails("customer name", "Banana street", "132", "Warsaw", "11-111",
                 "987654321");
