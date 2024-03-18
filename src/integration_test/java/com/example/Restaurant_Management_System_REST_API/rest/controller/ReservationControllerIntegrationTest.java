@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationRequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
@@ -9,7 +10,6 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
-import jakarta.persistence.Basic;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource(locations = "/application-test.properties")
@@ -89,4 +89,42 @@ class ReservationControllerIntegrationTest {
                 true, "customer@onet.pl", restaurantClientAuthoritySet);
         customerRepository.save(restaurantCustomer);
     }
+
+    @AfterAll
+    public void cleanDatabase() {
+        customerRepository.deleteAll();
+        authorityRepository.deleteAll();
+    }
+
+    @Test
+    public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
+        CustomerDTOReservationRequest customerDTOReservationRequest = modelMapper.map(restaurantCustomer, CustomerDTOReservationRequest.class);
+        CustomerDTOReservationResponse customerDTOReservationResponse = modelMapper.map(restaurantCustomer, CustomerDTOReservationResponse.class);
+
+        ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Anniversary party",
+                "20 years of marriage!",15, time, null, customerDTOReservationRequest);
+
+        ReservationDTOResponse expected = new ReservationDTOResponse(null, "Anniversary party",
+                "20 years of marriage!",15, time, null, customerDTOReservationResponse);
+
+        webTestClient.post()
+                .uri("/api/reservation/add")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
+                .bodyValue(reservationDTORequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ReservationDTOResponse.class)
+                .consumeWith(response -> {
+                    ReservationDTOResponse actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.getName(), actualResponse.getName());
+                    assertEquals(expected.getDescription(), actualResponse.getDescription());
+                    assertEquals(expected.getPeopleAmount(), actualResponse.getPeopleAmount());
+                    assertEquals(expected.getStart(), actualResponse.getStart());
+                    assertIterableEquals(expected.getTables(), actualResponse.getTables());
+                    assertEquals(expected.getCustomer(), actualResponse.getCustomer());
+                });
+        reservationRepository.deleteAll();
+    }
+
 }
