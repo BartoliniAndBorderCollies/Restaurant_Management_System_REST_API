@@ -7,6 +7,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.Res
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
@@ -123,6 +124,33 @@ class ReservationControllerIntegrationTest {
                     assertEquals(expected.getStart(), actualResponse.getStart());
                     assertIterableEquals(expected.getTables(), actualResponse.getTables());
                     assertEquals(expected.getCustomer(), actualResponse.getCustomer());
+                });
+        reservationRepository.deleteAll();
+    }
+
+    @Test
+    public void findById_ShouldMapAndReturnReservationDTOResponse_WhenReservationExist() {
+        LocalDateTime time = LocalDateTime.of(1990, 3, 18, 10, 11);
+        Reservation reservation = new Reservation(null, "test case", "test", 20, time,
+                null, restaurantCustomer);
+        reservationRepository.save(reservation);
+
+        webTestClient.get()
+                .uri("/api/reservation/find/" + reservation.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ReservationDTOResponse.class)
+                .consumeWith(response -> {
+                    ReservationDTOResponse actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(reservation.getName(), actualResponse.getName());
+                    assertEquals(reservation.getDescription(), actualResponse.getDescription());
+                    assertEquals(reservation.getPeopleAmount(), actualResponse.getPeopleAmount());
+                    assertEquals(reservation.getStart(), actualResponse.getStart());
+                    assertTrue(actualResponse.getTables().isEmpty());
+                    Customer actualCustomer = modelMapper.map(actualResponse.getCustomer(), Customer.class);
+                    assertEquals(reservation.getCustomer(), actualCustomer);
                 });
         reservationRepository.deleteAll();
     }
