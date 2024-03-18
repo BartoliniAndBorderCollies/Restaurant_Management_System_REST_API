@@ -21,10 +21,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -72,8 +71,8 @@ class ReservationControllerIntegrationTest {
         customerRepository.save(staff);
 
         //Defining basicAuthHeader required for authorization in the integration test
-         basicAuthStaffHeader = "Basic " + Base64.getEncoder()
-                 .encodeToString((staff.getEmailAddress() + ":" + rawPassword).getBytes());
+        basicAuthStaffHeader = "Basic " + Base64.getEncoder()
+                .encodeToString((staff.getEmailAddress() + ":" + rawPassword).getBytes());
     }
 
     @BeforeEach
@@ -103,10 +102,10 @@ class ReservationControllerIntegrationTest {
         CustomerDTOReservationResponse customerDTOReservationResponse = modelMapper.map(restaurantCustomer, CustomerDTOReservationResponse.class);
 
         ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Anniversary party",
-                "20 years of marriage!",15, time, null, customerDTOReservationRequest);
+                "20 years of marriage!", 15, time, null, customerDTOReservationRequest);
 
         ReservationDTOResponse expected = new ReservationDTOResponse(null, "Anniversary party",
-                "20 years of marriage!",15, time, null, customerDTOReservationResponse);
+                "20 years of marriage!", 15, time, null, customerDTOReservationResponse);
 
         webTestClient.post()
                 .uri("/api/reservation/add")
@@ -151,6 +150,31 @@ class ReservationControllerIntegrationTest {
                     assertTrue(actualResponse.getTables().isEmpty());
                     Customer actualCustomer = modelMapper.map(actualResponse.getCustomer(), Customer.class);
                     assertEquals(reservation.getCustomer(), actualCustomer);
+                });
+        reservationRepository.deleteAll();
+    }
+
+    @Test
+    public void findAll_ShouldReturnReservationDTOResponseList_WhenReservationExist() {
+        LocalDateTime time = LocalDateTime.of(1990, 3, 18, 10, 11);
+        Reservation reservation = new Reservation(null, "test case", "test", 20, time,
+                null, restaurantCustomer);
+        reservation.setTables(new ArrayList<>()); //I set this as empty list, otherwise I got assertion failure null vs empty
+        reservationRepository.save(reservation);
+
+        List<ReservationDTOResponse> expected = Arrays.asList(modelMapper.map(reservation, ReservationDTOResponse.class));
+
+        webTestClient.get()
+                .uri("/api/reservation/findAll")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(ReservationDTOResponse.class)
+                .consumeWith(response -> {
+                    List<ReservationDTOResponse> actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.size(), actualResponse.size());
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
         reservationRepository.deleteAll();
     }
