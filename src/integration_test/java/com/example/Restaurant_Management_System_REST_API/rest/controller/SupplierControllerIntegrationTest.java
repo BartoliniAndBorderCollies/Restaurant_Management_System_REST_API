@@ -81,6 +81,11 @@ class SupplierControllerIntegrationTest {
         supplierRepository.deleteAll();
     }
 
+    @AfterAll
+    public void cleanCustomers() {
+        customerRepository.deleteAll();
+    }
+
 
     @Test
     public void add_ShouldCreateSupplierAndSaveItInDatabaseAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
