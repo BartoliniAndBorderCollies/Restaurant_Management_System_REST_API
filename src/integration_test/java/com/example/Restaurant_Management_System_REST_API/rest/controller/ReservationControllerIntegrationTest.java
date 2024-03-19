@@ -49,6 +49,7 @@ class ReservationControllerIntegrationTest {
     @Autowired
     private ReservationRepository reservationRepository;
     private Set<Authority> restaurantClientAuthoritySet;
+    private Reservation reservation;
 
 
     @BeforeAll
@@ -90,6 +91,14 @@ class ReservationControllerIntegrationTest {
         restaurantCustomer = new Customer(null, LocalDateTime.now(), null, customerContactDetails, null, true, true, true,
                 true, "customer@onet.pl", restaurantClientAuthoritySet);
         customerRepository.save(restaurantCustomer);
+    }
+
+    @BeforeEach
+    public void prepareReservationForTests() {
+        time = LocalDateTime.of(2024, 3, 18, 21, 15);
+        reservation = new Reservation(null, "test case", "test", 20, time,
+                null, restaurantCustomer);
+        reservationRepository.save(reservation);
     }
 
     @AfterAll
