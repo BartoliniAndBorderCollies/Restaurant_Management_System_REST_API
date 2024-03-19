@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -232,6 +233,31 @@ class ReservationControllerIntegrationTest {
                     assertEquals(expected.getCustomer(), actualResponse.getCustomer());
                 });
         reservationRepository.deleteAll();
+    }
+
+    @Test
+    public void delete_ShouldDeleteReservationAndReturnResponseEntity_WhenReservationIdIsGiven() {
+        LocalDateTime originalTime = LocalDateTime.of(1987, 1, 1, 3, 18);
+        Reservation reservationToDelete = new Reservation(null, "test case2", "test2", 9,
+                originalTime,null, restaurantCustomer);
+        reservationRepository.save(reservationToDelete);
+
+        webTestClient.delete()
+                .uri("/api/reservation/delete/" + reservationToDelete.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",
+                            actualResponse);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+
+                   Optional<Reservation> shouldBeDeleted = reservationRepository.findById(reservationToDelete.getId());
+                   assertTrue(shouldBeDeleted.isEmpty());
+                });
     }
 
 }
