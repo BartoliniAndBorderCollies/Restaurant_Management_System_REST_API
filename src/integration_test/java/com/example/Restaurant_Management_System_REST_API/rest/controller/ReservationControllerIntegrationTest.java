@@ -47,6 +47,7 @@ class ReservationControllerIntegrationTest {
     private ModelMapper modelMapper;
     @Autowired
     private ReservationRepository reservationRepository;
+    private Set<Authority> restaurantClientAuthoritySet;
 
 
     @BeforeAll
@@ -82,7 +83,7 @@ class ReservationControllerIntegrationTest {
                 "987654321");
         Authority restaurantClient = new Authority(null, "ROLE_CLIENT");
         authorityRepository.save(restaurantClient);
-        Set<Authority> restaurantClientAuthoritySet = new HashSet<>();
+        restaurantClientAuthoritySet = new HashSet<>();
         restaurantClientAuthoritySet.add(restaurantClient);
 
         restaurantCustomer = new Customer(null, LocalDateTime.now(), null, customerContactDetails, null, true, true, true,
@@ -175,6 +176,60 @@ class ReservationControllerIntegrationTest {
                     assertNotNull(actualResponse);
                     assertEquals(expected.size(), actualResponse.size());
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+                });
+        reservationRepository.deleteAll();
+    }
+
+    @Test
+    public void update_ShouldUpdateReservationAndReturnReservationDTOResponse_WhenReservationIdAndDTOIsGiven() {
+
+        //Creating times
+        LocalDateTime originalTime = LocalDateTime.of(1987, 1, 1, 3, 18);
+        LocalDateTime updatedTime = LocalDateTime.of(1991, 4, 17, 11, 14);
+
+        //Creating reservation which is going to be updated and saving it to repo
+        Reservation originalReservation = new Reservation(null, "test case2", "test2", 9,
+                originalTime,null, restaurantCustomer);
+        reservationRepository.save(originalReservation);
+
+        //Creating a new customer to whom updated reservation will be set
+        ContactDetails contactDetailsForUpdate = new ContactDetails("update name", "update street",
+                "11", "Lodz", "00-111", "123456788");
+        String rawPasswordForUpdate = "Kkl1@$1j";
+        String encodedPasswordForUpdate = passwordEncoder.encode(rawPasswordForUpdate);
+
+        Customer customerForUpdate = new Customer(null, updatedTime, null, contactDetailsForUpdate,
+                encodedPasswordForUpdate,true, true, true, true,
+                "exampleForUpdate@onet.pl", restaurantClientAuthoritySet);
+        customerRepository.save(customerForUpdate);
+
+        //Mapping created customer to DTOs to be able to provide it to request and to check in response
+        CustomerDTOReservationRequest customerDTORequest = modelMapper.map(customerForUpdate, CustomerDTOReservationRequest.class);
+        CustomerDTOReservationResponse customerDTOResponse = modelMapper.map(customerForUpdate, CustomerDTOReservationResponse.class);
+
+        ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Birthday",
+                "10 years of struggle on planet earth", 12, updatedTime, null, customerDTORequest);
+
+        ReservationDTOResponse expected = new ReservationDTOResponse(null, "Birthday",
+                "10 years of struggle on planet earth", 12, updatedTime, null, customerDTOResponse);
+
+        //test itself
+        webTestClient.put()
+                .uri("/api/reservation/update/" + originalReservation.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
+                .bodyValue(reservationDTORequest)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ReservationDTOResponse.class)
+                .consumeWith(response -> {
+                    ReservationDTOResponse actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.getName(), actualResponse.getName());
+                    assertEquals(expected.getDescription(), actualResponse.getDescription());
+                    assertEquals(expected.getPeopleAmount(), actualResponse.getPeopleAmount());
+                    assertEquals(expected.getStart(), actualResponse.getStart());
+                    assertTrue(actualResponse.getTables().isEmpty());
+                    assertEquals(expected.getCustomer(), actualResponse.getCustomer());
                 });
         reservationRepository.deleteAll();
     }
