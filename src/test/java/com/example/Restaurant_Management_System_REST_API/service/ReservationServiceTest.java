@@ -36,6 +36,9 @@ class ReservationServiceTest {
     private AuthorityRepository authorityRepository;
     private PasswordEncoder passwordEncoder;
     private Validator validator;
+    private ReservationDTORequest reservationDTORequest;
+    private Customer customer;
+    private Reservation reservation;
 
 
     @BeforeEach
@@ -49,6 +52,13 @@ class ReservationServiceTest {
 
         customerService = new CustomerService(customerRepository, authorityRepository, modelMapper, passwordEncoder, validator);
         reservationService = new ReservationService(reservationRepository, modelMapper, customerService);
+    }
+
+    @BeforeEach
+    public void prepareMocksForTestMethods() {
+        reservationDTORequest = mock(ReservationDTORequest.class);
+        customer = mock(Customer.class);
+        reservation = mock(Reservation.class);
     }
 
 
