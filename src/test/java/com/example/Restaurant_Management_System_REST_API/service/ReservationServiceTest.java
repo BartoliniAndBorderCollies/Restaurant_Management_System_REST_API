@@ -65,9 +65,6 @@ class ReservationServiceTest {
     @Test
     public void create_ShouldThrowNotFoundInDatabaseException_WhenCustomerDoesNotExist() {
         //Arrange
-        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
-        Customer customer = mock(Customer.class);
-        Reservation reservation = mock(Reservation.class);
 
         when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
         when(reservation.getCustomer()).thenReturn(customer);
@@ -81,9 +78,6 @@ class ReservationServiceTest {
     @Test
     public void create_ShouldThrowCustomerAlreadyHasReservationException_WhenReservationIdIsAssignedToCustomer() {
         //Arrange
-        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
-        Customer customer = mock(Customer.class);
-        Reservation reservation = mock(Reservation.class);
 
         when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
         when(reservation.getCustomer()).thenReturn(customer);
@@ -101,9 +95,6 @@ class ReservationServiceTest {
     public void create_ShouldCallOnReservationRepositoryExactlyOnce_WhenReservationDTORequestIsGiven()
             throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
         //Arrange
-        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
-        Customer customer = mock(Customer.class);
-        Reservation reservation = mock(Reservation.class);
 
         when(modelMapper.map(reservationDTORequest, Reservation.class)).thenReturn(reservation);
         when(reservation.getCustomer()).thenReturn(customer);
@@ -178,7 +169,6 @@ class ReservationServiceTest {
     public void update_ShouldThrowNotFoundInDatabaseException_WhenGivenReservationIdDoesNotExist() {
         //Arrange
         Long nonExistedId = 999L;
-        ReservationDTORequest reservationDTORequest = mock(ReservationDTORequest.class);
 
         //Act
         //Assert
@@ -193,8 +183,6 @@ class ReservationServiceTest {
         LocalDateTime time = LocalDateTime.of(2020, 8, 10, 10, 15);
         CustomerDTOReservationRequest customerDTO = mock(CustomerDTOReservationRequest.class);
         CustomerDTOReservationResponse customerDTOResponse = mock(CustomerDTOReservationResponse.class);
-        Reservation reservation = mock(Reservation.class);
-        Customer customer = mock(Customer.class);
         String email = "example@example.eu";
 
         ReservationDTOResponse expected = new ReservationDTOResponse(id, "expected", "nice",
