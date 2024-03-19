@@ -42,7 +42,6 @@ class ReservationControllerIntegrationTest {
     private CustomerRepository customerRepository;
     private String basicAuthStaffHeader;
     private LocalDateTime time;
-    private ContactDetails customerContactDetails;
     private Customer restaurantCustomer;
     @Autowired
     private ModelMapper modelMapper;
@@ -81,7 +80,7 @@ class ReservationControllerIntegrationTest {
     @BeforeEach
     public void prepareRestaurantClient() {
         time = LocalDateTime.of(2024, 3, 18, 21, 15);
-        customerContactDetails = new ContactDetails("customer name", "Banana street", "132", "Warsaw", "11-111",
+        ContactDetails customerContactDetails = new ContactDetails("customer name", "Banana street", "132", "Warsaw", "11-111",
                 "987654321");
         Authority restaurantClient = new Authority(null, "ROLE_CLIENT");
         authorityRepository.save(restaurantClient);
@@ -140,10 +139,6 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void findById_ShouldMapAndReturnReservationDTOResponse_WhenReservationExist() {
-        LocalDateTime time = LocalDateTime.of(1990, 3, 18, 10, 11);
-        Reservation reservation = new Reservation(null, "test case", "test", 20, time,
-                null, restaurantCustomer);
-        reservationRepository.save(reservation);
 
         webTestClient.get()
                 .uri("/api/reservation/find/" + reservation.getId())
@@ -167,11 +162,8 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void findAll_ShouldReturnReservationDTOResponseList_WhenReservationExist() {
-        LocalDateTime time = LocalDateTime.of(1990, 3, 18, 10, 11);
-        Reservation reservation = new Reservation(null, "test case", "test", 20, time,
-                null, restaurantCustomer);
+
         reservation.setTables(new ArrayList<>()); //I set this as empty list, otherwise I got assertion failure null vs empty
-        reservationRepository.save(reservation);
 
         List<ReservationDTOResponse> expected = Arrays.asList(modelMapper.map(reservation, ReservationDTOResponse.class));
 
@@ -193,14 +185,8 @@ class ReservationControllerIntegrationTest {
     @Test
     public void update_ShouldUpdateReservationAndReturnReservationDTOResponse_WhenReservationIdAndDTOIsGiven() {
 
-        //Creating times
-        LocalDateTime originalTime = LocalDateTime.of(1987, 1, 1, 3, 18);
+        //Creating time for update procedure
         LocalDateTime updatedTime = LocalDateTime.of(1991, 4, 17, 11, 14);
-
-        //Creating reservation which is going to be updated and saving it to repo
-        Reservation originalReservation = new Reservation(null, "test case2", "test2", 9,
-                originalTime,null, restaurantCustomer);
-        reservationRepository.save(originalReservation);
 
         //Creating a new customer to whom updated reservation will be set
         ContactDetails contactDetailsForUpdate = new ContactDetails("update name", "update street",
@@ -225,7 +211,7 @@ class ReservationControllerIntegrationTest {
 
         //test itself
         webTestClient.put()
-                .uri("/api/reservation/update/" + originalReservation.getId())
+                .uri("/api/reservation/update/" + reservation.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
                 .bodyValue(reservationDTORequest)
                 .exchange()
@@ -246,13 +232,9 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void delete_ShouldDeleteReservationAndReturnResponseEntity_WhenReservationIdIsGiven() {
-        LocalDateTime originalTime = LocalDateTime.of(1987, 1, 1, 3, 18);
-        Reservation reservationToDelete = new Reservation(null, "test case2", "test2", 9,
-                originalTime,null, restaurantCustomer);
-        reservationRepository.save(reservationToDelete);
 
         webTestClient.delete()
-                .uri("/api/reservation/delete/" + reservationToDelete.getId())
+                .uri("/api/reservation/delete/" + reservation.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
                 .exchange()
                 .expectStatus().isOk()
@@ -260,13 +242,12 @@ class ReservationControllerIntegrationTest {
                 .consumeWith(response -> {
                     String actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",
+                    assertEquals("Reservation: " + reservation.getName() + " has been successfully deleted!",
                             actualResponse);
                     assertEquals(HttpStatus.OK, response.getStatus());
 
-                   Optional<Reservation> shouldBeDeleted = reservationRepository.findById(reservationToDelete.getId());
+                   Optional<Reservation> shouldBeDeleted = reservationRepository.findById(reservation.getId());
                    assertTrue(shouldBeDeleted.isEmpty());
                 });
     }
-
 }
