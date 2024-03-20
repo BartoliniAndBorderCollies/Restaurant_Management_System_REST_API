@@ -39,6 +39,12 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         return modelMapper.map(reservation, ReservationDTOResponse.class);
     }
 
+    private void assignTableToReservation(Reservation reservation) {
+        if(reservation.getTables().size() > 0) {
+            tableService.iterateAndSetTablesToReservation(reservation);
+        }
+    }
+
     private void assignCustomerToReservationAndSave(Reservation reservation) throws NotFoundInDatabaseException,
             CustomerAlreadyHasReservationException {
 
