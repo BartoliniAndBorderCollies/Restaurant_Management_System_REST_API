@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +21,6 @@ public class Table {
     private List<RestaurantOrder> restaurantOrders;
     @ManyToOne
     @JoinColumn(name = "reservation_id")
+    @JsonBackReference
     private Reservation reservation;
 }
