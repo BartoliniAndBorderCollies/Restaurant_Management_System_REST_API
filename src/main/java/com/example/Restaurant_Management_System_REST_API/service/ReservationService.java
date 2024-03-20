@@ -42,7 +42,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     }
 
     private void assignTableToReservation(Reservation reservation) {
-        if(reservation.getTables().size() > 0) {
+        if(reservation.getTables() != null && reservation.getTables().size() > 0) {
             tableService.iterateAndSetTablesToReservation(reservation);
         }
     }
