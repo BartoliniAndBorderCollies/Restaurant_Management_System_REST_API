@@ -16,10 +16,7 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private int chairsAmount;
     private boolean isAvailable;
-    private LocalDateTime reservationStart;
-    private LocalDateTime reservationEnd;
     @OneToMany(mappedBy = "table")
     private List<Order> orders;
     @ManyToOne
