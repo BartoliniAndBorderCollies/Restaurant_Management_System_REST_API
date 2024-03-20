@@ -27,9 +27,9 @@ public class TableService {
         return modelMapper.map(table, TableDTO.class);
     }
 
-    public List<Table> findAll() {
-        List<Table> tableList = new ArrayList<>();
-        tableRepository.findAll().forEach(table -> tableList.add(modelMapper.map(table, Table.class)));
+    public List<TableDTO> findAll() {
+        List<TableDTO> tableList = new ArrayList<>();
+        tableRepository.findAll().forEach(table -> tableList.add(modelMapper.map(table, TableDTO.class)));
 
         return tableList;
     }

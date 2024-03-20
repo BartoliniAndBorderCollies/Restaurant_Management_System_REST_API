@@ -23,7 +23,7 @@ public class TableController {
     }
 
     @GetMapping("/findAll")
-    public List<Table> findAll() {
+    public List<TableDTO> findAll() {
         return tableService.findAll();
     }
 
