@@ -28,6 +28,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
     private final CustomerService customerService;
+    private final TableService tableService;
 
     @Override
     public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException,
@@ -35,6 +36,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
 
         assignCustomerToReservationAndSave(reservation);
+        assignTableToReservation(reservation);
 
         return modelMapper.map(reservation, ReservationDTOResponse.class);
     }
