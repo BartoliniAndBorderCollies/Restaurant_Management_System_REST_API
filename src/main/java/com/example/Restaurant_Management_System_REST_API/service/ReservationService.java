@@ -126,6 +126,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
         Reservation reservationToDelete = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
+
+        tableService.iterateAndSetTablesToNullInReservationToDelete(reservationToDelete);//because Table is owning side
         reservationRepository.delete(reservationToDelete);
 
         return new ResponseEntity<>("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",
