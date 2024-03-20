@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTOs.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
@@ -19,8 +20,11 @@ public class TableService {
     private final TableRepository tableRepository;
     private final ModelMapper modelMapper;
 
-    public Table add(Table table) {
-        return tableRepository.save(table);
+    public TableDTO add(TableDTO tableDTO) {
+        Table table = modelMapper.map(tableDTO, Table.class);
+        tableRepository.save(table);
+
+        return modelMapper.map(table, TableDTO.class);
     }
 
     public List<Table> findAll() {
