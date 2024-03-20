@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTOs.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import lombok.AllArgsConstructor;
@@ -40,5 +41,13 @@ public class TableService {
         tableRepository.delete(tableToDelete);
 
         return new ResponseEntity<>("Table with id " + tableToDelete.getId() + " has been deleted!", HttpStatus.OK);
+    }
+
+    void iterateAndSetTablesToReservation(Reservation reservation) {
+        for (Table table: reservation.getTables()) {
+            table.setReservation(reservation);
+            table.setAvailable(false);
+            tableRepository.save(table);
+        }
     }
 }
