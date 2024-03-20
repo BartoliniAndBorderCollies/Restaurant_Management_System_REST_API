@@ -50,4 +50,12 @@ public class TableService {
             tableRepository.save(table);
         }
     }
+
+    void iterateAndSetTablesToNullInReservationToDelete(Reservation reservationToBeDeleted) {
+        for(Table table: reservationToBeDeleted.getTables()) {
+            table.setReservation(null);
+            table.setAvailable(true);
+            tableRepository.save(table);
+        }
+    }
 }
