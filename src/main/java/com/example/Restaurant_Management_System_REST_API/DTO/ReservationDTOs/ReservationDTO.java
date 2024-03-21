@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ReservationDTOResponse {
+public class ReservationDTO {
 
     private Long id;
     private String name;
