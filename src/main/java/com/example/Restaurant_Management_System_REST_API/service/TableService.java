@@ -35,8 +35,13 @@ public class TableService {
         return tableList;
     }
 
+    public TableDTO findById(Long id) throws NotFoundInDatabaseException {
+        Table table = tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
+        return modelMapper.map(table, TableDTO.class);
+    }
+
     public ResponseEntity<?> deleteById(Long id) throws NotFoundInDatabaseException {
-        Table tableToDelete = tableRepository.findById(id).orElseThrow(()-> new NotFoundInDatabaseException(Table.class));
+        Table tableToDelete = tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
 
         tableRepository.delete(tableToDelete);
 
@@ -44,7 +49,7 @@ public class TableService {
     }
 
     void iterateAndSetTablesToReservation(Reservation reservation) throws NotFoundInDatabaseException {
-        for (Table table: reservation.getTables()) {
+        for (Table table : reservation.getTables()) {
             checkIfTableExist(table.getId());
             table.setReservation(reservation);
             table.setAvailable(false);
@@ -53,11 +58,11 @@ public class TableService {
     }
 
     private void checkIfTableExist(Long id) throws NotFoundInDatabaseException {
-        tableRepository.findById(id).orElseThrow(()-> new NotFoundInDatabaseException(Table.class));
+        tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
     }
 
     void iterateAndSetTablesToNullInReservationToDelete(Reservation reservationToBeDeleted) {
-        for(Table table: reservationToBeDeleted.getTables()) {
+        for (Table table : reservationToBeDeleted.getTables()) {
             table.setReservation(null);
             table.setAvailable(true);
             tableRepository.save(table);
