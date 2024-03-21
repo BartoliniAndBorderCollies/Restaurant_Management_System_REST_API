@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationRequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
@@ -108,14 +107,13 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
-        CustomerDTOReservationRequest customerDTOReservationRequest = modelMapper.map(restaurantCustomer, CustomerDTOReservationRequest.class);
-        CustomerDTOReservationResponse customerDTOReservationResponse = modelMapper.map(restaurantCustomer, CustomerDTOReservationResponse.class);
+        CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
 
         ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Anniversary party",
-                "20 years of marriage!", 15, time, null, customerDTOReservationRequest);
+                "20 years of marriage!", 15, time, null, customerReservationDTO);
 
         ReservationDTOResponse expected = new ReservationDTOResponse(null, "Anniversary party",
-                "20 years of marriage!", 15, time, null, customerDTOReservationResponse);
+                "20 years of marriage!", 15, time, null, customerReservationDTO);
 
         webTestClient.post()
                 .uri("/api/reservation/add")
@@ -200,14 +198,13 @@ class ReservationControllerIntegrationTest {
         customerRepository.save(customerForUpdate);
 
         //Mapping created customer to DTOs to be able to provide it to request and to check in response
-        CustomerDTOReservationRequest customerDTORequest = modelMapper.map(customerForUpdate, CustomerDTOReservationRequest.class);
-        CustomerDTOReservationResponse customerDTOResponse = modelMapper.map(customerForUpdate, CustomerDTOReservationResponse.class);
+        CustomerReservationDTO customerReservationDTO = modelMapper.map(customerForUpdate, CustomerReservationDTO.class);
 
         ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, null, customerDTORequest);
+                "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
 
         ReservationDTOResponse expected = new ReservationDTOResponse(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, null, customerDTOResponse);
+                "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
 
         //test itself
         webTestClient.put()

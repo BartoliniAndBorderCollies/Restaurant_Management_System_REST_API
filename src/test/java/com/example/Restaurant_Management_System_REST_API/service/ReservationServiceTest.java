@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationRequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
@@ -181,8 +180,8 @@ class ReservationServiceTest {
         //Arrange
         Long id = 1L;
         LocalDateTime time = LocalDateTime.of(2020, 8, 10, 10, 15);
-        CustomerDTOReservationRequest customerDTO = mock(CustomerDTOReservationRequest.class);
-        CustomerDTOReservationResponse customerDTOResponse = mock(CustomerDTOReservationResponse.class);
+        CustomerReservationDTO customerDTO = mock(CustomerReservationDTO.class);
+        CustomerReservationDTO customerDTOResponse = mock(CustomerReservationDTO.class);
         String email = "example@example.eu";
 
         ReservationDTOResponse expected = new ReservationDTOResponse(id, "expected", "nice",

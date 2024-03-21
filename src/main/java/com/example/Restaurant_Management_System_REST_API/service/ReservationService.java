@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
@@ -84,7 +84,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(reservationDTOToBeUpdated::setPeopleAmount);
         Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(reservationDTOToBeUpdated::setStart);
         Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(reservationDTOToBeUpdated::setTables);
-        //Because I have different types in field of customer (CustomerDTOReservationResponse and CustomerDTOReservationRequest)
+        //Because I have different types in field of customer (CustomerReservationDTO and CustomerDTOReservationRequest)
         //I do like below. I need to use lambda because the ifPresent method expects a Consumer (a lambda that does not return a value).
         //This way, I'm passing a Consumer lambda to the ifPresent method
         Optional.ofNullable(reservationDTORequest.getCustomer()).ifPresent(customerRequest -> {
@@ -97,7 +97,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
                 customerService.checkIfCustomerHasAnyReservation(customerFromRequest);
 
                 //setting new customer to the reservation
-                reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerDTOReservationResponse.class));
+                reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerReservationDTO.class));
 
             } catch (NotFoundInDatabaseException | CustomerAlreadyHasReservationException e) {
                 //orElseThrow method can potentially throw a NotFoundInDatabaseException or CustomerAlreadyHasReservationException

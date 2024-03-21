@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import lombok.*;
 
@@ -20,5 +20,5 @@ public class ReservationDTOResponse {
     private int peopleAmount;
     private LocalDateTime start;
     private List<Table> tables;
-    private CustomerDTOReservationResponse customer;
+    private CustomerReservationDTO customer;
 }
