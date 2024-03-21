@@ -103,6 +103,7 @@ class ReservationControllerIntegrationTest {
     public void cleanDatabase() {
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
+        reservationRepository.deleteAll();
     }
 
     @Test
