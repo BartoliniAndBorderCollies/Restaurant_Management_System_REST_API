@@ -31,17 +31,18 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     private final TableService tableService;
 
     @Override
+    @Transactional(rollbackFor = NotFoundInDatabaseException.class)
     public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException,
             CustomerAlreadyHasReservationException {
         Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
 
         assignCustomerToReservationAndSave(reservation);
-        assignTableToReservation(reservation);
+        iterateAndSetTablesToReservation(reservation);
 
         return modelMapper.map(reservation, ReservationDTOResponse.class);
     }
 
-    private void assignTableToReservation(Reservation reservation) {
+    private void iterateAndSetTablesToReservation(Reservation reservation) throws NotFoundInDatabaseException {
         if(reservation.getTables() != null && reservation.getTables().size() > 0) {
             tableService.iterateAndSetTablesToReservation(reservation);
         }
