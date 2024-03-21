@@ -10,7 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,4 +70,21 @@ public class TableService {
             tableRepository.save(table);
         }
     }
+
+    void checkIfTablesAreAvailable(Reservation reservation) throws NotFoundInDatabaseException {
+        for (Table table : reservation.getTables()) {
+            Reservation existingReservation = findById(table.getId()).getReservation();
+            if (existingReservation != null) {
+                LocalDateTime existingReservationStart = existingReservation.getStart();
+                LocalDateTime newReservationStart = reservation.getStart();
+                if (existingReservationStart.isBefore(newReservationStart) &&
+                        existingReservationStart.plusHours(2).isAfter(newReservationStart)) { // I assume that max time is 2 hours
+
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Table with id " + table.getId() +
+                            " is not available at the requested time.");
+                }
+            }
+        }
+    }
+
 }
