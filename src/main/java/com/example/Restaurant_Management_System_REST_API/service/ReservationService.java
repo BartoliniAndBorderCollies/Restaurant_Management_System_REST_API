@@ -39,8 +39,10 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
 
         assignCustomerToReservationAndSave(reservation);
+        if(reservation.getTables() != null)
+           checkIfTablesAreAvailable(reservation);
+        
         iterateAndSetTablesToReservation(reservation);
-        checkIfTablesAreAvailable(reservation);
 
         return modelMapper.map(reservation, ReservationDTOResponse.class);
     }
