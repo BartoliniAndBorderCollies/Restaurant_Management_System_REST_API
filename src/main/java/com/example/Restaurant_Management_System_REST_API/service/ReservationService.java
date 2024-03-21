@@ -9,6 +9,8 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 
