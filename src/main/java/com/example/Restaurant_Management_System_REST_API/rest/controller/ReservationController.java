@@ -1,7 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.ReservationService;
@@ -20,28 +19,28 @@ public class ReservationController {
 
     // this will be done by owner, manager and staff
     @PostMapping("/add")
-    public ReservationDTOResponse create(@RequestBody ReservationDTORequest reservationDTORequest)
+    public ReservationDTO create(@RequestBody ReservationDTO reservationDTO)
             throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
-        return reservationService.create(reservationDTORequest);
+        return reservationService.create(reservationDTO);
     }
 
     // this will be done by owner, manager and staff
     @GetMapping("/find/{id}")
-    public ReservationDTOResponse findById(@PathVariable Long id) throws NotFoundInDatabaseException {
+    public ReservationDTO findById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return reservationService.findById(id);
     }
 
     // this will be done by owner, manager and staff
     @GetMapping("/findAll")
-    public List<ReservationDTOResponse> findAll() {
+    public List<ReservationDTO> findAll() {
         return reservationService.findAll();
     }
 
     // this will be done by owner, manager and staff
     @PutMapping("/update/{id}")
-    public ReservationDTOResponse update(@PathVariable Long id, @RequestBody ReservationDTORequest reservationDTORequest)
+    public ReservationDTO update(@PathVariable Long id, @RequestBody ReservationDTO reservationDTO)
             throws NotFoundInDatabaseException {
-        return reservationService.update(id, reservationDTORequest);
+        return reservationService.update(id, reservationDTO);
     }
 
     // this will be done by owner, manager and staff

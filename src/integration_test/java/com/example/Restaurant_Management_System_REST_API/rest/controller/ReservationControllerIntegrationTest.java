@@ -1,8 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
-import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -110,21 +109,21 @@ class ReservationControllerIntegrationTest {
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
 
-        ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Anniversary party",
+        ReservationDTO reservationDTO = new ReservationDTO(null, "Anniversary party",
                 "20 years of marriage!", 15, time, null, customerReservationDTO);
 
-        ReservationDTOResponse expected = new ReservationDTOResponse(null, "Anniversary party",
+        ReservationDTO expected = new ReservationDTO(null, "Anniversary party",
                 "20 years of marriage!", 15, time, null, customerReservationDTO);
 
         webTestClient.post()
                 .uri("/api/reservation/add")
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
-                .bodyValue(reservationDTORequest)
+                .bodyValue(reservationDTO)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(ReservationDTOResponse.class)
+                .expectBody(ReservationDTO.class)
                 .consumeWith(response -> {
-                    ReservationDTOResponse actualResponse = response.getResponseBody();
+                    ReservationDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
@@ -144,9 +143,9 @@ class ReservationControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(ReservationDTOResponse.class)
+                .expectBody(ReservationDTO.class)
                 .consumeWith(response -> {
-                    ReservationDTOResponse actualResponse = response.getResponseBody();
+                    ReservationDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(reservation.getName(), actualResponse.getName());
                     assertEquals(reservation.getDescription(), actualResponse.getDescription());
@@ -164,16 +163,16 @@ class ReservationControllerIntegrationTest {
 
         reservation.setTables(new ArrayList<>()); //I set this as empty list, otherwise I got assertion failure null vs empty
 
-        List<ReservationDTOResponse> expected = Arrays.asList(modelMapper.map(reservation, ReservationDTOResponse.class));
+        List<ReservationDTO> expected = Arrays.asList(modelMapper.map(reservation, ReservationDTO.class));
 
         webTestClient.get()
                 .uri("/api/reservation/findAll")
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(ReservationDTOResponse.class)
+                .expectBodyList(ReservationDTO.class)
                 .consumeWith(response -> {
-                    List<ReservationDTOResponse> actualResponse = response.getResponseBody();
+                    List<ReservationDTO> actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(expected.size(), actualResponse.size());
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
@@ -201,22 +200,22 @@ class ReservationControllerIntegrationTest {
         //Mapping created customer to DTOs to be able to provide it to request and to check in response
         CustomerReservationDTO customerReservationDTO = modelMapper.map(customerForUpdate, CustomerReservationDTO.class);
 
-        ReservationDTORequest reservationDTORequest = new ReservationDTORequest(null, "Birthday",
+        ReservationDTO reservationDTO = new ReservationDTO(null, "Birthday",
                 "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
 
-        ReservationDTOResponse expected = new ReservationDTOResponse(null, "Birthday",
+        ReservationDTO expected = new ReservationDTO(null, "Birthday",
                 "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
 
         //test itself
         webTestClient.put()
                 .uri("/api/reservation/update/" + reservation.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
-                .bodyValue(reservationDTORequest)
+                .bodyValue(reservationDTO)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(ReservationDTOResponse.class)
+                .expectBody(ReservationDTO.class)
                 .consumeWith(response -> {
-                    ReservationDTOResponse actualResponse = response.getResponseBody();
+                    ReservationDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
