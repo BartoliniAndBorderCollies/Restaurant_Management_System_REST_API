@@ -43,12 +43,17 @@ public class TableService {
         return new ResponseEntity<>("Table with id " + tableToDelete.getId() + " has been deleted!", HttpStatus.OK);
     }
 
-    void iterateAndSetTablesToReservation(Reservation reservation) {
+    void iterateAndSetTablesToReservation(Reservation reservation) throws NotFoundInDatabaseException {
         for (Table table: reservation.getTables()) {
+            checkIfTableExist(table.getId());
             table.setReservation(reservation);
             table.setAvailable(false);
             tableRepository.save(table);
         }
+    }
+
+    private void checkIfTableExist(Long id) throws NotFoundInDatabaseException {
+        tableRepository.findById(id).orElseThrow(()-> new NotFoundInDatabaseException(Table.class));
     }
 
     void iterateAndSetTablesToNullInReservationToDelete(Reservation reservationToBeDeleted) {
