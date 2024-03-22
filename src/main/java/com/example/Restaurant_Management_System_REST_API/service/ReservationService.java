@@ -136,7 +136,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Reservation reservationToDelete = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
 
-        tableService.iterateAndSetTablesToNullInReservationToDelete(reservationToDelete);//because Table is owning side
+        if(reservationToDelete.getTables() != null)
+            tableService.iterateAndSetTablesToNullInReservationToDelete(reservationToDelete);//because Table is owning side
         reservationRepository.delete(reservationToDelete);
 
         return new ResponseEntity<>("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",

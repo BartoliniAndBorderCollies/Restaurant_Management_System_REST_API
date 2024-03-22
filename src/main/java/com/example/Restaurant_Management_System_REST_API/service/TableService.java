@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.TableDTOs.TableDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
@@ -86,5 +86,4 @@ public class TableService {
             }
         }
     }
-
 }
