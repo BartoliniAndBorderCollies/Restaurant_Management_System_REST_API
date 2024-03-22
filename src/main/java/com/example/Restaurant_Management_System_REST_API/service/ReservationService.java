@@ -1,8 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOReservationResponse;
-import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTORequest;
-import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -25,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ReservationService implements GenericBasicCrudOperations<ReservationDTOResponse, ReservationDTORequest, Long> {
+public class ReservationService implements GenericBasicCrudOperations<ReservationDTO, ReservationDTO,  Long> {
 
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
@@ -34,17 +33,17 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
     @Override
     @Transactional(rollbackFor = NotFoundInDatabaseException.class)
-    public ReservationDTOResponse create(ReservationDTORequest reservationDTORequest) throws NotFoundInDatabaseException,
+    public ReservationDTO create(ReservationDTO reservationDTO) throws NotFoundInDatabaseException,
             CustomerAlreadyHasReservationException {
-        Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
+        Reservation reservation = modelMapper.map(reservationDTO, Reservation.class);
 
         assignCustomerToReservationAndSave(reservation);
         if(reservation.getTables() != null)
            checkIfTablesAreAvailable(reservation);
-        
+
         iterateAndSetTablesToReservation(reservation);
 
-        return modelMapper.map(reservation, ReservationDTOResponse.class);
+        return modelMapper.map(reservation, ReservationDTO.class);
     }
 
     private void checkIfTablesAreAvailable(Reservation reservation) throws NotFoundInDatabaseException {
@@ -75,34 +74,34 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     }
 
     @Override
-    public ReservationDTOResponse findById(Long id) throws NotFoundInDatabaseException {
+    public ReservationDTO findById(Long id) throws NotFoundInDatabaseException {
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
 
-        return modelMapper.map(reservation, ReservationDTOResponse.class);
+        return modelMapper.map(reservation, ReservationDTO.class);
     }
 
     @Override
-    public List<ReservationDTOResponse> findAll() {
-        List<ReservationDTOResponse> reservationDTOResponseList = new ArrayList<>();
+    public List<ReservationDTO> findAll() {
+        List<ReservationDTO> reservationDTOList = new ArrayList<>();
 
         reservationRepository.findAll().forEach(reservation ->
-                reservationDTOResponseList.add(modelMapper.map(reservation, ReservationDTOResponse.class)));
+                reservationDTOList.add(modelMapper.map(reservation, ReservationDTO.class)));
 
-        return reservationDTOResponseList;
+        return reservationDTOList;
     }
 
     @Override
-    public ReservationDTOResponse update(Long id, ReservationDTORequest reservationDTORequest)
+    public ReservationDTO update(Long id, ReservationDTO reservationDTORequest)
             throws NotFoundInDatabaseException {
-        ReservationDTOResponse reservationDTOToBeUpdated = findById(id);
+        ReservationDTO reservationDTOToBeUpdated = findById(id);
 
         Optional.ofNullable(reservationDTORequest.getName()).ifPresent(reservationDTOToBeUpdated::setName);
         Optional.ofNullable(reservationDTORequest.getDescription()).ifPresent(reservationDTOToBeUpdated::setDescription);
         Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(reservationDTOToBeUpdated::setPeopleAmount);
         Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(reservationDTOToBeUpdated::setStart);
         Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(reservationDTOToBeUpdated::setTables);
-        //Because I have different types in field of customer (CustomerDTOReservationResponse and CustomerDTOReservationRequest)
+        //Because I have different types in field of customer (CustomerReservationDTO and CustomerDTOReservationRequest)
         //I do like below. I need to use lambda because the ifPresent method expects a Consumer (a lambda that does not return a value).
         //This way, I'm passing a Consumer lambda to the ifPresent method
         Optional.ofNullable(reservationDTORequest.getCustomer()).ifPresent(customerRequest -> {
@@ -115,7 +114,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
                 customerService.checkIfCustomerHasAnyReservation(customerFromRequest);
 
                 //setting new customer to the reservation
-                reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerDTOReservationResponse.class));
+                reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerReservationDTO.class));
 
             } catch (NotFoundInDatabaseException | CustomerAlreadyHasReservationException e) {
                 //orElseThrow method can potentially throw a NotFoundInDatabaseException or CustomerAlreadyHasReservationException

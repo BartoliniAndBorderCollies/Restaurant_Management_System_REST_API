@@ -84,6 +84,8 @@ class SupplierControllerIntegrationTest {
     @AfterAll
     public void cleanCustomers() {
         customerRepository.deleteAll();
+        authorityRepository.deleteAll();
+        supplierRepository.deleteAll();
     }
 
 

@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs;
 
-import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
+import com.example.Restaurant_Management_System_REST_API.DTO.ContactDetailsDTO.ContactDetailsDTO;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Data
-public class CustomerDTOReservationRequest {
+public class CustomerReservationDTO {
 
 
     private Long id;
-    private ContactDetails contactDetails;
+    private ContactDetailsDTO contactDetails;
     private String emailAddress;
 }
