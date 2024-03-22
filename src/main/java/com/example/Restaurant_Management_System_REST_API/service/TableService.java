@@ -37,9 +37,8 @@ public class TableService {
         return tableList;
     }
 
-    public TableDTO findById(Long id) throws NotFoundInDatabaseException {
-        Table table = tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
-        return modelMapper.map(table, TableDTO.class);
+    private Table findById(Long id) throws NotFoundInDatabaseException {
+        return tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
     }
 
     public ResponseEntity<?> deleteById(Long id) throws NotFoundInDatabaseException {
