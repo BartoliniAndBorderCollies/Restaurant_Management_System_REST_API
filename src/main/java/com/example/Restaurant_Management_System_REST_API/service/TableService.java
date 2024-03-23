@@ -73,16 +73,16 @@ public class TableService {
     void checkIfTablesAreAvailable(Reservation reservation) throws NotFoundInDatabaseException {
         for (Table table : reservation.getTables()) {
             Reservation existingReservation = findById(table.getId()).getReservation();
-            if (existingReservation != null) {
-                LocalDateTime existingReservationStart = existingReservation.getStart();
-                LocalDateTime newReservationStart = reservation.getStart();
-                if (existingReservationStart.isBefore(newReservationStart) &&
-                        existingReservationStart.plusHours(2).isAfter(newReservationStart)) { // I assume that max time is 2 hours
 
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Table with id " + table.getId() +
-                            " is not available at the requested time.");
-                }
+            if (existingReservation != null && isTimeConflict(existingReservation.getStart(), reservation.getStart())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Table with id " + table.getId() +
+                        " is not available at the requested time.");
             }
         }
+    }
+
+    boolean isTimeConflict(LocalDateTime existingStart, LocalDateTime newStart) {
+        return existingStart.isBefore(newStart) && existingStart.plusHours(2).isAfter(newStart); // I assume that max time is 2 hours,
+        // will return true if the existing reservation ends after the new reservation starts
     }
 }
