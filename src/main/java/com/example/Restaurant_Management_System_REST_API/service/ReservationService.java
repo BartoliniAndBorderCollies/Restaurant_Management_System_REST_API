@@ -1,6 +1,5 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
@@ -98,41 +97,10 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
         ReservationDTO existingReservationDTO = findById(id);
 
-        if(reservationDTORequest.getTables() != null)
-            checkIfTablesAreAvailable(modelMapper.map(reservationDTORequest, Reservation.class));
-
         Optional.ofNullable(reservationDTORequest.getName()).ifPresent(existingReservationDTO::setName);
         Optional.ofNullable(reservationDTORequest.getDescription()).ifPresent(existingReservationDTO::setDescription);
         Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(existingReservationDTO::setPeopleAmount);
-        Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(existingReservationDTO::setStart);
 
-        Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(existingReservationDTO::setTables);
-
-        //Because I have different types in field of customer (CustomerReservationDTO and CustomerDTOReservationRequest)
-        //I do like below. I need to use lambda because the ifPresent method expects a Consumer (a lambda that does not return a value).
-        //This way, I'm passing a Consumer lambda to the ifPresent method
-        Optional.ofNullable(reservationDTORequest.getCustomer()).ifPresent(customerRequest -> {
-            try {
-                //checking if customer exists
-                Customer customerFromRequest = customerService.getCustomerFromReservationByEmailAddress
-                        (modelMapper.map(reservationDTORequest, Reservation.class)).orElseThrow(() -> new NotFoundInDatabaseException(Customer.class));
-
-                //checking if this customer already has any reservation
-                customerService.checkIfCustomerHasAnyReservation(customerFromRequest);
-
-                //setting new customer to the reservation
-                existingReservationDTO.setCustomer(modelMapper.map(customerFromRequest, CustomerReservationDTO.class));
-
-            } catch (NotFoundInDatabaseException | CustomerAlreadyHasReservationException e) {
-                //orElseThrow method can potentially throw a NotFoundInDatabaseException or CustomerAlreadyHasReservationException
-                // both are checked exceptions
-                //However, in lambda expression, checked exceptions cannot be thrown directly. that is why
-                //I wrap the checked exception in an unchecked exception, like RuntimeException
-                throw new RuntimeException(e);
-            }
-        });
-
-        //saving new reservation data to database
         reservationRepository.save(modelMapper.map(existingReservationDTO, Reservation.class));
 
         return existingReservationDTO;
