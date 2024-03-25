@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ReservationService implements GenericBasicCrudOperations<ReservationDTO, ReservationDTO,  Long> {
+public class ReservationService implements GenericBasicCrudOperations<ReservationDTO, ReservationDTO, Long> {
 
     private final ReservationRepository reservationRepository;
     private final ModelMapper modelMapper;
@@ -38,8 +38,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Reservation reservation = modelMapper.map(reservationDTO, Reservation.class);
 
         assignCustomerToReservationAndSave(reservation);
-        if(reservation.getTables() != null)
-           checkIfTablesAreAvailable(reservation);
+        if (reservation.getTables() != null)
+            checkIfTablesAreAvailable(reservation);
 
         iterateAndSetTablesToReservation(reservation);
 
@@ -51,8 +51,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     }
 
     private void iterateAndSetTablesToReservation(Reservation reservation) throws NotFoundInDatabaseException {
-        if(reservation.getTables() != null && reservation.getTables().size() > 0) {
-            tableService.iterateAndSetTablesToReservation(reservation);
+        if (reservation.getTables() != null && reservation.getTables().size() > 0) {
+            tableService.iterateAndSetTablesToReservationAndSave(reservation);
         }
     }
 
@@ -143,8 +143,8 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Reservation reservationToDelete = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
 
-        if(reservationToDelete.getTables() != null)
-            tableService.iterateAndSetTablesToNullInReservationToDelete(reservationToDelete);//because Table is owning side
+        if (reservationToDelete.getTables() != null)
+            tableService.iterateAndSetReservationToNullInTablesAndSave(reservationToDelete);//because Table is owning side
         reservationRepository.delete(reservationToDelete);
 
         return new ResponseEntity<>("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",
