@@ -92,15 +92,22 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     }
 
     @Override
+    @Transactional
     public ReservationDTO update(Long id, ReservationDTO reservationDTORequest)
             throws NotFoundInDatabaseException {
-        ReservationDTO reservationDTOToBeUpdated = findById(id);
 
-        Optional.ofNullable(reservationDTORequest.getName()).ifPresent(reservationDTOToBeUpdated::setName);
-        Optional.ofNullable(reservationDTORequest.getDescription()).ifPresent(reservationDTOToBeUpdated::setDescription);
-        Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(reservationDTOToBeUpdated::setPeopleAmount);
-        Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(reservationDTOToBeUpdated::setStart);
-        Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(reservationDTOToBeUpdated::setTables);
+        ReservationDTO existingReservationDTO = findById(id);
+
+        if(reservationDTORequest.getTables() != null)
+            checkIfTablesAreAvailable(modelMapper.map(reservationDTORequest, Reservation.class));
+
+        Optional.ofNullable(reservationDTORequest.getName()).ifPresent(existingReservationDTO::setName);
+        Optional.ofNullable(reservationDTORequest.getDescription()).ifPresent(existingReservationDTO::setDescription);
+        Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(existingReservationDTO::setPeopleAmount);
+        Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(existingReservationDTO::setStart);
+
+        Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(existingReservationDTO::setTables);
+
         //Because I have different types in field of customer (CustomerReservationDTO and CustomerDTOReservationRequest)
         //I do like below. I need to use lambda because the ifPresent method expects a Consumer (a lambda that does not return a value).
         //This way, I'm passing a Consumer lambda to the ifPresent method
@@ -114,7 +121,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
                 customerService.checkIfCustomerHasAnyReservation(customerFromRequest);
 
                 //setting new customer to the reservation
-                reservationDTOToBeUpdated.setCustomer(modelMapper.map(customerFromRequest, CustomerReservationDTO.class));
+                existingReservationDTO.setCustomer(modelMapper.map(customerFromRequest, CustomerReservationDTO.class));
 
             } catch (NotFoundInDatabaseException | CustomerAlreadyHasReservationException e) {
                 //orElseThrow method can potentially throw a NotFoundInDatabaseException or CustomerAlreadyHasReservationException
@@ -126,9 +133,9 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         });
 
         //saving new reservation data to database
-        reservationRepository.save(modelMapper.map(reservationDTOToBeUpdated, Reservation.class));
+        reservationRepository.save(modelMapper.map(existingReservationDTO, Reservation.class));
 
-        return reservationDTOToBeUpdated;
+        return existingReservationDTO;
     }
 
     @Override
