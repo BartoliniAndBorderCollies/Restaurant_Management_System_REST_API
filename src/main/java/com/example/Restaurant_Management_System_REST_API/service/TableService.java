@@ -82,7 +82,11 @@ public class TableService {
     }
 
     boolean isTimeConflict(LocalDateTime existingStart, LocalDateTime newStart) {
-        return existingStart.isBefore(newStart) && existingStart.plusHours(2).isAfter(newStart); // I assume that max time is 2 hours,
-        // will return true if the existing reservation ends after the new reservation starts
+        LocalDateTime existingEnd = existingStart.plusHours(2);
+        LocalDateTime newEnd = newStart.plusHours(2);
+
+        return (newStart.isEqual(existingStart) || newStart.isAfter(existingStart)) && newStart.isBefore(existingEnd)
+                || (newEnd.isAfter(existingStart) && newEnd.isBefore(existingEnd))
+                || (existingStart.isAfter(newStart) && existingStart.isBefore(newEnd));
     }
 }
