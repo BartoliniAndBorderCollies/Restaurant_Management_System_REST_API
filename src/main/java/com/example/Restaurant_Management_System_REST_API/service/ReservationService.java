@@ -103,6 +103,12 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(existingReservationDTO::setStart);
 
         Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(tableDTOList -> {
+            try {
+                checkIfTablesAreAvailable(modelMapper.map(reservationDTORequest, Reservation.class));
+            } catch (NotFoundInDatabaseException e) {
+                throw new RuntimeException(e);
+            }
+
             //setting existing reservation tables to null
             tableService.iterateAndSetReservationToNullInTablesAndSave(modelMapper.map(existingReservationDTO, Reservation.class));
             //setting tables to update reservation
