@@ -31,7 +31,6 @@ public class Reservation {
     @NotNull(message = "Start time of the reservation is required!")
     private LocalDateTime start;
     @ManyToMany(mappedBy = "reservationList")
-    @JsonManagedReference
     private List<Table> tables;
     @OneToOne
     @JoinColumn(name = "customer_id")
