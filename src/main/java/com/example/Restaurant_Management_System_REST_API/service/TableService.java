@@ -52,7 +52,14 @@ public class TableService {
     void iterateAndSetTablesToReservationAndSave(Reservation reservation) throws NotFoundInDatabaseException {
         for (Table table : reservation.getTables()) {
             checkIfTableExist(table.getId());
-            table.setReservation(reservation);
+            List<Reservation> reservationList = new ArrayList<>();
+
+            if(table.getReservationList() != null)
+                reservationList = table.getReservationList();
+
+            reservationList.add(reservation);
+            table.setReservationList(reservationList);
+
             table.setAvailable(false);
             tableRepository.save(table);
         }
@@ -64,7 +71,7 @@ public class TableService {
 
     void iterateAndSetReservationToNullInTablesAndSave(Reservation reservationToBeDeleted) {
         for (Table table : reservationToBeDeleted.getTables()) {
-            table.setReservation(null);
+            table.setReservationList(null);
             table.setAvailable(true);
             tableRepository.save(table);
         }
