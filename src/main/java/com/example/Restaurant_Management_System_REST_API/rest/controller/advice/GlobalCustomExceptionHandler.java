@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller.advice;
 
+import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import jakarta.validation.ConstraintViolationException;
@@ -31,6 +32,11 @@ public class GlobalCustomExceptionHandler {
 
     @ExceptionHandler(ObjectAlreadyExistException.class)
     public ResponseEntity<?> handleObjectAlreadyExistException (ObjectAlreadyExistException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(CustomerAlreadyHasReservationException.class)
+    public ResponseEntity<?> handleCustomerAlreadyHasReservationException (CustomerAlreadyHasReservationException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

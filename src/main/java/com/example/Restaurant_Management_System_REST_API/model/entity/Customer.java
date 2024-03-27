@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -82,5 +83,18 @@ public class Customer implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) && Objects.equals(password, customer.password) && Objects.equals(emailAddress, customer.emailAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, password, emailAddress);
     }
 }
