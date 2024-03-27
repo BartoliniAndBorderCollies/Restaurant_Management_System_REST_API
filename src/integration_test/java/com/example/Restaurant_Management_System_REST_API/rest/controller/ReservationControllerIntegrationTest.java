@@ -178,14 +178,9 @@ class ReservationControllerIntegrationTest {
                 .consumeWith(response -> {
                     List<ReservationDTO> actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertListForSizeAndElements(expected, actualResponse);
+                    assertEquals(expected.size(), actualResponse.size());
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
-    }
-
-    private void assertListForSizeAndElements
-            (List<ReservationDTO> expected, List<ReservationDTO> actualResponse) {
-        assertEquals(expected.size(), actualResponse.size());
-        assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
