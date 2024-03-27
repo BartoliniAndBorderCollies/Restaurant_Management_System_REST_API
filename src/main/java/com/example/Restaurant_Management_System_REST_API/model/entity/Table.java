@@ -19,8 +19,9 @@ public class Table {
     private boolean isAvailable;
     @OneToMany(mappedBy = "table")
     private List<RestaurantOrder> restaurantOrders;
-    @ManyToOne
-    @JoinColumn(name = "reservation_id")
+    @ManyToMany //this is the owning side because it has @JoinColumn
+    @JoinTable(name = "tables_and_reservations", joinColumns = @JoinColumn(name = "table_id"),
+            inverseJoinColumns = @JoinColumn(name = "reservation_id"))
     @JsonBackReference
-    private Reservation reservation;
+    private List<Reservation> reservationList;
 }
