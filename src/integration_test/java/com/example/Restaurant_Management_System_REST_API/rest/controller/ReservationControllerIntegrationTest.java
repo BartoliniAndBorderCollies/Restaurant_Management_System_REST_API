@@ -105,6 +105,12 @@ class ReservationControllerIntegrationTest {
         reservationRepository.deleteAll();
     }
 
+    @AfterEach
+    public void cleanup() {
+        reservationRepository.deleteAll();
+    }
+
+
     @Test
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
@@ -132,7 +138,6 @@ class ReservationControllerIntegrationTest {
                     assertIterableEquals(expected.getTables(), actualResponse.getTables());
                     assertEquals(expected.getCustomer(), actualResponse.getCustomer());
                 });
-        reservationRepository.deleteAll();
     }
 
     @Test
@@ -155,7 +160,6 @@ class ReservationControllerIntegrationTest {
                     Customer actualCustomer = modelMapper.map(actualResponse.getCustomer(), Customer.class);
                     assertEquals(reservation.getCustomer(), actualCustomer);
                 });
-        reservationRepository.deleteAll();
     }
 
     @Test
@@ -174,10 +178,14 @@ class ReservationControllerIntegrationTest {
                 .consumeWith(response -> {
                     List<ReservationDTO> actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals(expected.size(), actualResponse.size());
-                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+                    assertListForSizeAndElements(expected, actualResponse);
                 });
-        reservationRepository.deleteAll();
+    }
+
+    private void assertListForSizeAndElements
+            (List<ReservationDTO> expected, List<ReservationDTO> actualResponse) {
+        assertEquals(expected.size(), actualResponse.size());
+        assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
@@ -224,7 +232,6 @@ class ReservationControllerIntegrationTest {
                     assertTrue(actualResponse.getTables().isEmpty());
                     assertEquals(expected.getCustomer(), actualResponse.getCustomer());
                 });
-        reservationRepository.deleteAll();
     }
 
     @Test
