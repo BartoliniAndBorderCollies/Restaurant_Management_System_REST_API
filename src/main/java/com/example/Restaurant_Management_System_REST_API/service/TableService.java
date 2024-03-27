@@ -85,9 +85,6 @@ public class TableService {
         }
     }
 
-    //this is a simple validation it checks just the table id of the previous reservation. Because table does not hold
-    //list of reservation but the last one. Therefore, this validation checks only id of the previous reservation table
-    //I spent many hours to discover it and I aware of this situation, but for now it stays like it is.
     boolean isTimeConflict(LocalDateTime existingStart, LocalDateTime newStart) {
         LocalDateTime existingEnd = existingStart.plusHours(2);
         LocalDateTime newEnd = newStart.plusHours(2);
