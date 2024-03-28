@@ -2,13 +2,16 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,9 @@ class ReservationControllerIntegrationTest {
     private ReservationRepository reservationRepository;
     private Set<Authority> restaurantClientAuthoritySet;
     private Reservation reservation;
+    @Autowired
+    private TableRepository tableRepository;
+    private List<Table> tableList;
 
 
     @BeforeAll
@@ -91,10 +97,24 @@ class ReservationControllerIntegrationTest {
     }
 
     @BeforeEach
+    public void prepareRestaurantTables() {
+        // Create tables with initial values
+        Table table1 = new Table(null, true, null, new ArrayList<>());
+        Table table2 = new Table(null, true, null, new ArrayList<>());
+        Table table3 = new Table(null, true, null, new ArrayList<>());
+        tableList = Arrays.asList(table1, table2, table3);
+
+        // Save each table in the repository
+        for (Table table: tableList) {
+            tableRepository.save(table);
+        }
+    }
+
+    @BeforeEach
     public void prepareReservationForTests() {
         time = LocalDateTime.of(2024, 3, 18, 21, 15);
         reservation = new Reservation(null, "test case", "test", 20, time,
-                null, restaurantCustomer);
+                tableList, restaurantCustomer);
         reservationRepository.save(reservation);
     }
 
