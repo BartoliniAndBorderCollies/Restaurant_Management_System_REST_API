@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.exception.TableNotAvailableException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
@@ -92,38 +93,36 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
     @Override
     @Transactional
-    public ReservationDTO update(Long id, ReservationDTO reservationDTORequest)
-            throws NotFoundInDatabaseException {
-
+    public ReservationDTO update(Long id, ReservationDTO reservationDTORequest) throws NotFoundInDatabaseException {
         ReservationDTO existingReservationDTO = findById(id);
 
+        // Update fields if they are not null
         Optional.ofNullable(reservationDTORequest.getName()).ifPresent(existingReservationDTO::setName);
         Optional.ofNullable(reservationDTORequest.getDescription()).ifPresent(existingReservationDTO::setDescription);
         Optional.of(reservationDTORequest.getPeopleAmount()).ifPresent(existingReservationDTO::setPeopleAmount);
         Optional.ofNullable(reservationDTORequest.getStart()).ifPresent(existingReservationDTO::setStart);
 
-        Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(tableDTOList -> {
-            try {
-                checkIfTablesAreAvailable(modelMapper.map(reservationDTORequest, Reservation.class));
-            } catch (NotFoundInDatabaseException e) {
-                throw new RuntimeException(e);
-            }
-
-            //setting existing reservation tables to null
-            tableService.iterateAndSetReservationToNullInTablesAndSave(modelMapper.map(existingReservationDTO, Reservation.class));
-            //setting tables to update reservation
-            try {
-                existingReservationDTO.setTables(tableDTOList); // Set the new tables here, because next line creates new object
-                tableService.iterateAndSetTablesToReservationAndSave(modelMapper.map(existingReservationDTO, Reservation.class));
-                reservationRepository.save(modelMapper.map(existingReservationDTO, Reservation.class));
-            } catch (NotFoundInDatabaseException e) {
-                throw new RuntimeException(e);
-            }
+        // If tables are not null, check their availability and update them
+        Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(tables -> {
+            Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
+            checkIfTablesAreAvailableAndUpdate(reservation);
+            existingReservationDTO.setTables(tables);
         });
 
+        // Save the updated reservation
         reservationRepository.save(modelMapper.map(existingReservationDTO, Reservation.class));
 
         return existingReservationDTO;
+    }
+
+    private void checkIfTablesAreAvailableAndUpdate(Reservation reservation) {
+        try {
+            checkIfTablesAreAvailable(reservation);
+            tableService.iterateAndSetReservationToNullInTablesAndSave(reservation);
+            tableService.iterateAndSetTablesToReservationAndSave(reservation);
+        } catch (NotFoundInDatabaseException e) {
+            throw new TableNotAvailableException();
+        }
     }
 
     @Override
