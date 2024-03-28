@@ -1,6 +1,5 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -30,7 +29,9 @@ public class Reservation {
     private int peopleAmount;
     @NotNull(message = "Start time of the reservation is required!")
     private LocalDateTime start;
-    @ManyToMany(mappedBy = "reservationList")
+    @ManyToMany //now this is the owning side
+    @JoinTable(name = "tables_and_reservations", joinColumns = @JoinColumn(name = "reservation_id"),
+            inverseJoinColumns = @JoinColumn(name = "table_id"))
     private List<Table> tables;
     @OneToOne
     @JoinColumn(name = "customer_id")
