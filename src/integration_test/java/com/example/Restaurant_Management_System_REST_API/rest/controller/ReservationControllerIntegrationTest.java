@@ -24,6 +24,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -162,6 +163,10 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void findById_ShouldMapAndReturnReservationDTOResponse_WhenReservationExist() {
+        // Map each Table to TableDTO
+        List<TableDTO> tableListDTO = reservation.getTables().stream()
+                .map(table -> modelMapper.map(table, TableDTO.class))
+                .collect(Collectors.toList());
 
         webTestClient.get()
                 .uri("/api/reservation/find/" + reservation.getId())
@@ -176,7 +181,8 @@ class ReservationControllerIntegrationTest {
                     assertEquals(reservation.getDescription(), actualResponse.getDescription());
                     assertEquals(reservation.getPeopleAmount(), actualResponse.getPeopleAmount());
                     assertEquals(reservation.getStart(), actualResponse.getStart());
-                    assertTrue(actualResponse.getTables().isEmpty());
+                    assertIterableEquals(tableListDTO, actualResponse.getTables());
+
                     Customer actualCustomer = modelMapper.map(actualResponse.getCustomer(), Customer.class);
                     assertEquals(reservation.getCustomer(), actualCustomer);
                 });
