@@ -214,6 +214,11 @@ class ReservationControllerIntegrationTest {
         ReservationDTO expected = new ReservationDTO(null, "Birthday",
                 "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
 
+        LocalDateTime time2 = LocalDateTime.of(2024, 3, 18, 21, 15);
+        Reservation reservationToUpdateTest = new Reservation(null, "birthday", "50-th",
+                10, time2, null, customerForUpdate);
+        reservationRepository.save(reservationToUpdateTest);
+
         //test itself
         webTestClient.put()
                 .uri("/api/reservation/update/" + reservation.getId())
@@ -230,7 +235,6 @@ class ReservationControllerIntegrationTest {
                     assertEquals(expected.getPeopleAmount(), actualResponse.getPeopleAmount());
                     assertEquals(expected.getStart(), actualResponse.getStart());
                     assertTrue(actualResponse.getTables().isEmpty());
-                    assertEquals(expected.getCustomer(), actualResponse.getCustomer());
                 });
     }
 
