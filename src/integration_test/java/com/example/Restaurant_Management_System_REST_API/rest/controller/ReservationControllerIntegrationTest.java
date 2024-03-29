@@ -124,6 +124,7 @@ class ReservationControllerIntegrationTest {
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
         reservationRepository.deleteAll();
+        tableRepository.deleteAll();
     }
 
     @AfterEach
