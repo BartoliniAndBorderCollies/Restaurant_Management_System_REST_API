@@ -236,15 +236,12 @@ class ReservationControllerIntegrationTest {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(customerForUpdate, CustomerReservationDTO.class);
 
         ReservationDTO reservationDTO = new ReservationDTO(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
+                "10 years of struggle on planet earth", 12, updatedTime, getTableDTOSList(),
+                customerReservationDTO);
 
         ReservationDTO expected = new ReservationDTO(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
-
-        LocalDateTime time2 = LocalDateTime.of(2024, 3, 18, 21, 15);
-        Reservation reservationToUpdateTest = new Reservation(null, "birthday", "50-th",
-                10, time2, null, customerForUpdate);
-        reservationRepository.save(reservationToUpdateTest);
+                "10 years of struggle on planet earth", 12, updatedTime, getTableDTOSList(),
+                customerReservationDTO);
 
         //test itself
         webTestClient.put()
@@ -261,7 +258,7 @@ class ReservationControllerIntegrationTest {
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPeopleAmount(), actualResponse.getPeopleAmount());
                     assertEquals(expected.getStart(), actualResponse.getStart());
-                    assertTrue(actualResponse.getTables().isEmpty());
+                    assertIterableEquals(expected.getTables(), actualResponse.getTables());
                 });
     }
 
