@@ -16,6 +16,8 @@ class TableServiceTest {
     private ModelMapper modelMapper;
     private TableRepository tableRepository;
     private TableService tableService;
+    private TableDTO tableDTO;
+    private Table table;
 
     @BeforeEach
     public void prepareEnvironment() {
@@ -24,13 +26,15 @@ class TableServiceTest {
         tableService = new TableService(tableRepository, modelMapper);
     }
 
+    @BeforeEach
+    public void prepareTableDTOAndTable() {
+        tableDTO = new TableDTO(1L);
+        table = mock(Table.class);
+    }
 
     @Test
     public void add_ShouldMapAndSaveAndMapAgainAndReturn_WhenTableDTOIsGiven() {
         //Arrange
-        TableDTO tableDTO = new TableDTO(1L);
-        Table table = mock(Table.class);
-
         when(modelMapper.map(tableDTO, Table.class)).thenReturn(table);
         when(tableRepository.save(table)).thenReturn(table);
         when(modelMapper.map(table, TableDTO.class)).thenReturn(tableDTO);
