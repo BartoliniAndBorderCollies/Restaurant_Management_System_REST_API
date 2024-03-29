@@ -7,6 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -44,6 +47,22 @@ class TableServiceTest {
 
         //Assert
         assertEquals(tableDTO, actual);
+    }
+
+    @Test
+    public void findAll_ShouldMapEachTableToDTOAndReturnTableDTOList_WhenTableExist() {
+        //Arrange
+        List<TableDTO> tableList = Arrays.asList(tableDTO);
+        List<Table> tables = Arrays.asList(table);
+
+        when(tableRepository.findAll()).thenReturn(tables);
+        when(modelMapper.map(table, TableDTO.class)).thenReturn(tableDTO);
+
+        //Act
+        List<TableDTO> actual = tableService.findAll();
+
+        //Assert
+        assertIterableEquals(tableList, actual);
     }
 
 }
