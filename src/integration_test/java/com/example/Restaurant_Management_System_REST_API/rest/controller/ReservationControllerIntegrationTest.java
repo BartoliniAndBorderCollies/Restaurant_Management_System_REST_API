@@ -136,11 +136,15 @@ class ReservationControllerIntegrationTest {
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
 
+        List<TableDTO> tableDTOList = tableList.stream()
+                .map(table -> modelMapper.map(table, TableDTO.class))
+                .toList();
+
         ReservationDTO reservationDTO = new ReservationDTO(null, "Anniversary party",
-                "20 years of marriage!", 15, time, null, customerReservationDTO);
+                "20 years of marriage!", 15, time, tableDTOList, customerReservationDTO);
 
         ReservationDTO expected = new ReservationDTO(null, "Anniversary party",
-                "20 years of marriage!", 15, time, null, customerReservationDTO);
+                "20 years of marriage!", 15, time, tableDTOList, customerReservationDTO);
 
         webTestClient.post()
                 .uri("/api/reservation/add")
