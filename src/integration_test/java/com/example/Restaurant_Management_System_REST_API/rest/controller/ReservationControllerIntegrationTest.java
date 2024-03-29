@@ -195,8 +195,6 @@ class ReservationControllerIntegrationTest {
     @Test
     public void findAll_ShouldReturnReservationDTOResponseList_WhenReservationExist() {
 
-        reservation.setTables(new ArrayList<>()); //I set this as empty list, otherwise I got assertion failure null vs empty
-
         List<ReservationDTO> expected = Arrays.asList(modelMapper.map(reservation, ReservationDTO.class));
 
         webTestClient.get()
@@ -208,14 +206,9 @@ class ReservationControllerIntegrationTest {
                 .consumeWith(response -> {
                     List<ReservationDTO> actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertListForSizeAndElements(expected, actualResponse);
+                    assertEquals(expected.size(), actualResponse.size());
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
-    }
-
-    private void assertListForSizeAndElements
-            (List<ReservationDTO> expected, List<ReservationDTO> actualResponse) {
-        assertEquals(expected.size(), actualResponse.size());
-        assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
