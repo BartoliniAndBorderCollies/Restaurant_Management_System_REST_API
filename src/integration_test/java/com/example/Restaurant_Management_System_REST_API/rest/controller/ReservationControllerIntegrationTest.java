@@ -132,6 +132,12 @@ class ReservationControllerIntegrationTest {
     }
 
 
+    private List<TableDTO> getTableDTOSList() {
+        return reservation.getTables().stream()
+                .map(table -> modelMapper.map(table, TableDTO.class))
+                .collect(Collectors.toList());
+    }
+
     @Test
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
@@ -167,10 +173,8 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void findById_ShouldMapAndReturnReservationDTOResponse_WhenReservationExist() {
-        // Map each Table to TableDTO
-        List<TableDTO> tableListDTO = reservation.getTables().stream()
-                .map(table -> modelMapper.map(table, TableDTO.class))
-                .collect(Collectors.toList());
+
+        List<TableDTO> tableListDTO = getTableDTOSList();
 
         webTestClient.get()
                 .uri("/api/reservation/find/" + reservation.getId())
