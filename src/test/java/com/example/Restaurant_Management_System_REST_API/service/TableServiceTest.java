@@ -153,5 +153,23 @@ class TableServiceTest {
         verify(table2).setAvailable(false);
     }
 
+    @Test
+    public void iterateAndSetReservationToNullInTablesAndSave_ShouldCallDeleteOnTableRepoAndSetTablesCorrectly_WhenReservationIsGiven(){
+        //Arrange
+        Table table2 = mock(Table.class);
+        List<Table> tableList = Arrays.asList(table, table2);
+
+        when(reservation.getTables()).thenReturn(tableList);
+        //Act
+        tableService.iterateAndSetReservationToNullInTablesAndSave(reservation);
+
+        //Assert
+        verify(tableRepository, times(2)).save(any(Table.class));
+        verify(table).setReservationList(null);
+        verify(table2).setReservationList(null);
+        verify(table).setAvailable(true);
+        verify(table2).setAvailable(true);
+    }
+
 
 }
