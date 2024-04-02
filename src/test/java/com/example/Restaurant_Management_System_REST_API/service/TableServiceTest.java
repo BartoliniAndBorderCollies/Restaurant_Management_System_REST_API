@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,6 +104,19 @@ class TableServiceTest {
         //Assert
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertEquals("Table with id " + tableToDelete.getId() + " has been deleted!", actualResponse.getBody());
+    }
+
+    @Test
+    public void iterateAndSetTablesToReservationAndSave_ShouldThrowNotFoundInDbException_WhenTableNotExist() {
+        //Arrange
+        Reservation reservation = mock(Reservation.class);
+        List<Table> tableList = Arrays.asList(table);
+        when(reservation.getTables()).thenReturn(tableList);
+
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> tableService.iterateAndSetTablesToReservationAndSave(reservation));
     }
 
 }
