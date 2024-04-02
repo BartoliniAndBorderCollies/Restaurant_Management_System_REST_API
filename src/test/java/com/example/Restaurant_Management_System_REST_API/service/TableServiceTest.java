@@ -7,6 +7,8 @@ import com.example.Restaurant_Management_System_REST_API.repository.TableReposit
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -86,6 +88,21 @@ class TableServiceTest {
         tableService.deleteById(tableToDelete.getId());
         //Assert
         verify(tableRepository, times(1)).delete(tableToDelete);
+    }
+
+    @Test
+    public void deleteById_ShouldInteractWithDependenciesCorrectlyAndReturnResponseEntity_WhenTableIdIsGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Table tableToDelete = new Table(1L, true, null, null);
+        when(tableRepository.findById(tableToDelete.getId())).thenReturn(Optional.of(tableToDelete));
+
+        //Act
+        ResponseEntity<?> actualResponse = tableService.deleteById(tableToDelete.getId());
+
+        //Assert
+        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
+        assertEquals("Table with id " + tableToDelete.getId() + " has been deleted!", actualResponse.getBody());
     }
 
 }
