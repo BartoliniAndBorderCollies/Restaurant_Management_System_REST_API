@@ -10,10 +10,11 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 class TableServiceTest {
 
@@ -73,6 +74,18 @@ class TableServiceTest {
 
         //Assert
         assertThrows(NotFoundInDatabaseException.class, ()-> tableService.deleteById(nonExistedId));
+    }
+
+    @Test
+    public void deleteById_ShouldCallOnTableRepoExactlyOnce_WhenTableIdIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        Table tableToDelete = new Table(1L, true, null, null);
+        when(tableRepository.findById(tableToDelete.getId())).thenReturn(Optional.of(tableToDelete));
+
+        //Act
+        tableService.deleteById(tableToDelete.getId());
+        //Assert
+        verify(tableRepository, times(1)).delete(tableToDelete);
     }
 
 }
