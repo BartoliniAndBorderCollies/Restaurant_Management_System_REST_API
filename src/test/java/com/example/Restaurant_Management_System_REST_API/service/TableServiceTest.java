@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +64,15 @@ class TableServiceTest {
 
         //Assert
         assertIterableEquals(tableList, actual);
+    }
+
+    @Test
+    public void deleteById_ShouldThrowNotFoundInDatabaseException_WhenTableNotExist() {
+        //Arrange
+        Long nonExistedId = 999L;
+
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> tableService.deleteById(nonExistedId));
     }
 
 }
