@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ class TableServiceTest {
         Long nonExistedId = 999L;
 
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> tableService.deleteById(nonExistedId));
+        assertThrows(NotFoundInDatabaseException.class, () -> tableService.deleteById(nonExistedId));
     }
 
     @Test
@@ -116,7 +117,38 @@ class TableServiceTest {
 
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> tableService.iterateAndSetTablesToReservationAndSave(reservation));
+        assertThrows(NotFoundInDatabaseException.class, () -> tableService.iterateAndSetTablesToReservationAndSave(reservation));
     }
+
+    @Test
+    public void iterateAndSetTablesToReservationAndSave_ShouldCallSaveOnTableRepoAndSetTablesCorrectly_WhenReservationIsGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Reservation reservation = mock(Reservation.class);
+        Table table1 = mock(Table.class);
+        Table table2 = mock(Table.class);
+        List<Table> tableList = Arrays.asList(table1, table2);
+
+        when(reservation.getTables()).thenReturn(tableList);
+        when(table1.getReservationList()).thenReturn(new ArrayList<>());
+        when(table2.getReservationList()).thenReturn(new ArrayList<>());
+        when(tableRepository.findById(table1.getId())).thenReturn(Optional.of(table1));
+        when(tableRepository.findById(table2.getId())).thenReturn(Optional.of(table2));
+
+        //Act
+        tableService.iterateAndSetTablesToReservationAndSave(reservation);
+
+        //Assert
+
+        // Verify that the save method of the tableRepository mock is called exactly twice, because there are two tables in the
+        // reservation, and for each table, the save method should be called once after updating the table's reservation
+        // list and availability.
+        verify(tableRepository, times(2)).save(any(Table.class));
+
+        // Verify that the setAvailable method of the table1 and table2 mock is called exactly once with the argument false.
+        verify(table1).setAvailable(false);
+        verify(table2).setAvailable(false);
+    }
+
 
 }
