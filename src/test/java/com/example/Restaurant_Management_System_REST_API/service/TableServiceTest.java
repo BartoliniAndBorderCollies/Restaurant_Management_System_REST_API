@@ -116,7 +116,6 @@ class TableServiceTest {
     @Test
     public void iterateAndSetTablesToReservationAndSave_ShouldThrowNotFoundInDbException_WhenTableNotExist() {
         //Arrange
-        Reservation reservation = mock(Reservation.class);
         List<Table> tableList = Arrays.asList(table);
         when(reservation.getTables()).thenReturn(tableList);
 
