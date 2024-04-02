@@ -27,6 +27,7 @@ class TableServiceTest {
     private TableService tableService;
     private TableDTO tableDTO;
     private Table table;
+    private Reservation reservation;
 
     @BeforeEach
     public void prepareEnvironment() {
