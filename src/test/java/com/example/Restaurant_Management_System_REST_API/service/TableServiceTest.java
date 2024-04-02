@@ -129,15 +129,13 @@ class TableServiceTest {
     public void iterateAndSetTablesToReservationAndSave_ShouldCallSaveOnTableRepoAndSetTablesCorrectly_WhenReservationIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
-        Reservation reservation = mock(Reservation.class);
-        Table table1 = mock(Table.class);
         Table table2 = mock(Table.class);
-        List<Table> tableList = Arrays.asList(table1, table2);
+        List<Table> tableList = Arrays.asList(table, table2);
 
         when(reservation.getTables()).thenReturn(tableList);
-        when(table1.getReservationList()).thenReturn(new ArrayList<>());
+        when(table.getReservationList()).thenReturn(new ArrayList<>());
         when(table2.getReservationList()).thenReturn(new ArrayList<>());
-        when(tableRepository.findById(table1.getId())).thenReturn(Optional.of(table1));
+        when(tableRepository.findById(table.getId())).thenReturn(Optional.of(table));
         when(tableRepository.findById(table2.getId())).thenReturn(Optional.of(table2));
 
         //Act
@@ -151,7 +149,7 @@ class TableServiceTest {
         verify(tableRepository, times(2)).save(any(Table.class));
 
         // Verify that the setAvailable method of the table1 and table2 mock is called exactly once with the argument false.
-        verify(table1).setAvailable(false);
+        verify(table).setAvailable(false);
         verify(table2).setAvailable(false);
     }
 
