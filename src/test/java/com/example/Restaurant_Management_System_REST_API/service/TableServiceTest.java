@@ -42,6 +42,11 @@ class TableServiceTest {
         table = mock(Table.class);
     }
 
+    @BeforeEach
+    public void prepareReservationMock() {
+        reservation = mock(Reservation.class);
+    }
+
     @Test
     public void add_ShouldMapAndSaveAndMapAgainAndReturn_WhenTableDTOIsGiven() {
         //Arrange
