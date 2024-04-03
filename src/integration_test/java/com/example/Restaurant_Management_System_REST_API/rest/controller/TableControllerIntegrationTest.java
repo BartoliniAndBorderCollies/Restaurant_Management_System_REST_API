@@ -4,6 +4,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -19,10 +21,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -41,6 +42,8 @@ class TableControllerIntegrationTest {
     private String basicAuthHeaderOwner;
     @Autowired
     private TableRepository tableRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @BeforeAll
     public void setUpRolesAndCustomers() {
@@ -90,6 +93,27 @@ class TableControllerIntegrationTest {
                     assertEquals(tableDTO, actualResponse);
                 });
         tableRepository.deleteAll();
+    }
+
+    @Test
+    public void findAll_ShouldMapAndReturnTableDTOList_WhenTableExist() {
+        Table table = new Table(null, true, null, null);
+        tableRepository.save(table);
+
+        List<TableDTO> expected = Arrays.asList(modelMapper.map(table, TableDTO.class));
+
+        webTestClient.get()
+                .uri("/api/table/findAll")
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(TableDTO.class)
+                .consumeWith(response -> {
+                    List<TableDTO> actualResponse = response.getResponseBody();
+                    assert actualResponse != null;
+                    assertFalse(actualResponse.isEmpty());
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+                });
     }
 
 }
