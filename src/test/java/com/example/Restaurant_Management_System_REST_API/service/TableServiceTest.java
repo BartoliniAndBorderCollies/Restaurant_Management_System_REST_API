@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -185,5 +187,20 @@ class TableServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> tableService.checkIfTablesAreAvailable(reservation));
     }
 
+    @Test
+    public void checkIfTablesAreAvailable_ShouldThrowResponseStatusException_WhenTimeConflictExists() {
+        //Arrange
+        Table table2 = mock(Table.class);
+        List<Table> tableList = Arrays.asList(table, table2);
+        List<Reservation> reservationList = Arrays.asList(reservation);
+        LocalDateTime localDateTime = LocalDateTime.now(); // must be a real object, not a mock
 
+        when(reservation.getTables()).thenReturn(tableList);
+        when(tableRepository.findById(any(Long.class))).thenReturn(Optional.of(table));
+        when(table.getReservationList()).thenReturn(reservationList);
+        when(reservation.getStart()).thenReturn(localDateTime);
+
+        //Act & Assert
+        assertThrows(ResponseStatusException.class, ()-> tableService.checkIfTablesAreAvailable(reservation));
+    }
 }
