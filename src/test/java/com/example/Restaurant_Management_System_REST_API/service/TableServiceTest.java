@@ -171,5 +171,19 @@ class TableServiceTest {
         verify(table2).setAvailable(true);
     }
 
+    @Test
+    public void checkIfTablesAreAvailable_ShouldThrowNotFoundInDatabaseException_WhenTableNotExist() {
+        //Arrange
+        Table table2 = mock(Table.class);
+        List<Table> tableList = Arrays.asList(table, table2);
+
+        when(reservation.getTables()).thenReturn(tableList);
+
+        //Act
+
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> tableService.checkIfTablesAreAvailable(reservation));
+    }
+
 
 }
