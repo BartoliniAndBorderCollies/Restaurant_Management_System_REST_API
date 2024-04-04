@@ -48,6 +48,7 @@ class TableControllerIntegrationTest {
     private TableRepository tableRepository;
     @Autowired
     private ModelMapper modelMapper;
+    private Table table;
 
     @BeforeAll
     public void setUpRolesAndCustomers() {
