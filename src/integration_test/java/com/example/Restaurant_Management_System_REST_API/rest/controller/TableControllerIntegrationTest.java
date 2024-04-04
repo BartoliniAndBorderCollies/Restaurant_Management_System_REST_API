@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -119,6 +120,26 @@ class TableControllerIntegrationTest {
                     assert actualResponse != null;
                     assertFalse(actualResponse.isEmpty());
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+                });
+    }
+
+    @Test
+    public void deleteById_ShouldFindAndDeleteTableAndReturnResponseEntity_WhenTableExistAndTableIdIsGiven() {
+
+        webTestClient.delete()
+                .uri("/api/table/delete/" + table.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String actualResponse = response.getResponseBody();
+                    assert actualResponse != null;
+                    assertFalse(actualResponse.isEmpty());
+                    assertEquals("Table with id " + table.getId() + " has been deleted!", actualResponse);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+                    Optional<Table> thisTableShouldBeDeleted = tableRepository.findById(table.getId());
+                    assertFalse(thisTableShouldBeDeleted.isPresent());
                 });
     }
 
