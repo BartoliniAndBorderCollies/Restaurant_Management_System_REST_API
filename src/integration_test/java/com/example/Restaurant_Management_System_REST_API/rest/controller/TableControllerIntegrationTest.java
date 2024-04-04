@@ -8,10 +8,7 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
@@ -74,6 +72,12 @@ class TableControllerIntegrationTest {
                 .encodeToString((owner.getEmailAddress() + ":" + rawPassword).getBytes()); // here I need to provide a raw password
     }
 
+    @BeforeEach
+    public void prepareTable() {
+        table = new Table(null, true, null, null);
+        tableRepository.save(table);
+    }
+
     @AfterAll
     public void cleanDatabase() {
         tableRepository.deleteAll();
@@ -83,7 +87,7 @@ class TableControllerIntegrationTest {
 
     @Test
     public void add_ShouldAddRestaurantTableToDatabaseAndReturnTableDTO_WhenTableDTOIsGiven() {
-        TableDTO tableDTO = new TableDTO(1L);
+        TableDTO tableDTO = modelMapper.map(table, TableDTO.class);
 
         webTestClient.post()
                 .uri("/api/table/add")
@@ -102,9 +106,6 @@ class TableControllerIntegrationTest {
 
     @Test
     public void findAll_ShouldMapAndReturnTableDTOList_WhenTableExist() {
-        Table table = new Table(null, true, null, null);
-        tableRepository.save(table);
-
         List<TableDTO> expected = Arrays.asList(modelMapper.map(table, TableDTO.class));
 
         webTestClient.get()
