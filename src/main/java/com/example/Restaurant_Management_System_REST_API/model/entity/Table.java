@@ -21,7 +21,7 @@ public class Table {
     private LocalDateTime reservationStart;
     private LocalDateTime reservationEnd;
     @OneToMany(mappedBy = "table")
-    private List<Order> orders;
+    private List<RestaurantOrder> restaurantOrders;
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
