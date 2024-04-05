@@ -13,6 +13,8 @@ import java.util.Set;
 @Data
 public class MenuRecordDTOResponse extends CatalogItem {
 
+
+    //TODO: add String name field in next branch
     private Long id;
     private Set<String> ingredients;
     private Category category;
