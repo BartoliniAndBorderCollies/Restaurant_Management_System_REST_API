@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,7 +31,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     public RestaurantOrderDTO findById(Long id) throws NotFoundInDatabaseException {
-        RestaurantOrder restaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(()-> new
+        RestaurantOrder restaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(() -> new
                 NotFoundInDatabaseException(RestaurantOrder.class));
 
         return modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
@@ -38,7 +39,13 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     public List<RestaurantOrderDTO> findAll() {
-        return null;
+        List<RestaurantOrderDTO> orderDTOList = new ArrayList<>();
+        restaurantOrderRepository.findAll().forEach(restaurantOrder -> {
+            RestaurantOrderDTO orderDto = modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
+            orderDTOList.add(orderDto);
+
+        });
+        return orderDTOList;
     }
 
     @Override
