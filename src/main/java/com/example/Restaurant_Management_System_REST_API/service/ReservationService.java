@@ -105,7 +105,11 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
         // If tables are not null, check their availability and update them
         Optional.ofNullable(reservationDTORequest.getTables()).ifPresent(tables -> {
             Reservation reservation = modelMapper.map(reservationDTORequest, Reservation.class);
-            checkIfTablesAreAvailableAndUpdate(reservation);
+            try {
+                checkIfTablesAreAvailableAndUpdate(reservation);
+            } catch (NotFoundInDatabaseException e) {
+                throw new TableNotAvailableException();
+            }
             existingReservationDTO.setTables(tables);
         });
 
