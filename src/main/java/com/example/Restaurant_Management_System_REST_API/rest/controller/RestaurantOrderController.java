@@ -7,6 +7,8 @@ import com.example.Restaurant_Management_System_REST_API.service.RestaurantOrder
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/order")
 @AllArgsConstructor
@@ -22,5 +24,10 @@ public class RestaurantOrderController {
     @GetMapping("/find/{id}")
     public RestaurantOrderDTO findById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return restaurantOrderService.findById(id);
+    }
+
+    @GetMapping("/findAll")
+    public List<RestaurantOrderDTO> findAll() {
+        return restaurantOrderService.findAll();
     }
 }
