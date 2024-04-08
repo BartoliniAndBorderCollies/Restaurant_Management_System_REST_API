@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlrea
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.RestaurantOrderService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +36,10 @@ public class RestaurantOrderController {
     public RestaurantOrderDTO update(@PathVariable Long id, @RequestBody RestaurantOrderDTO restaurantOrderDTO)
             throws NotFoundInDatabaseException {
         return restaurantOrderService.update(id, restaurantOrderDTO);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) throws NotFoundInDatabaseException {
+        return restaurantOrderService.delete(id);
     }
 }
