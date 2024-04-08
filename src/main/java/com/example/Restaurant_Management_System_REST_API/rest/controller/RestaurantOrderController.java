@@ -30,4 +30,10 @@ public class RestaurantOrderController {
     public List<RestaurantOrderDTO> findAll() {
         return restaurantOrderService.findAll();
     }
+
+    @PutMapping("/update/{id}")
+    public RestaurantOrderDTO update(@PathVariable Long id, @RequestBody RestaurantOrderDTO restaurantOrderDTO)
+            throws NotFoundInDatabaseException {
+        return restaurantOrderService.update(id, restaurantOrderDTO);
+    }
 }
