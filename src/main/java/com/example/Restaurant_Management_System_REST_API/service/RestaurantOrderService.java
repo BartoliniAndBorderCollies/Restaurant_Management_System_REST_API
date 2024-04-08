@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -49,8 +50,27 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     }
 
     @Override
-    public RestaurantOrderDTO update(Long aLong, RestaurantOrderDTO object) throws NotFoundInDatabaseException {
-        return null;
+    public RestaurantOrderDTO update(Long id, RestaurantOrderDTO updatedOrderDTO) throws NotFoundInDatabaseException {
+
+        RestaurantOrder existingRestaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(()->
+                new NotFoundInDatabaseException(RestaurantOrder.class));
+        RestaurantOrder restaurantOrder = modelMapper.map(updatedOrderDTO, RestaurantOrder.class);
+
+        Optional.ofNullable(restaurantOrder.getOrderStatus()).ifPresent(existingRestaurantOrder::setOrderStatus);
+        Optional.ofNullable(restaurantOrder.getTable()).ifPresent(table -> {
+            //TODO: when branch add_table_layers will be merged do the following steps:
+            //TODO: check if table exist
+            //TODO: if exists take this object and its id and set this object to existingRestaurantOrder and save
+            existingRestaurantOrder.setTable(table);
+            restaurantOrderRepository.save(existingRestaurantOrder);
+        });
+
+        Optional.ofNullable(restaurantOrder.getMenuRecords()).ifPresent(existingRestaurantOrder::setMenuRecords);
+        //TODO: finish this logic in the next branch
+
+        restaurantOrderRepository.save(existingRestaurantOrder);
+
+        return modelMapper.map(existingRestaurantOrder, RestaurantOrderDTO.class);
     }
 
     @Override
