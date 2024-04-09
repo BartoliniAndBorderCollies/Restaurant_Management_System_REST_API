@@ -9,9 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,6 +75,23 @@ class RestaurantOrderServiceTest {
 
         //Assert
         assertEquals(restaurantOrderDTO, actual);
+    }
+
+    @Test
+    public void findAll_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTOList_WhenRestaurantOrderExist() {
+        //Arrange
+        List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder);
+        List<RestaurantOrderDTO> expected = Arrays.asList(restaurantOrderDTO);
+
+        when(restaurantOrderRepository.findAll()).thenReturn(restaurantOrderList);
+        //I ensure that every RestaurantOrder is returned as DTO through model mapper:
+        when(modelMapper.map(any(RestaurantOrder.class), eq(RestaurantOrderDTO.class))).thenReturn(restaurantOrderDTO);
+
+        //Act
+        List<RestaurantOrderDTO> actual = restaurantOrderService.findAll();
+
+        //Assert
+        assertIterableEquals(expected, actual);
     }
 
 }
