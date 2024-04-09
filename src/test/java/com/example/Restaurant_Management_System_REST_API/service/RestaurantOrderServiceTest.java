@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -54,6 +56,22 @@ class RestaurantOrderServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(nonExistedId));
+    }
+
+    @Test
+    public void findById_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderIdIsGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Long id = 1L;
+        RestaurantOrder restaurantOrder = mock(RestaurantOrder.class);
+        when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
+        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+
+        //Act
+        RestaurantOrderDTO actual = restaurantOrderService.findById(id);
+
+        //Assert
+        assertEquals(restaurantOrderDTO, actual);
     }
 
 }
