@@ -46,4 +46,14 @@ class RestaurantOrderServiceTest {
         assertEquals(restaurantOrderDTO, actual);
     }
 
+    @Test
+    public void findById_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
+        //Arrange
+        Long nonExistedId = 999L;
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(nonExistedId));
+    }
+
 }
