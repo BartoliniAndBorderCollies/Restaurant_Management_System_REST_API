@@ -37,8 +37,6 @@ class RestaurantOrderServiceTest {
     public void create_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven()
             throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
         //Arrange
-        RestaurantOrder restaurantOrder = mock(RestaurantOrder.class);
-
         when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
         when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
@@ -65,7 +63,6 @@ class RestaurantOrderServiceTest {
             throws NotFoundInDatabaseException {
         //Arrange
         Long id = 1L;
-        RestaurantOrder restaurantOrder = mock(RestaurantOrder.class);
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
 
