@@ -94,4 +94,14 @@ class RestaurantOrderServiceTest {
         assertIterableEquals(expected, actual);
     }
 
+    @Test
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderWithGivenIdNotExist() {
+        //Arrange
+        Long nonExistedId = 999L;
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderDTO));
+    }
+
 }
