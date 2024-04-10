@@ -166,6 +166,18 @@ class RestaurantOrderServiceTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    public void delete_ShouldCallOnRepositoryExactlyOnce_WhenRestaurantOrderIdIsGiven() throws NotFoundInDatabaseException {
+        //Arrange
+        when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
+
+        //Act
+        restaurantOrderService.delete(id);
+
+        //Assert
+        verify(restaurantOrderRepository, times(1)).delete(restaurantOrder);
+    }
+
 
 
 }
