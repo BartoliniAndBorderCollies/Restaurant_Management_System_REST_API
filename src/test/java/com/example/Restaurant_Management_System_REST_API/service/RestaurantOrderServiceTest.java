@@ -11,6 +11,8 @@ import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOr
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 
 import java.util.Arrays;
@@ -147,5 +149,23 @@ class RestaurantOrderServiceTest {
         //Assert
         assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(nonExistedId));
     }
+
+    @Test
+    public void delete_ShouldInteractWithDependenciesCorrectlyAndReturnResponseEntity_WhenRestaurantOrderIdIsGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
+        when(restaurantOrder.getId()).thenReturn(1L);
+        ResponseEntity<?> expected = new ResponseEntity<>("Order number " + restaurantOrder.getId() +
+                " has been deleted!", HttpStatus.OK);
+
+        //Act
+        ResponseEntity<?> actual = restaurantOrderService.delete(id);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
+
 
 }
