@@ -3,7 +3,10 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
+import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -102,6 +105,37 @@ class RestaurantOrderServiceTest {
         //Act
         //Assert
         assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderDTO));
+    }
+
+    //TODO: this below test will need to be updated after merging two new branches
+    @Test
+    public void update_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenIdAndRestaurantOrderDTOsGiven()
+            throws NotFoundInDatabaseException {
+        //Arrange
+        Long id = 1L;
+        Table table = mock(Table.class);
+        MenuRecord mockMenuRecord = mock(MenuRecord.class);
+        List<MenuRecord> menuRecordList = Arrays.asList(mockMenuRecord);
+
+        when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
+        when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(restaurantOrder.getOrderStatus()).thenReturn(OrderStatus.PENDING);
+        when(restaurantOrder.getTable()).thenReturn(table);
+        when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+        when(restaurantOrder.getMenuRecords()).thenReturn(menuRecordList);
+
+
+        RestaurantOrderDTO expected = restaurantOrderDTO;
+
+        //Act
+        RestaurantOrderDTO actual = restaurantOrderService.update(id, restaurantOrderDTO);
+
+        //Assert
+        assertEquals(expected, actual);
+        verify(restaurantOrder).setOrderStatus(OrderStatus.PENDING);
+        verify(restaurantOrder).setTable(table);
+        verify(restaurantOrder).setMenuRecords(menuRecordList);
     }
 
 }
