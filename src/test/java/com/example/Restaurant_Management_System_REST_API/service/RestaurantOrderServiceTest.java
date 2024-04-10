@@ -29,6 +29,7 @@ class RestaurantOrderServiceTest {
     private RestaurantOrderRepository restaurantOrderRepository;
     private RestaurantOrderDTO restaurantOrderDTO;
     private RestaurantOrder restaurantOrder;
+    private Long id;
 
     @BeforeEach
     public void setUpEnvironment() {
@@ -37,6 +38,7 @@ class RestaurantOrderServiceTest {
         restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper);
         restaurantOrderDTO = mock(RestaurantOrderDTO.class);
         restaurantOrder = mock(RestaurantOrder.class);
+        id = 1L;
     }
 
 
@@ -69,7 +71,6 @@ class RestaurantOrderServiceTest {
     public void findById_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderIdIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
-        Long id = 1L;
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
 
@@ -112,7 +113,6 @@ class RestaurantOrderServiceTest {
     public void update_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenIdAndRestaurantOrderDTOsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
-        Long id = 1L;
         Table table = mock(Table.class);
         MenuRecord mockMenuRecord = mock(MenuRecord.class);
         List<MenuRecord> menuRecordList = Arrays.asList(mockMenuRecord);
