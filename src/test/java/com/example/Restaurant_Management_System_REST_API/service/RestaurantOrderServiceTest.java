@@ -138,4 +138,14 @@ class RestaurantOrderServiceTest {
         verify(restaurantOrder).setMenuRecords(menuRecordList);
     }
 
+    @Test
+    public void delete_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderWithGivenIdNotExist() {
+        //Arrange
+        Long nonExistedId = 999L;
+
+        //Act
+        //Assert
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(nonExistedId));
+    }
+
 }
