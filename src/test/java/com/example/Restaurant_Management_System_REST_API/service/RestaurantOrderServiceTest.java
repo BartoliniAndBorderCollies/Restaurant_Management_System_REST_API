@@ -60,6 +60,21 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
+    public void create_ShouldCallOnRepoExactlyOnce_WhenRestaurantOrderDTOIsGiven()
+            throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
+        //Arrange
+        when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+
+        //Act
+        restaurantOrderService.create(restaurantOrderDTO);
+
+        //Assert
+        verify(restaurantOrderRepository, times(1)).save(restaurantOrder);
+    }
+
+    @Test
     public void findById_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
         Long nonExistedId = 999L;
@@ -177,7 +192,4 @@ class RestaurantOrderServiceTest {
         //Assert
         verify(restaurantOrderRepository, times(1)).delete(restaurantOrder);
     }
-
-
-
 }
