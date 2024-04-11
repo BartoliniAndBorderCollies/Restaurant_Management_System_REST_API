@@ -100,10 +100,11 @@ class ReservationControllerIntegrationTest {
     @BeforeEach
     public void prepareRestaurantTables() {
         // Create tables with initial values
-        Table table1 = new Table(null, true, null, new ArrayList<>());
-        Table table2 = new Table(null, true, null, new ArrayList<>());
-        Table table3 = new Table(null, true, null, new ArrayList<>());
-        tableList = Arrays.asList(table1, table2, table3);
+        tableList = new ArrayList<>();
+        for(int i =0; i<3; i++) {
+            Table table = new Table(null, true, null, new ArrayList<>());
+            tableList.add(table);
+        }
 
         // Save each table in the repository
         for (Table table: tableList) {
