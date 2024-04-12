@@ -2,7 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
-import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -134,9 +134,9 @@ class ReservationControllerIntegrationTest {
     }
 
 
-    private List<TableDTO> getTableDTOSList() {
+    private List<TableReservationDTO> getTableReservationDTOSList() {
         return reservation.getTables().stream()
-                .map(table -> modelMapper.map(table, TableDTO.class))
+                .map(table -> modelMapper.map(table, TableReservationDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -144,15 +144,15 @@ class ReservationControllerIntegrationTest {
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
 
-        List<TableDTO> tableDTOList = tableList.stream()
-                .map(table -> modelMapper.map(table, TableDTO.class))
+        List<TableReservationDTO> tableReservationDTOS = tableList.stream()
+                .map(table -> modelMapper.map(table, TableReservationDTO.class))
                 .toList();
 
         ReservationDTO reservationDTO = new ReservationDTO(null, "Anniversary party",
-                "20 years of marriage!", 15, time, tableDTOList, customerReservationDTO);
+                "20 years of marriage!", 15, time, tableReservationDTOS, customerReservationDTO);
 
         ReservationDTO expected = new ReservationDTO(null, "Anniversary party",
-                "20 years of marriage!", 15, time, tableDTOList, customerReservationDTO);
+                "20 years of marriage!", 15, time, tableReservationDTOS, customerReservationDTO);
 
         webTestClient.post()
                 .uri("/api/reservation/add")
@@ -176,7 +176,7 @@ class ReservationControllerIntegrationTest {
     @Test
     public void findById_ShouldMapAndReturnReservationDTOResponse_WhenReservationExist() {
 
-        List<TableDTO> tableListDTO = getTableDTOSList();
+        List<TableReservationDTO> tableListDTO = getTableReservationDTOSList();
 
         webTestClient.get()
                 .uri("/api/reservation/find/" + reservation.getId())
@@ -238,11 +238,11 @@ class ReservationControllerIntegrationTest {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(customerForUpdate, CustomerReservationDTO.class);
 
         ReservationDTO reservationDTO = new ReservationDTO(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, getTableDTOSList(),
+                "10 years of struggle on planet earth", 12, updatedTime, getTableReservationDTOSList(),
                 customerReservationDTO);
 
         ReservationDTO expected = new ReservationDTO(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, getTableDTOSList(),
+                "10 years of struggle on planet earth", 12, updatedTime, getTableReservationDTOSList(),
                 customerReservationDTO);
 
         //test itself
