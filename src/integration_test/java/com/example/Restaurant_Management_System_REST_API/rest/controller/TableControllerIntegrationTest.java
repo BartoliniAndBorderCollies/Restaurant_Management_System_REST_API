@@ -75,7 +75,7 @@ class TableControllerIntegrationTest {
 
     @BeforeEach
     public void prepareTable() {
-        table = new Table(null, true, null, null);
+        table = new Table(null, true, null, new ArrayList<>());
         tableRepository.save(table);
     }
 
