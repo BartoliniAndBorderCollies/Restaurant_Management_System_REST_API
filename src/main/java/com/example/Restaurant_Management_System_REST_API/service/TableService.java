@@ -51,14 +51,9 @@ public class TableService {
 
     void iterateAndSetTablesToReservationAndSave(Reservation reservation) throws NotFoundInDatabaseException {
         for (Table table : reservation.getTables()) {
-            checkIfTableExist(table.getId());
-            List<Reservation> reservationList = new ArrayList<>();
+            Table takenTable = checkIfTableExist(table.getId());
 
-            if(table.getReservationList() != null)
-                reservationList = table.getReservationList();
-
-            reservationList.add(reservation);
-            table.setReservationList(reservationList);
+            takenTable.getReservationList().add(reservation);
 
             table.setAvailable(false);
             tableRepository.save(table);
