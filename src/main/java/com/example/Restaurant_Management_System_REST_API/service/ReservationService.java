@@ -121,7 +121,6 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
 
     private void checkIfTablesAreAvailableAndUpdate(Reservation reservation) throws NotFoundInDatabaseException {
             checkIfTablesAreAvailable(reservation);
-            tableService.iterateAndSetReservationToNullInTablesAndSave(reservation);
             tableService.iterateAndSetTablesToReservationAndSave(reservation);
     }
 
