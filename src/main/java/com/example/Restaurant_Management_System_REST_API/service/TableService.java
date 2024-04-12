@@ -65,8 +65,8 @@ public class TableService {
         }
     }
 
-    private void checkIfTableExist(Long id) throws NotFoundInDatabaseException {
-        tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
+    private Table checkIfTableExist(Long id) throws NotFoundInDatabaseException {
+        return tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
     }
 
     void iterateAndSetReservationToNullInTablesAndSave(Reservation reservationToBeDeleted) {
