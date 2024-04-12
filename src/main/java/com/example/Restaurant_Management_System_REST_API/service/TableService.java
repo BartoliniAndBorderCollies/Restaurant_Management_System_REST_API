@@ -74,19 +74,25 @@ public class TableService {
 
     void checkIfTablesAreAvailable(Reservation reservation) throws NotFoundInDatabaseException {
         for (Table table : reservation.getTables()) {
-            Table existingTable = findById(table.getId());
-
-            if (existingTable != null) {
-                for (Reservation existingReservation : existingTable.getReservationList()) {
-                    if (isTimeConflict(existingReservation.getStart(), reservation.getStart())) {
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Table with id " + table.getId() +
-                                " is not available at the requested time.");
-                    }
-                }
-            }
+            checkTableAvailability(table, reservation);
         }
     }
 
+    private void checkTableAvailability(Table table, Reservation reservation) throws NotFoundInDatabaseException {
+        Table existingTable = findById(table.getId());
+
+        checkReservationConflict(existingTable, reservation);
+    }
+
+    private void checkReservationConflict(Table table, Reservation reservation) {
+        for (Reservation existingReservation : table.getReservationList()) {
+            if (isTimeConflict(existingReservation.getStart(), reservation.getStart())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Table with id " + table.getId() +
+                        " is not available at the requested time.");
+            }
+        }
+    }
+    
     boolean isTimeConflict(LocalDateTime existingStart, LocalDateTime newStart) {
         LocalDateTime existingEnd = existingStart.plusHours(2);
         LocalDateTime newEnd = newStart.plusHours(2);
