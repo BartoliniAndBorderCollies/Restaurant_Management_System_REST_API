@@ -40,7 +40,7 @@ class TableServiceTest {
 
     @BeforeEach
     public void prepareTableDTOAndTable() {
-        tableDTO = new TableDTO(1L);
+        tableDTO = new TableDTO(1L, null);
         table = mock(Table.class);
     }
 
