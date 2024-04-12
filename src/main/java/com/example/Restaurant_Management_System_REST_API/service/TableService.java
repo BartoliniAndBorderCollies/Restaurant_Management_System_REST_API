@@ -97,6 +97,14 @@ public class TableService {
         LocalDateTime existingEnd = existingStart.plusHours(2);
         LocalDateTime newEnd = newStart.plusHours(2);
 
+        //Time conflict is true when new and old reservation are at the same date, same hours (plus/minus 2 hours excluding), for example:
+        // reservation one: 18:00 today, reservation two: 16:30 - conflict, true
+        // reservation one: 18:00 today, reservation two: 19:59 - conflict, true
+        // reservation one: 18:00 today, reservation two: 20:00 - NO conflict, false
+        // reservation one: 18:00 today, reservation two: 16:30 - conflict, true
+        // reservation one: 18:00 today, reservation two: 16:01 - conflict, true
+        // reservation one: 18:00 today, reservation two: 16:00 - NO conflict, false
+
         return (newStart.isEqual(existingStart) || newStart.isAfter(existingStart)) && newStart.isBefore(existingEnd)
                 || (newEnd.isAfter(existingStart) && newEnd.isBefore(existingEnd))
                 || (existingStart.isAfter(newStart) && existingStart.isBefore(newEnd));
