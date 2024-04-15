@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
@@ -96,6 +97,28 @@ class RestaurantOrderControllerIntegrationTest {
                     assertEquals(restaurantOrderDTO.getOrderStatus(), actualResponse.getOrderStatus());
                     assertEquals(restaurantOrderDTO.getTable(), actualResponse.getTable());
                     assertEquals(restaurantOrderDTO.getMenuRecords(), actualResponse.getMenuRecords());
+                });
+    }
+
+    @Test
+    public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
+        LocalDateTime time = LocalDateTime.of(2024, 12, 9, 10, 12);
+        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
+                null, null); //TODO: add table and menu records when new branch will be merged
+        restaurantOrderRepository.save(restaurantOrder);
+
+        webTestClient.get()
+                .uri("/api/order/find/" + restaurantOrder.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(RestaurantOrderDTO.class)
+                .consumeWith(response -> {
+                    RestaurantOrderDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(restaurantOrder.getOrderTime(), actualResponse.getOrderTime());
+                    assertEquals(restaurantOrder.getOrderStatus(), actualResponse.getOrderStatus());
+                    //TODO: add more assertions when new branch will be merged
                 });
     }
 
