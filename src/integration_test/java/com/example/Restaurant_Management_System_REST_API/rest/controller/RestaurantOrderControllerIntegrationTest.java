@@ -40,6 +40,7 @@ class RestaurantOrderControllerIntegrationTest {
     private String basicHeaderOwner;
     @Autowired
     private RestaurantOrderRepository restaurantOrderRepository;
+    private Customer restaurantOwner;
 
     @BeforeEach
     public void setUpRestaurantOrderDTO() {
@@ -60,7 +61,7 @@ class RestaurantOrderControllerIntegrationTest {
         Set<Authority> authorities = new HashSet<>();
         authorities.add(owner);
 
-        Customer restaurantOwner = new Customer(null, LocalDateTime.now(), null, contactDetails, encodedPassword, true, true,
+        restaurantOwner = new Customer(null, LocalDateTime.now(), null, contactDetails, encodedPassword, true, true,
                 true, true, "owner@owner.eu", authorities);
         customerRepository.save(restaurantOwner);
         basicHeaderOwner = "Basic " + Base64.getEncoder()
