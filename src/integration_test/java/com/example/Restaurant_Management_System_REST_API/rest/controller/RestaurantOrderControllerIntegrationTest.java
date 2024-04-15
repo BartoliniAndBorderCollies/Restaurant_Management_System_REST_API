@@ -68,13 +68,16 @@ class RestaurantOrderControllerIntegrationTest {
                 .encodeToString((restaurantOwner.getEmailAddress() + ":" + rawPassword).getBytes());
     }
 
-    @AfterAll
+    @AfterEach
     public void cleanDatabase() {
-        customerRepository.deleteAll();
-        authorityRepository.deleteAll();
         restaurantOrderRepository.deleteAll();
     }
 
+    @AfterAll
+    public void cleanRoles() {
+        customerRepository.deleteAll();
+        authorityRepository.deleteAll();
+    }
 
     @Test
     public void add_ShouldAddRestaurantOrderToDatabaseAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven() {
