@@ -9,6 +9,7 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.Reservatio
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -37,6 +38,8 @@ class ReservationServiceTest {
     private ReservationDTO reservationDTO;
     private Customer customer;
     private Reservation reservation;
+    private TableService tableService;
+    private TableRepository tableRepository;
 
 
     @BeforeEach
@@ -47,9 +50,11 @@ class ReservationServiceTest {
         passwordEncoder = mock(PasswordEncoder.class);
         validator = mock(Validator.class);
         customerRepository = mock(CustomerRepository.class);
+        tableRepository = mock(TableRepository.class);
 
+        tableService = new TableService(tableRepository, modelMapper);
         customerService = new CustomerService(customerRepository, authorityRepository, modelMapper, passwordEncoder, validator);
-        reservationService = new ReservationService(reservationRepository, modelMapper, customerService);
+        reservationService = new ReservationService(reservationRepository, modelMapper, customerService, tableService);
     }
 
     @BeforeEach

@@ -1,7 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
-import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +19,6 @@ public class ReservationDTO {
     private String description;
     private int peopleAmount;
     private LocalDateTime start;
-    private List<TableDTO> tables;
+    private List<TableReservationDTO> tables;
     private CustomerReservationDTO customer;
 }
