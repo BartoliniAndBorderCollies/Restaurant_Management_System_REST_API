@@ -4,6 +4,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final ModelMapper modelMapper;
+    private final TableService tableService;
 
     @Override
     public RestaurantOrderDTO create(RestaurantOrderDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
@@ -58,13 +60,13 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         RestaurantOrder restaurantOrder = modelMapper.map(updatedOrderDTO, RestaurantOrder.class);
 
         Optional.ofNullable(restaurantOrder.getOrderStatus()).ifPresent(existingRestaurantOrder::setOrderStatus);
-        Optional.ofNullable(restaurantOrder.getTable()).ifPresent(table -> {
-            //TODO: when branch add_table_layers will be merged do the following steps:
-            //TODO: check if table exist
-            //TODO: if exists take this object and its id and set this object to existingRestaurantOrder and save
+
+        if(restaurantOrder.getTable() != null) { //its easier to use here if instead of Optional.ofNullable, because
+            //I would need to try-catch the block with RuntimeException class, because lambda is not caught
+            //with checked exception.
+            Table table = tableService.checkIfTableExist(restaurantOrder.getTable().getId());
             existingRestaurantOrder.setTable(table);
-            restaurantOrderRepository.save(existingRestaurantOrder);
-        });
+        }
 
         Optional.ofNullable(restaurantOrder.getMenuRecords()).ifPresent(existingRestaurantOrder::setMenuRecords);
         //TODO: finish this logic in the next branch
