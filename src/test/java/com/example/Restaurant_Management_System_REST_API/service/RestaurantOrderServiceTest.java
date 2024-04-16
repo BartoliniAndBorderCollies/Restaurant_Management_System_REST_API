@@ -29,6 +29,7 @@ class RestaurantOrderServiceTest {
     private ModelMapper modelMapper;
     private RestaurantOrderService restaurantOrderService;
     private RestaurantOrderRepository restaurantOrderRepository;
+    private TableService tableService;
     private RestaurantOrderDTO restaurantOrderDTO;
     private RestaurantOrder restaurantOrder;
     private Long id;
@@ -37,7 +38,8 @@ class RestaurantOrderServiceTest {
     public void setUpEnvironment() {
         modelMapper = mock(ModelMapper.class);
         restaurantOrderRepository = mock(RestaurantOrderRepository.class);
-        restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper);
+        tableService = mock(TableService.class);
+        restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService);
         restaurantOrderDTO = mock(RestaurantOrderDTO.class);
         restaurantOrder = mock(RestaurantOrder.class);
         id = 1L;
