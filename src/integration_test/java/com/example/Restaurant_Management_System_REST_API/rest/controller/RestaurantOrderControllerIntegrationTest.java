@@ -18,9 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,10 +40,14 @@ class RestaurantOrderControllerIntegrationTest {
     @Autowired
     private RestaurantOrderRepository restaurantOrderRepository;
     private Customer restaurantOwner;
+    @Autowired
+    private ModelMapper modelMapper;
+    private LocalDateTime time;
+
 
     @BeforeEach
     public void setUpRestaurantOrderDTO() {
-        LocalDateTime time = LocalDateTime.of(2020, 10, 10, 19, 55);
+        time = LocalDateTime.of(2020, 10, 10, 19, 55);
         restaurantOrderDTO = new RestaurantOrderDTO(null, time, OrderStatus.PENDING, null, null); //TODO: add tables and records after mering new branch
     }
 
@@ -102,9 +104,8 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
-        LocalDateTime time = LocalDateTime.of(2024, 12, 9, 10, 12);
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
-                null, null); //TODO: add table and menu records when new branch will be merged
+                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
 
         webTestClient.get()
