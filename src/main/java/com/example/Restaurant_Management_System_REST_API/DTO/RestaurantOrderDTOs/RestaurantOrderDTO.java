@@ -3,10 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTO
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class RestaurantOrderDTO {
 
     private Long id;
