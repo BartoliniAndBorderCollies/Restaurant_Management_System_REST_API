@@ -10,6 +10,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRep
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import org.junit.jupiter.api.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -120,6 +122,32 @@ class RestaurantOrderControllerIntegrationTest {
                     assertEquals(restaurantOrder.getOrderTime(), actualResponse.getOrderTime());
                     assertEquals(restaurantOrder.getOrderStatus(), actualResponse.getOrderStatus());
                     //TODO: add more assertions when new branch will be merged
+                });
+    }
+
+    @Test
+    public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
+        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
+                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
+        RestaurantOrder restaurantOrder2 = new RestaurantOrder(null, time, OrderStatus.PENDING, restaurantOwner,
+                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
+        restaurantOrderRepository.save(restaurantOrder);
+        restaurantOrderRepository.save(restaurantOrder2);
+
+        List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder, restaurantOrder2);
+        List<RestaurantOrderDTO> expected = new ArrayList<>();
+        restaurantOrderList.forEach(order -> expected.add(modelMapper.map(order, RestaurantOrderDTO.class)));
+
+        webTestClient.get()
+                .uri("/api/order/findAll")
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(RestaurantOrderDTO.class)
+                .consumeWith(response -> {
+                    List<RestaurantOrderDTO> actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
     }
 
