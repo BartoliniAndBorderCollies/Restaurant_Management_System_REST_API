@@ -56,7 +56,7 @@ public class TableService {
         }
     }
 
-    private Table checkIfTableExist(Long id) throws NotFoundInDatabaseException {
+    Table checkIfTableExist(Long id) throws NotFoundInDatabaseException {
         return tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
     }
 
@@ -75,7 +75,7 @@ public class TableService {
     }
 
     private void checkTableAvailability(Table table, Reservation reservation) throws NotFoundInDatabaseException {
-        Table existingTable = findById(table.getId());
+        Table existingTable = checkIfTableExist(table.getId());
 
         checkReservationConflict(existingTable, reservation);
     }
