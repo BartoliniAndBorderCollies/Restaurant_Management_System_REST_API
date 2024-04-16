@@ -1,28 +1,29 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @jakarta.persistence.Table(name = "restaurant_tables")
 public class Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private int chairsAmount;
     private boolean isAvailable;
-    private LocalDateTime reservationStart;
-    private LocalDateTime reservationEnd;
     @OneToMany(mappedBy = "table")
-    private List<Order> orders;
-    @ManyToOne
-    @JoinColumn(name = "reservation_id")
-    private Reservation reservation;
+    private List<RestaurantOrder> restaurantOrders;
+    @ManyToMany(mappedBy = "tables")
+    @JsonBackReference
+    private List<Reservation> reservationList;
 }

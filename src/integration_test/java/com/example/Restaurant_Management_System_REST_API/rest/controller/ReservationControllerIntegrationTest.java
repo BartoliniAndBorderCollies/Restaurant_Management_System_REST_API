@@ -2,13 +2,16 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +51,9 @@ class ReservationControllerIntegrationTest {
     private ReservationRepository reservationRepository;
     private Set<Authority> restaurantClientAuthoritySet;
     private Reservation reservation;
+    @Autowired
+    private TableRepository tableRepository;
+    private List<Table> tableList;
 
 
     @BeforeAll
@@ -91,10 +98,25 @@ class ReservationControllerIntegrationTest {
     }
 
     @BeforeEach
+    public void prepareRestaurantTables() {
+        // Create tables with initial values
+        tableList = new ArrayList<>();
+        for(int i =0; i<3; i++) {
+            Table table = new Table(null, true, null, new ArrayList<>());
+            tableList.add(table);
+        }
+
+        // Save each table in the repository
+        for (Table table: tableList) {
+            tableRepository.save(table);
+        }
+    }
+
+    @BeforeEach
     public void prepareReservationForTests() {
         time = LocalDateTime.of(2024, 3, 18, 21, 15);
         reservation = new Reservation(null, "test case", "test", 20, time,
-                null, restaurantCustomer);
+                tableList, restaurantCustomer);
         reservationRepository.save(reservation);
     }
 
@@ -103,6 +125,7 @@ class ReservationControllerIntegrationTest {
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
         reservationRepository.deleteAll();
+        tableRepository.deleteAll();
     }
 
     @AfterEach
@@ -111,15 +134,25 @@ class ReservationControllerIntegrationTest {
     }
 
 
+    private List<TableReservationDTO> getTableReservationDTOSList() {
+        return reservation.getTables().stream()
+                .map(table -> modelMapper.map(table, TableReservationDTO.class))
+                .collect(Collectors.toList());
+    }
+
     @Test
     public void create_ShouldAddReservationToDbAssignCustomerAndReturnReservationDTOResponse_WhenReservationDTORequestIsGiven() {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(restaurantCustomer, CustomerReservationDTO.class);
 
+        List<TableReservationDTO> tableReservationDTOS = tableList.stream()
+                .map(table -> modelMapper.map(table, TableReservationDTO.class))
+                .toList();
+
         ReservationDTO reservationDTO = new ReservationDTO(null, "Anniversary party",
-                "20 years of marriage!", 15, time, null, customerReservationDTO);
+                "20 years of marriage!", 15, time, tableReservationDTOS, customerReservationDTO);
 
         ReservationDTO expected = new ReservationDTO(null, "Anniversary party",
-                "20 years of marriage!", 15, time, null, customerReservationDTO);
+                "20 years of marriage!", 15, time, tableReservationDTOS, customerReservationDTO);
 
         webTestClient.post()
                 .uri("/api/reservation/add")
@@ -143,6 +176,8 @@ class ReservationControllerIntegrationTest {
     @Test
     public void findById_ShouldMapAndReturnReservationDTOResponse_WhenReservationExist() {
 
+        List<TableReservationDTO> tableListDTO = getTableReservationDTOSList();
+
         webTestClient.get()
                 .uri("/api/reservation/find/" + reservation.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
@@ -156,7 +191,8 @@ class ReservationControllerIntegrationTest {
                     assertEquals(reservation.getDescription(), actualResponse.getDescription());
                     assertEquals(reservation.getPeopleAmount(), actualResponse.getPeopleAmount());
                     assertEquals(reservation.getStart(), actualResponse.getStart());
-                    assertTrue(actualResponse.getTables().isEmpty());
+                    assertIterableEquals(tableListDTO, actualResponse.getTables());
+
                     Customer actualCustomer = modelMapper.map(actualResponse.getCustomer(), Customer.class);
                     assertEquals(reservation.getCustomer(), actualCustomer);
                 });
@@ -164,8 +200,6 @@ class ReservationControllerIntegrationTest {
 
     @Test
     public void findAll_ShouldReturnReservationDTOResponseList_WhenReservationExist() {
-
-        reservation.setTables(new ArrayList<>()); //I set this as empty list, otherwise I got assertion failure null vs empty
 
         List<ReservationDTO> expected = Arrays.asList(modelMapper.map(reservation, ReservationDTO.class));
 
@@ -204,10 +238,12 @@ class ReservationControllerIntegrationTest {
         CustomerReservationDTO customerReservationDTO = modelMapper.map(customerForUpdate, CustomerReservationDTO.class);
 
         ReservationDTO reservationDTO = new ReservationDTO(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
+                "10 years of struggle on planet earth", 12, updatedTime, getTableReservationDTOSList(),
+                customerReservationDTO);
 
         ReservationDTO expected = new ReservationDTO(null, "Birthday",
-                "10 years of struggle on planet earth", 12, updatedTime, null, customerReservationDTO);
+                "10 years of struggle on planet earth", 12, updatedTime, getTableReservationDTOSList(),
+                customerReservationDTO);
 
         //test itself
         webTestClient.put()
@@ -224,8 +260,7 @@ class ReservationControllerIntegrationTest {
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPeopleAmount(), actualResponse.getPeopleAmount());
                     assertEquals(expected.getStart(), actualResponse.getStart());
-                    assertTrue(actualResponse.getTables().isEmpty());
-                    assertEquals(expected.getCustomer(), actualResponse.getCustomer());
+                    assertIterableEquals(expected.getTables(), actualResponse.getTables());
                 });
     }
 

@@ -55,6 +55,10 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/reservation/**"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
+                        //Secured paths for Restaurant Table operations
+                        .requestMatchers(mvc.pattern("/api/table/**"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
+
                         //Permit all other requests
                         .anyRequest()
                         .permitAll())
