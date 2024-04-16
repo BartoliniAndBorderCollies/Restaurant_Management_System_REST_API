@@ -37,10 +37,6 @@ public class TableService {
         return tableList;
     }
 
-    private Table findById(Long id) throws NotFoundInDatabaseException {
-        return tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
-    }
-
     public ResponseEntity<?> deleteById(Long id) throws NotFoundInDatabaseException {
         Table tableToDelete = tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
 
