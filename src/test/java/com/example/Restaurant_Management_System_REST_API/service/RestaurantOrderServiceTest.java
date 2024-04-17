@@ -8,6 +8,7 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -33,11 +34,13 @@ class RestaurantOrderServiceTest {
     private RestaurantOrderDTO restaurantOrderDTO;
     private RestaurantOrder restaurantOrder;
     private Long id;
+    private TableRepository tableRepository;
 
     @BeforeEach
     public void setUpEnvironment() {
         modelMapper = mock(ModelMapper.class);
         restaurantOrderRepository = mock(RestaurantOrderRepository.class);
+        tableRepository = mock(TableRepository.class);
         tableService = mock(TableService.class);
         restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService);
         restaurantOrderDTO = mock(RestaurantOrderDTO.class);
@@ -127,7 +130,7 @@ class RestaurantOrderServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderDTO));
     }
 
-    //TODO: this below test will need to be updated after merging two new branches
+    //TODO: this below test will need to be updated after merging new branch
     @Test
     public void update_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenIdAndRestaurantOrderDTOsGiven()
             throws NotFoundInDatabaseException {
@@ -140,6 +143,8 @@ class RestaurantOrderServiceTest {
         when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrder.getOrderStatus()).thenReturn(OrderStatus.PENDING);
         when(restaurantOrder.getTable()).thenReturn(table);
+        when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
+        restaurantOrder.setTable(table);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
         when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
         when(restaurantOrder.getMenuRecords()).thenReturn(menuRecordList);
