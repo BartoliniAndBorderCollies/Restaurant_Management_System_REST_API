@@ -96,6 +96,7 @@ class RestaurantOrderControllerIntegrationTest {
     public void cleanRoles() {
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
+        tableRepository.deleteAll();
     }
 
     @Test
