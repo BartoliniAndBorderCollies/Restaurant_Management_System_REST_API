@@ -53,18 +53,17 @@ class RestaurantOrderControllerIntegrationTest {
     @Autowired
     private TableRepository tableRepository;
     private TableReservationDTO tableDTO;
+    private RestaurantOrder restaurantOrder;
 
-    @BeforeEach
-    public void prepareRestaurantTableAndMapToDTO() {
+    @BeforeAll
+    public void prepareEnvironment() {
+        time = LocalDateTime.of(2020, 10, 10, 19, 55);
         table = new Table(null, true, new ArrayList<>(), new ArrayList<>());
         tableRepository.save(table);
         tableDTO = modelMapper.map(table, TableReservationDTO.class);
-    }
-
-    @BeforeEach
-    public void setUpRestaurantOrderDTO() {
-        time = LocalDateTime.of(2020, 10, 10, 19, 55);
-        restaurantOrderDTO = new RestaurantOrderDTO(null, time, OrderStatus.PENDING, tableDTO, null); //TODO: add records after mering new branch
+        restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, restaurantOwner,
+                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
+        restaurantOrderRepository.save(restaurantOrder);
     }
 
     @BeforeAll
@@ -87,13 +86,9 @@ class RestaurantOrderControllerIntegrationTest {
                 .encodeToString((restaurantOwner.getEmailAddress() + ":" + rawPassword).getBytes());
     }
 
-    @AfterEach
-    public void cleanDatabase() {
-        restaurantOrderRepository.deleteAll();
-    }
-
     @AfterAll
-    public void cleanRoles() {
+    public void cleanDatabases() {
+        restaurantOrderRepository.deleteAll();
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
         tableRepository.deleteAll();
@@ -101,6 +96,8 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void add_ShouldAddRestaurantOrderToDatabaseAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven() {
+        RestaurantOrderDTO restaurantOrderDTO = new RestaurantOrderDTO(null, time, OrderStatus.PENDING, tableDTO,
+                new ArrayList<>()); //TODO: add menu records when new branch will be merged
 
         webTestClient.post()
                 .uri("/api/order/add")
@@ -121,9 +118,6 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
-        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
-                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
-        restaurantOrderRepository.save(restaurantOrder);
 
         webTestClient.get()
                 .uri("/api/order/find/" + restaurantOrder.getId())
@@ -136,18 +130,15 @@ class RestaurantOrderControllerIntegrationTest {
                     assertNotNull(actualResponse);
                     assertEquals(restaurantOrder.getOrderTime(), actualResponse.getOrderTime());
                     assertEquals(restaurantOrder.getOrderStatus(), actualResponse.getOrderStatus());
-                    assertEquals(tableDTO, actualResponse.getTable());
+                    assertEquals(modelMapper.map(restaurantOrder.getTable(), TableReservationDTO.class), actualResponse.getTable());
                     //TODO: add more assertions when new branch will be merged
                 });
     }
 
     @Test
     public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
-        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
-                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         RestaurantOrder restaurantOrder2 = new RestaurantOrder(null, time, OrderStatus.PENDING, restaurantOwner,
                 null, new ArrayList<>()); //TODO: add menu records when new branch will be merged
-        restaurantOrderRepository.save(restaurantOrder);
         restaurantOrderRepository.save(restaurantOrder2);
 
         List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder, restaurantOrder2);
@@ -169,11 +160,6 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
-        //This restaurant order exists in db and will be updated:
-        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, restaurantOwner,
-                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
-        restaurantOrderRepository.save(restaurantOrder);
-
         //These are expected update details:
         Table updatedTable = new Table(100L, false, new ArrayList<>(), new ArrayList<>());
         tableRepository.save(updatedTable);
@@ -201,6 +187,7 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
+        //This must be here because I create restaurantOrder in @BeforeAll and if I delete it here then I lost it for other methods
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
                 table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
