@@ -136,6 +136,7 @@ class RestaurantOrderControllerIntegrationTest {
                     assertNotNull(actualResponse);
                     assertEquals(restaurantOrder.getOrderTime(), actualResponse.getOrderTime());
                     assertEquals(restaurantOrder.getOrderStatus(), actualResponse.getOrderStatus());
+                    assertEquals(tableDTO, actualResponse.getTable());
                     //TODO: add more assertions when new branch will be merged
                 });
     }
