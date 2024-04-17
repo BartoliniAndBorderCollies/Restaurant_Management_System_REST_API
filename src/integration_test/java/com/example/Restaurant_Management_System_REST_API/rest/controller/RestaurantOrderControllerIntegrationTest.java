@@ -1,14 +1,17 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +64,7 @@ class RestaurantOrderControllerIntegrationTest {
     @BeforeEach
     public void setUpRestaurantOrderDTO() {
         time = LocalDateTime.of(2020, 10, 10, 19, 55);
-        restaurantOrderDTO = new RestaurantOrderDTO(null, time, OrderStatus.PENDING, null, null); //TODO: add tables and records after mering new branch
+        restaurantOrderDTO = new RestaurantOrderDTO(null, time, OrderStatus.PENDING, tableDTO, null); //TODO: add records after mering new branch
     }
 
     @BeforeAll
@@ -118,7 +121,7 @@ class RestaurantOrderControllerIntegrationTest {
     @Test
     public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
-                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
+                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
 
         webTestClient.get()
@@ -139,9 +142,9 @@ class RestaurantOrderControllerIntegrationTest {
     @Test
     public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
-                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
+                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         RestaurantOrder restaurantOrder2 = new RestaurantOrder(null, time, OrderStatus.PENDING, restaurantOwner,
-                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
+                null, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
         restaurantOrderRepository.save(restaurantOrder2);
 
@@ -165,7 +168,7 @@ class RestaurantOrderControllerIntegrationTest {
     @Test
     public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
-                null, new ArrayList<>()); //TODO: add table and menu records when new branch will be merged
+                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
 
         webTestClient.delete()
