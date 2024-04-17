@@ -46,7 +46,17 @@ class RestaurantOrderControllerIntegrationTest {
     @Autowired
     private ModelMapper modelMapper;
     private LocalDateTime time;
+    private Table table;
+    @Autowired
+    private TableRepository tableRepository;
+    private TableReservationDTO tableDTO;
 
+    @BeforeEach
+    public void prepareRestaurantTableAndMapToDTO() {
+        table = new Table(null, true, new ArrayList<>(), new ArrayList<>());
+        tableRepository.save(table);
+        tableDTO = modelMapper.map(table, TableReservationDTO.class);
+    }
 
     @BeforeEach
     public void setUpRestaurantOrderDTO() {
