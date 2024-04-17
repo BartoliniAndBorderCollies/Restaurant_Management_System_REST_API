@@ -168,6 +168,38 @@ class RestaurantOrderControllerIntegrationTest {
     }
 
     @Test
+    public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
+        //This restaurant order exists in db and will be updated:
+        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, restaurantOwner,
+                table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
+        restaurantOrderRepository.save(restaurantOrder);
+
+        //These are expected update details:
+        Table updatedTable = new Table(100L, false, new ArrayList<>(), new ArrayList<>());
+        tableRepository.save(updatedTable);
+        TableReservationDTO updatedTableDTO = modelMapper.map(updatedTable, TableReservationDTO.class);
+        OrderStatus updatedStatus = OrderStatus.DONE;
+        RestaurantOrderDTO expected = new RestaurantOrderDTO(null, time, updatedStatus, updatedTableDTO, new ArrayList<>());
+
+        //This is a body value of updating DTO
+        RestaurantOrderDTO updatingDTO = new RestaurantOrderDTO(null, time, updatedStatus, updatedTableDTO, new ArrayList<>());
+
+        webTestClient.put()
+                .uri("/api/order/update/" + restaurantOrder.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .bodyValue(updatingDTO)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(RestaurantOrderDTO.class)
+                .consumeWith(response -> {
+                    RestaurantOrderDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.getOrderStatus(), actualResponse.getOrderStatus());
+                    assertEquals(expected.getTable(), actualResponse.getTable());
+                });
+    }
+
+    @Test
     public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, restaurantOwner,
                 table, new ArrayList<>()); //TODO: add menu records when new branch will be merged
