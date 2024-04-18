@@ -72,4 +72,8 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
 
         return new ResponseEntity<>("Menu record has been deleted!", HttpStatus.OK);
     }
+
+    MenuRecord findByName(String name) throws NotFoundInDatabaseException {
+        return menuRecordRepository.findByName(name).orElseThrow(()-> new NotFoundInDatabaseException(MenuRecord.class));
+    }
 }
