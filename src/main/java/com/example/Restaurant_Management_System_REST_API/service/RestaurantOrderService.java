@@ -29,7 +29,16 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     public RestaurantOrderDTO create(RestaurantOrderDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
+        if(restaurantOrderDTO.getMenuRecords() == null) {
+            throw new NotFoundInDatabaseException(MenuRecord.class);
+        }
+
         RestaurantOrder restaurantOrder = modelMapper.map(restaurantOrderDTO, RestaurantOrder.class);
+        checkIfMealExist(restaurantOrder);
+        tableService.checkIfTableExist(restaurantOrder.getTable().getId());
+        //TODO: checkIfCustomerExist
+        //TODO: update the stock amount
+
         restaurantOrderRepository.save(restaurantOrder);
 
         return modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
