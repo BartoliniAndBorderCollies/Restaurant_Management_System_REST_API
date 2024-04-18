@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import lombok.*;
@@ -19,5 +19,5 @@ public class RestaurantOrderDTO {
     private LocalDateTime orderTime;
     private OrderStatus orderStatus;
     private TableReservationDTO table;
-    private List<MenuRecordDTOResponse> menuRecords;
+    private List<MenuRecordForOrderDTO> menuRecords;
 }
