@@ -53,7 +53,7 @@ class MenuRecordServiceTest {
                     ingredients, Category.FOR_KIDS, true);
             menuRecord = new MenuRecord(ingredients, Category.BEVERAGE, "Drink", "Thirsty very much!",
                     6.0, true);
-            menuRecordDTOResponse = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, false);
+            menuRecordDTOResponse = new MenuRecordDTOResponse(1L, "Lech beer", ingredients, Category.BEVERAGE, false);
         }
 
         @Test
@@ -105,7 +105,7 @@ class MenuRecordServiceTest {
         @BeforeEach
         public void setUp() {
             id = 1L;
-            menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
+            menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, "Lech beer", ingredients, Category.DESSERT, true);
             menuRecord = new MenuRecord(ingredients, Category.DESSERT, "Lovely dessert!", "mhmmm",
                     6.5, true);
         }
@@ -136,7 +136,7 @@ class MenuRecordServiceTest {
             List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord, menuRecord2);
             when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
 
-            MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, ingredients, Category.BEVERAGE, true);
+            MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, "Lech beer", ingredients, Category.BEVERAGE, true);
             when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
             when(modelMapper.map(menuRecord2, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse2);
 
