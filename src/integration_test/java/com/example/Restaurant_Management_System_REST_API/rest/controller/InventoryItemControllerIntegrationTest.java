@@ -100,7 +100,7 @@ class InventoryItemControllerIntegrationTest {
                     InventoryItemDTOResponse actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertNotNull(actualResponse.getId());
-                    assertEquals(expected.getStockAmount(), actualResponse.getStockAmount());
+                    assertEquals(expected.getAmount(), actualResponse.getAmount());
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
@@ -127,7 +127,7 @@ class InventoryItemControllerIntegrationTest {
                     InventoryItemDTOResponse actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertNotNull(actualResponse.getId());
-                    assertEquals(expected.getStockAmount(), actualResponse.getStockAmount());
+                    assertEquals(expected.getAmount(), actualResponse.getAmount());
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
@@ -187,8 +187,7 @@ class InventoryItemControllerIntegrationTest {
                 .consumeWith(response -> {
                     InventoryItemDTOResponse actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals(expected.getDeliveryDate(), actualResponse.getDeliveryDate());
-                    assertEquals(expected.getStockAmount(), actualResponse.getStockAmount());
+                    assertEquals(expected.getAmount(), actualResponse.getAmount());
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
