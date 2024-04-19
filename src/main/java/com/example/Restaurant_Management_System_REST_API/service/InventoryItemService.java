@@ -62,7 +62,6 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
             throws NotFoundInDatabaseException {
         InventoryItemDTOResponse inventoryDTOToBeUpdated = findById(id);
 
-        Optional.ofNullable(inventoryItemDTORequest.getDeliveryDate()).ifPresent(inventoryDTOToBeUpdated::setDeliveryDate);
         Optional.of(inventoryItemDTORequest.getAmount()).ifPresent(inventoryDTOToBeUpdated::setAmount);
         Optional.ofNullable(inventoryItemDTORequest.getSupplier()).ifPresent(inventoryDTOToBeUpdated::setSupplier);
         Optional.ofNullable(inventoryItemDTORequest.getName()).ifPresent(inventoryDTOToBeUpdated::setName);

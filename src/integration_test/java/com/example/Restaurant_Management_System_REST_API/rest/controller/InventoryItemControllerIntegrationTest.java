@@ -86,7 +86,7 @@ class InventoryItemControllerIntegrationTest {
         InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest(null, null,
                 100, null, "Potatoes", "Potatoes", 1.49);
 
-        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, null, 100,
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 100,
                 null, "Potatoes", "Potatoes", 1.49 );
 
         webTestClient.post()
@@ -109,13 +109,12 @@ class InventoryItemControllerIntegrationTest {
 
     @Test
     public void findById_ShouldReturnInventoryItemDTOResponse_WhenInventoryItemIdExist() {
-        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 26, 14, 29, 20);
 
-        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 
-        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, fixedDateTime, 55, null,
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 55, null,
                 "Pepper", "Black pepper", 0.19);
 
         webTestClient.get()
@@ -127,7 +126,6 @@ class InventoryItemControllerIntegrationTest {
                 .consumeWith(response-> {
                     InventoryItemDTOResponse actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals(expected.getDeliveryDate(), actualResponse.getDeliveryDate());
                     assertNotNull(actualResponse.getId());
                     assertEquals(expected.getStockAmount(), actualResponse.getStockAmount());
                     assertEquals(expected.getName(), actualResponse.getName());
@@ -139,11 +137,9 @@ class InventoryItemControllerIntegrationTest {
 
     @Test
     public void findAll_ShouldReturnInventoryItemDTOResponseList_WhenInventoryExist() {
-        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 27, 9, 28);
-
-        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
                 "Pepper", "Black pepper", 0.19);
-        InventoryItem inventoryItem2 = new InventoryItem(null, fixedDateTime, 100, null,
+        InventoryItem inventoryItem2 = new InventoryItem(null, 100, null,
                 "Salt", "Sea salt", 0.49);
 
         inventoryItemRepository.saveAll(Arrays.asList(inventoryItem, inventoryItem2));
@@ -170,9 +166,7 @@ class InventoryItemControllerIntegrationTest {
 
     @Test
     public void update_ShouldUpdateInventoryItemAndReturnInventoryDTOResponse_WhenIdAndInventoryItemDTORequestAreGiven() {
-        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 27, 9, 28);
-
-        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 
@@ -180,8 +174,7 @@ class InventoryItemControllerIntegrationTest {
                 LocalDateTime.of(2024, 3, 1, 10,2, 59), 1000,
                 null, "Updated pepper","So nice updated pepper", 0.99);
 
-        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(999L,
-                LocalDateTime.of(2024, 3, 1, 10,2, 59), 1000,
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(999L, 1000,
                 null, "Updated pepper","So nice updated pepper", 0.99);
 
         webTestClient.put()
@@ -205,9 +198,8 @@ class InventoryItemControllerIntegrationTest {
 
     @Test
     public void delete_ShouldDeleteInventoryItemAndReturnResponseEntity_WhenIdIsGiven() {
-        LocalDateTime fixedDateTime = LocalDateTime.of(2024, 2, 27, 9, 28);
 
-        InventoryItem inventoryItem = new InventoryItem(null, fixedDateTime, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 

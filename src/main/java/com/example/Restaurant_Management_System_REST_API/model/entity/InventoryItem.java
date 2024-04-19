@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,11 +16,10 @@ import java.util.List;
 @NoArgsConstructor
 public class InventoryItem extends CatalogItem {
 
-    public InventoryItem(Long id, LocalDateTime deliveryDate, int amount, Supplier supplier, String name,
+    public InventoryItem(Long id, int amount, Supplier supplier, String name,
                          String description, Double price ) {
         super(name, description, price);
         this.id = id;
-        this.deliveryDate = deliveryDate;
         this.amount = amount;
         this.supplier = supplier;
     }
@@ -29,7 +27,6 @@ public class InventoryItem extends CatalogItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private LocalDateTime deliveryDate;
     @Positive(message = "Amount must be above zero!")
     private int amount;
     @ManyToOne
