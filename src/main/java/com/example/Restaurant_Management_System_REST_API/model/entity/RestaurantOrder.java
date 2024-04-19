@@ -23,11 +23,9 @@ public class RestaurantOrder {
     private LocalDateTime orderTime;
     private OrderStatus orderStatus;
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-    @ManyToOne
     @JoinColumn(name = "table_id")
     private Table table;
+    private String telephoneNumber;
     @ManyToMany
     @JoinTable(
             name = "order_menu_record",

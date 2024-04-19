@@ -19,5 +19,6 @@ public class RestaurantOrderDTO {
     private LocalDateTime orderTime;
     private OrderStatus orderStatus;
     private TableReservationDTO table;
+    private String telephoneNumber;
     private List<MenuRecordForOrderDTO> menuRecords;
 }
