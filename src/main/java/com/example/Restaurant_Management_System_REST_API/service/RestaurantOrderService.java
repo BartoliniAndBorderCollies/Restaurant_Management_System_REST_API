@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
@@ -13,7 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,12 +31,15 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     private final MenuRecordService menuRecordService;
 
     @Override
+    @Transactional
     public RestaurantOrderDTO create(RestaurantOrderDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
-        if(restaurantOrderDTO.getMenuRecords() == null) {
+        //1. Check if client provided meals which he wants to order
+        if(restaurantOrderDTO.getMenuRecords() == null)
             throw new NotFoundInDatabaseException(MenuRecord.class);
-        }
 
         RestaurantOrder restaurantOrder = modelMapper.map(restaurantOrderDTO, RestaurantOrder.class);
+
+        //2. Check if these meals exist in restaurant menu
         checkIfMealExist(restaurantOrder);
         tableService.checkIfTableExist(restaurantOrder.getTable().getId());
         //TODO: checkIfCustomerExist
