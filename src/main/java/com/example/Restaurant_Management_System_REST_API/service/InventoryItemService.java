@@ -63,7 +63,7 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         InventoryItemDTOResponse inventoryDTOToBeUpdated = findById(id);
 
         Optional.ofNullable(inventoryItemDTORequest.getDeliveryDate()).ifPresent(inventoryDTOToBeUpdated::setDeliveryDate);
-        Optional.of(inventoryItemDTORequest.getStockAmount()).ifPresent(inventoryDTOToBeUpdated::setStockAmount);
+        Optional.of(inventoryItemDTORequest.getAmount()).ifPresent(inventoryDTOToBeUpdated::setAmount);
         Optional.ofNullable(inventoryItemDTORequest.getSupplier()).ifPresent(inventoryDTOToBeUpdated::setSupplier);
         Optional.ofNullable(inventoryItemDTORequest.getName()).ifPresent(inventoryDTOToBeUpdated::setName);
         Optional.ofNullable(inventoryItemDTORequest.getDescription()).ifPresent(inventoryDTOToBeUpdated::setDescription);
