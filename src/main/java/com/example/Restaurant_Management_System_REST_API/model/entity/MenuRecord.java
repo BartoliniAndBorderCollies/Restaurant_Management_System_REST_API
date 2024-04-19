@@ -5,11 +5,11 @@ import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,7 +32,7 @@ public class MenuRecord extends CatalogItem {
     @NotEmpty(message = "Must have at least one ingredient!")
     @Column(nullable = false)
     private Set<String> ingredients;
-    @NotNull (message = "Category is missing!")
+    @NotNull(message = "Category is missing!")
     @Column(nullable = false)
     private Category category;
     @NotNull(message = "Availability is missing!")
@@ -40,4 +40,9 @@ public class MenuRecord extends CatalogItem {
     private Boolean isAvailable; //I use object to be able to hold null values (for updating process, I want to update
     //just fields which hold values, if some are skipped they should not be changed on db. if it was a primitive data type
     //of boolean then it would change to false as default
+    @ManyToMany
+    @JoinTable(name = "menu_record_and_inventory_items",
+            joinColumns = @JoinColumn(name = "menuRecord_id"),
+            inverseJoinColumns =@JoinColumn(name = "inventoryItem_id"))
+    private List<InventoryItem> inventoryItems;
 }
