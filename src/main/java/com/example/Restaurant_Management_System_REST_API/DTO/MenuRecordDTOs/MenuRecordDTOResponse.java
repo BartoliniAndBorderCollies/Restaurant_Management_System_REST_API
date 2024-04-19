@@ -2,8 +2,10 @@ package com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs;
 
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
+import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,4 +20,5 @@ public class MenuRecordDTOResponse extends CatalogItem {
     private Set<String> ingredients;
     private Category category;
     private Boolean isAvailable;
+    private List<InventoryItem> inventoryItems;
 }
