@@ -3,7 +3,6 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +27,10 @@ public class MenuRecord extends CatalogItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @NotEmpty(message = "Must have at least one ingredient!")
-    @Column(nullable = false)
+    @ManyToMany
+    @JoinTable(name = "menu_record_and_ingredients",
+            joinColumns = @JoinColumn(name = "menuRecord_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
     private List<Ingredient> ingredients;
     @NotNull(message = "Category is missing!")
     @Column(nullable = false)
@@ -42,6 +43,6 @@ public class MenuRecord extends CatalogItem {
     @ManyToMany
     @JoinTable(name = "menu_record_and_inventory_items",
             joinColumns = @JoinColumn(name = "menuRecord_id"),
-            inverseJoinColumns =@JoinColumn(name = "inventoryItem_id"))
+            inverseJoinColumns = @JoinColumn(name = "inventoryItem_id"))
     private List<InventoryItem> inventoryItems;
 }
