@@ -17,9 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 public class MenuRecord extends CatalogItem {
 
-    public MenuRecord(List<MealIngredient> mealIngredients, Category category, String name, String description, Double price, Boolean isAvailable) {
+    public MenuRecord(List<Ingredient> ingredients, Category category, String name, String description, Double price, Boolean isAvailable) {
         super(name, description, price); // This calls the constructor in CatalogItem
-        this.mealIngredients = mealIngredients;
+        this.ingredients = ingredients;
         this.category = category;
         this.isAvailable = isAvailable;
     }
@@ -30,7 +30,7 @@ public class MenuRecord extends CatalogItem {
     private Long id;
     @NotEmpty(message = "Must have at least one ingredient!")
     @Column(nullable = false)
-    private List<MealIngredient> mealIngredients;
+    private List<Ingredient> ingredients;
     @NotNull(message = "Category is missing!")
     @Column(nullable = false)
     private Category category;
