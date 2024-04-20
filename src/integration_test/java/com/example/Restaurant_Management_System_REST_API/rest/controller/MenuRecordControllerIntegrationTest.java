@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.Menu
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.MealIngredient;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // (this is called per-class test instance lifecycle), and the @BeforeAll method doesn’t need to be static.
 class MenuRecordControllerIntegrationTest {
 
-    private Set<String> ingredients;
+    private List<MealIngredient> mealIngredients;
     @Autowired
     private WebTestClient webTestClient;
     private String basicAuthHeaderOwner;
@@ -84,11 +85,14 @@ class MenuRecordControllerIntegrationTest {
     }
 
     @BeforeEach
-    public void setUp() {
-        ingredients = new HashSet<>();
-        ingredients.add("water");
-        ingredients.add("hops");
-        ingredients.add("barley");
+    public void setUpIngredients() {
+        mealIngredients = new ArrayList<>();
+        MealIngredient potatoes = new MealIngredient(1L, "Potatoes", 0.3);
+        MealIngredient chop = new MealIngredient(2L, "chop", 0.2);
+        MealIngredient pickledCabbage = new MealIngredient(3L, "Pickled cabbage", 0.2);
+        mealIngredients.add(potatoes);
+        mealIngredients.add(chop);
+        mealIngredients.add(pickledCabbage);
     }
 
     @AfterEach
@@ -106,7 +110,7 @@ class MenuRecordControllerIntegrationTest {
     public void create_ShouldAddMenuRecordToDatabaseAndReturnDTOResponse_WhenDTORequestIsGiven() {
 
         MenuRecordDTORequest menuRecordDTORequest = new MenuRecordDTORequest("DTO request", "DTO description", 10.0, null,
-                ingredients, Category.FOR_KIDS, true);
+                mealIngredients, Category.FOR_KIDS, true);
 
         webTestClient.post()
                 .uri("/api/menu/record/add")
@@ -130,7 +134,7 @@ class MenuRecordControllerIntegrationTest {
 
     @Test
     public void findById_ShouldReturnMenuRecordDTOResponse_WhenMenuRecordIdIsGiven() {
-        MenuRecord menuRecord = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+        MenuRecord menuRecord = new MenuRecord(mealIngredients, Category.SNACKS, "lovely snacks", "omommoom",
                 3.0, true);
         menuRecordRepository.save(menuRecord);
 
@@ -147,7 +151,7 @@ class MenuRecordControllerIntegrationTest {
                     assertEquals(menuRecord.getName(), menuDTOResponse.getName());
                     assertEquals(menuRecord.getDescription(), menuDTOResponse.getDescription());
                     assertEquals(menuRecord.getPrice(), menuDTOResponse.getPrice());
-                    assertIterableEquals(menuRecord.getIngredients(), menuDTOResponse.getIngredients());
+                    assertIterableEquals(menuRecord.getMealIngredients(), menuDTOResponse.getIngredients());
                     assertEquals(menuRecord.getCategory(), menuDTOResponse.getCategory());
                     assertEquals(menuRecord.getIsAvailable(), menuDTOResponse.getIsAvailable());
                 });
@@ -157,9 +161,9 @@ class MenuRecordControllerIntegrationTest {
     public void findAll_ShouldReturnMenuRecordDTOResponseList_WhenMenuRecordsExist() {
 
         List<MenuRecord> menuRecords = Arrays.asList(
-                new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+                new MenuRecord(mealIngredients, Category.SNACKS, "lovely snacks", "omommoom",
                         3.0, true),
-                new MenuRecord(ingredients, Category.BEVERAGE, "Lovely drink", "thirsty!", 5.0,
+                new MenuRecord(mealIngredients, Category.BEVERAGE, "Lovely drink", "thirsty!", 5.0,
                         true)
         );
 
@@ -199,10 +203,10 @@ class MenuRecordControllerIntegrationTest {
     @Test
     public void update_ShouldUpdateMenuRecordAndMapAndReturnMenuRecordDTOResponse_WhenMenuRecordDTORequestAndIdAreGiven() {
 
-        MenuRecord menuRecordOld = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+        MenuRecord menuRecordOld = new MenuRecord(mealIngredients, Category.SNACKS, "lovely snacks", "omommoom",
                 3.0, true);
         MenuRecordDTORequest menuRecordDTORequest = new MenuRecordDTORequest("Updated name", "This is updated description",
-                100.00, null, ingredients, Category.FOR_KIDS, true);
+                100.00, null, mealIngredients, Category.FOR_KIDS, true);
 
         menuRecordRepository.save(menuRecordOld);
 
@@ -229,7 +233,7 @@ class MenuRecordControllerIntegrationTest {
     @Test
     public void delete_ShouldDeleteMenuRecordAndReturnResponseEntity_WhenIdIsGiven() {
 
-        MenuRecord menuRecord = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
+        MenuRecord menuRecord = new MenuRecord(mealIngredients, Category.SNACKS, "lovely snacks", "omommoom",
                 3.0, true);
         menuRecordRepository.save(menuRecord);
 

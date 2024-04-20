@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.Menu
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
+import com.example.Restaurant_Management_System_REST_API.model.entity.MealIngredient;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,7 +28,7 @@ class MenuRecordServiceTest {
     private MenuRecordDTORequest menuRecordDTORequest;
     private MenuRecord menuRecord;
     private MenuRecordDTOResponse menuRecordDTOResponse;
-    private Set<String> ingredients;
+    private List<MealIngredient> ingredients;
     private Long id;
     private MenuRecordDTOResponse menuRecordDTOResponse1;
 
@@ -37,10 +38,13 @@ class MenuRecordServiceTest {
         modelMapper = mock(ModelMapper.class);
         menuRecordService = new MenuRecordService(menuRecordRepository, modelMapper);
 
-        ingredients = new HashSet<>();
-        ingredients.add("water");
-        ingredients.add("hops");
-        ingredients.add("barley");
+        ingredients = new ArrayList<>();
+        MealIngredient potatoes = new MealIngredient(1L, "Potatoes", 0.3);
+        MealIngredient chop = new MealIngredient(2L, "chop", 0.2);
+        MealIngredient pickledCabbage = new MealIngredient(3L, "Pickled cabbage", 0.2);
+        ingredients.add(potatoes);
+        ingredients.add(chop);
+        ingredients.add(pickledCabbage);
     }
 
 

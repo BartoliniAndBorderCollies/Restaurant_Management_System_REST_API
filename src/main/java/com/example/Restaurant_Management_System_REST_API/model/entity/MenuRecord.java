@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -18,9 +17,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class MenuRecord extends CatalogItem {
 
-    public MenuRecord(Set<String> ingredients, Category category, String name, String description, Double price, Boolean isAvailable) {
+    public MenuRecord(List<MealIngredient> mealIngredients, Category category, String name, String description, Double price, Boolean isAvailable) {
         super(name, description, price); // This calls the constructor in CatalogItem
-        this.ingredients = ingredients;
+        this.mealIngredients = mealIngredients;
         this.category = category;
         this.isAvailable = isAvailable;
     }
@@ -31,7 +30,7 @@ public class MenuRecord extends CatalogItem {
     private Long id;
     @NotEmpty(message = "Must have at least one ingredient!")
     @Column(nullable = false)
-    private Set<String> ingredients;
+    private List<MealIngredient> mealIngredients;
     @NotNull(message = "Category is missing!")
     @Column(nullable = false)
     private Category category;
