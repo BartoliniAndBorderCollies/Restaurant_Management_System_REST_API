@@ -87,9 +87,9 @@ class MenuRecordControllerIntegrationTest {
     @BeforeEach
     public void setUpIngredients() {
         ingredients = new ArrayList<>();
-        Ingredient potatoes = new Ingredient(1L, "Potatoes", 0.3);
-        Ingredient chop = new Ingredient(2L, "chop", 0.2);
-        Ingredient pickledCabbage = new Ingredient(3L, "Pickled cabbage", 0.2);
+        Ingredient potatoes = new Ingredient("Potatoes", 0.3);
+        Ingredient chop = new Ingredient("Chop", 0.2);
+        Ingredient pickledCabbage = new Ingredient("Pickled cabbage", 0.2);
         ingredients.add(potatoes);
         ingredients.add(chop);
         ingredients.add(pickledCabbage);
