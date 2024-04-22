@@ -61,7 +61,7 @@ class MenuRecordServiceTest {
         }
 
         @Test
-        public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() {
+        public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
@@ -75,7 +75,7 @@ class MenuRecordServiceTest {
         }
 
         @Test
-        public void create_ShouldReturnTypeMenuRecordDTOResponse_WhenMenuRecordDTORequestIsGiven() {
+        public void create_ShouldReturnTypeMenuRecordDTOResponse_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange - takes from @BeforeEach
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
@@ -89,7 +89,7 @@ class MenuRecordServiceTest {
         }
 
         @Test
-        public void create_ShouldCallExactlyOnceOnMenuRecordRepo_WhenMenuRecordDTORequestIsGiven() {
+        public void create_ShouldCallExactlyOnceOnMenuRecordRepo_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange - takes from @BeforeEach
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
