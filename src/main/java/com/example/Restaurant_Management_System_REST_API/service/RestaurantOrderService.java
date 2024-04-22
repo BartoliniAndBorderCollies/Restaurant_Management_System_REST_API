@@ -4,9 +4,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
-import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
-import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
+import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
@@ -15,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     private final ModelMapper modelMapper;
     private final TableService tableService;
     private final MenuRecordService menuRecordService;
+    private final InventoryItemService inventoryItemService;
 
     @Override
     @Transactional
@@ -48,6 +48,26 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         restaurantOrderRepository.save(restaurantOrder);
 
         return modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
+    }
+
+    private boolean areThereEnoughIngredients(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
+        List<MenuRecord> listOfMealsWhichClientWantsToOrder = restaurantOrder.getMenuRecords();
+
+        for (MenuRecord menuRecord : listOfMealsWhichClientWantsToOrder) {
+            List<Ingredient> ingredients = menuRecord.getIngredients();
+            for (Ingredient eachIngredient : ingredients) {
+                double requiredIngredientQuantity = eachIngredient.getAmountRequired();
+                InventoryItem inventoryItem = findByName(eachIngredient.getName());
+                if (inventoryItem == null || inventoryItem.getAmount() - requiredIngredientQuantity < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private InventoryItem findByName(String name) throws NotFoundInDatabaseException {
+        return inventoryItemService.findByName(name);
     }
 
     private void checkIfMealExist(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
@@ -84,13 +104,13 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     @Override
     public RestaurantOrderDTO update(Long id, RestaurantOrderDTO updatedOrderDTO) throws NotFoundInDatabaseException {
 
-        RestaurantOrder existingRestaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(()->
+        RestaurantOrder existingRestaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(RestaurantOrder.class));
         RestaurantOrder restaurantOrder = modelMapper.map(updatedOrderDTO, RestaurantOrder.class);
 
         Optional.ofNullable(restaurantOrder.getOrderStatus()).ifPresent(existingRestaurantOrder::setOrderStatus);
 
-        if(restaurantOrder.getTable() != null) { //its easier to use here if instead of Optional.ofNullable, because
+        if (restaurantOrder.getTable() != null) { //its easier to use here if instead of Optional.ofNullable, because
             //I would need to try-catch the block with RuntimeException class, because lambda is not caught
             //with checked exception.
             Table table = tableService.checkIfTableExist(restaurantOrder.getTable().getId());
@@ -107,7 +127,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
-        RestaurantOrder restaurantOrderToBeDeleted = restaurantOrderRepository.findById(id).orElseThrow(()->
+        RestaurantOrder restaurantOrderToBeDeleted = restaurantOrderRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(RestaurantOrder.class));
 
         restaurantOrderRepository.delete(restaurantOrderToBeDeleted);
