@@ -81,4 +81,8 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
         return new ResponseEntity<>("Inventory item: " + inventoryToDelete.getName() + " has been deleted!", HttpStatus.OK);
     }
+
+    public InventoryItem findByName(String name) throws NotFoundInDatabaseException {
+        return inventoryItemRepository.findByName(name).orElseThrow(()->new NotFoundInDatabaseException(InventoryItem.class));
+    }
 }
