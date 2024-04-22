@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -37,7 +35,4 @@ public class InventoryItem extends CatalogItem {
     // In this case, @JsonManagedReference is the side that Jackson will serialize, and @JsonBackReference is the side
     // that Jackson will omit to avoid the infinite loop.
     private Supplier supplier;
-
-    @ManyToMany(mappedBy = "inventoryItems")
-    private List<MenuRecord> menuRecords;
 }

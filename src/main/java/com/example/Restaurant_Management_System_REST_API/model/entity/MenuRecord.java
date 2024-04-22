@@ -27,7 +27,7 @@ public class MenuRecord extends CatalogItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @ElementCollection
+    @ElementCollection // element of collections will be stored in separate table, and below I define this table
     @CollectionTable(name = "ingredients", joinColumns = @JoinColumn(name = "menu_record_id"))
     private List<Ingredient> ingredients;
     @NotNull(message = "Category is missing!")
@@ -38,9 +38,4 @@ public class MenuRecord extends CatalogItem {
     private Boolean isAvailable; //I use object to be able to hold null values (for updating process, I want to update
     //just fields which hold values, if some are skipped they should not be changed on db. if it was a primitive data type
     //of boolean then it would change to false as default
-    @ManyToMany
-    @JoinTable(name = "menu_record_and_inventory_items",
-            joinColumns = @JoinColumn(name = "menuRecord_id"),
-            inverseJoinColumns = @JoinColumn(name = "inventoryItem_id"))
-    private List<InventoryItem> inventoryItems;
 }
