@@ -34,16 +34,33 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     @Transactional
     public RestaurantOrderDTO create(RestaurantOrderDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
         //1. Check if client provided meals which he wants to order
-        if(restaurantOrderDTO.getMenuRecords() == null)
+        if (restaurantOrderDTO.getMenuRecords() == null)
             throw new NotFoundInDatabaseException(MenuRecord.class);
 
         RestaurantOrder restaurantOrder = modelMapper.map(restaurantOrderDTO, RestaurantOrder.class);
 
         //2. Check if these meals exist in restaurant menu
         checkIfMealExist(restaurantOrder);
-        tableService.checkIfTableExist(restaurantOrder.getTable().getId());
-        //TODO: checkIfCustomerExist
-        //TODO: update the stock amount
+
+        //3 check if there are enough ingredients
+        if(!areThereEnoughIngredients(restaurantOrder))
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Not enough ingredients to make this order!");
+
+
+        //4. If table is not null, meaning that it is not take away order check if such table exist
+        if (restaurantOrder.getTable() != null)
+            tableService.checkIfTableExist(restaurantOrder.getTable().getId());
+
+        //5. Set the order time to current time
+        restaurantOrder.setOrderTime(LocalDateTime.now());
+
+        //6. Set the order status to PENDING
+        restaurantOrder.setOrderStatus(OrderStatus.PENDING);
+
+
+        //7. Update the stock amount
+
+        //8. Set the total price for the order
 
         restaurantOrderRepository.save(restaurantOrder);
 
