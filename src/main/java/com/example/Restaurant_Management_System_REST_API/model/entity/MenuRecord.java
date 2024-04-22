@@ -27,10 +27,8 @@ public class MenuRecord extends CatalogItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @ManyToMany
-    @JoinTable(name = "menu_record_and_ingredients",
-            joinColumns = @JoinColumn(name = "menuRecord_id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+    @ElementCollection
+    @CollectionTable(name = "ingredients", joinColumns = @JoinColumn(name = "menu_record_id"))
     private List<Ingredient> ingredients;
     @NotNull(message = "Category is missing!")
     @Column(nullable = false)
