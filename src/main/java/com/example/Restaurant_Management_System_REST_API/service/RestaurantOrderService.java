@@ -65,7 +65,16 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
         restaurantOrderRepository.save(restaurantOrder);
 
-        return modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
+        return modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
+    }
+
+    private double countTotalPrice(RestaurantOrder restaurantOrder) {
+        List<MenuRecord> allOrderedMeals = restaurantOrder.getMenuRecords();
+        double totalPrice = 0;
+        for (MenuRecord eachMeal: allOrderedMeals) {
+            totalPrice += eachMeal.getPrice();
+        }
+        return totalPrice;
     }
 
     private boolean areThereEnoughIngredients(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
