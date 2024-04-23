@@ -40,7 +40,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         RestaurantOrder restaurantOrder = modelMapper.map(restaurantOrderDTO, RestaurantOrder.class);
 
         //2. Check if these meals exist in restaurant menu
-        checkIfMealExist(restaurantOrder);
+        checkIfMealIsOnRestaurantMenu(restaurantOrder);
 
         //3 check if there are enough ingredients
         if(!areThereEnoughIngredients(restaurantOrder))
@@ -87,7 +87,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         return inventoryItemService.findByName(name);
     }
 
-    private void checkIfMealExist(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
+    private void checkIfMealIsOnRestaurantMenu(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
         List<MenuRecord> managedMenuRecords = new ArrayList<>();
         for (MenuRecord menuRecord : restaurantOrder.getMenuRecords()) {
             MenuRecord managedMenuRecord = menuRecordService.findByName(menuRecord.getName());
