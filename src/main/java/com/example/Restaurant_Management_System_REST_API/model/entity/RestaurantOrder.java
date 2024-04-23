@@ -26,6 +26,7 @@ public class RestaurantOrder {
     @JoinColumn(name = "table_id")
     private Table table;
     private String telephoneNumber;
+    private double totalAmountToPay;
     @ManyToMany
     @JoinTable(
             name = "order_menu_record",
