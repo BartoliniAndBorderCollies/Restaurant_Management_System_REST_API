@@ -58,10 +58,11 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         //6. Set the order status to PENDING
         restaurantOrder.setOrderStatus(OrderStatus.PENDING);
 
-
         //7. Update the stock amount
+        updateStockAmount(restaurantOrder);
 
         //8. Set the total price for the order
+        restaurantOrder.setTotalAmountToPay(countTotalPrice(restaurantOrder));
 
         restaurantOrderRepository.save(restaurantOrder);
 
