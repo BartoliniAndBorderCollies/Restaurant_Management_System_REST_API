@@ -84,6 +84,19 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         return true;
     }
 
+    private void updateStockAmount(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
+        List<MenuRecord> listOfMealsWhichClientWantsToOrder = restaurantOrder.getMenuRecords();
+
+        for (MenuRecord menuRecord : listOfMealsWhichClientWantsToOrder) {
+            List<Ingredient> ingredients = menuRecord.getIngredients();
+            for (Ingredient eachIngredient : ingredients) {
+                double requiredIngredientQuantity = eachIngredient.getAmountRequired();
+                InventoryItem inventoryItem = findByName(eachIngredient.getName());
+                inventoryItem.setAmount(inventoryItem.getAmount() - requiredIngredientQuantity);
+            }
+        }
+    }
+
     private InventoryItem findByName(String name) throws NotFoundInDatabaseException {
         return inventoryItemService.findByName(name);
     }
