@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
@@ -37,7 +38,7 @@ class RestaurantOrderControllerIntegrationTest {
     private WebTestClient webTestClient;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    private RestaurantOrderDTO restaurantOrderDTO;
+    private RestaurantOrderResponseDTO restaurantOrderResponseDTO;
     @Autowired
     private AuthorityRepository authorityRepository;
     @Autowired
@@ -62,7 +63,7 @@ class RestaurantOrderControllerIntegrationTest {
         tableRepository.save(table);
         tableDTO = modelMapper.map(table, TableReservationDTO.class);
         restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table, "1234567890",
-                new ArrayList<>()); //TODO: add menu records when new branch will be merged
+                0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
     }
 
@@ -96,23 +97,23 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void add_ShouldAddRestaurantOrderToDatabaseAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven() {
-        RestaurantOrderDTO restaurantOrderDTO = new RestaurantOrderDTO(null, time, OrderStatus.PENDING, tableDTO,
-                "1234567890", new ArrayList<>()); //TODO: add menu records when new branch will be merged
+        RestaurantOrderResponseDTO restaurantOrderResponseDTO = new RestaurantOrderResponseDTO(null, time, OrderStatus.PENDING, tableDTO,
+                "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
 
         webTestClient.post()
                 .uri("/api/order/add")
                 .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
-                .bodyValue(restaurantOrderDTO)
+                .bodyValue(restaurantOrderResponseDTO)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(RestaurantOrderDTO.class)
+                .expectBody(RestaurantOrderResponseDTO.class)
                 .consumeWith(response -> {
-                    RestaurantOrderDTO actualResponse = response.getResponseBody();
+                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals(restaurantOrderDTO.getOrderTime(), actualResponse.getOrderTime());
-                    assertEquals(restaurantOrderDTO.getOrderStatus(), actualResponse.getOrderStatus());
-                    assertEquals(restaurantOrderDTO.getTable(), actualResponse.getTable());
-                    assertEquals(restaurantOrderDTO.getMenuRecords(), actualResponse.getMenuRecords());
+                    assertEquals(restaurantOrderResponseDTO.getOrderTime(), actualResponse.getOrderTime());
+                    assertEquals(restaurantOrderResponseDTO.getOrderStatus(), actualResponse.getOrderStatus());
+                    assertEquals(restaurantOrderResponseDTO.getTable(), actualResponse.getTable());
+                    assertEquals(restaurantOrderResponseDTO.getMenuRecords(), actualResponse.getMenuRecords());
                 });
     }
 
@@ -124,9 +125,9 @@ class RestaurantOrderControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(RestaurantOrderDTO.class)
+                .expectBody(RestaurantOrderResponseDTO.class)
                 .consumeWith(response -> {
-                    RestaurantOrderDTO actualResponse = response.getResponseBody();
+                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(restaurantOrder.getOrderTime(), actualResponse.getOrderTime());
                     assertEquals(restaurantOrder.getOrderStatus(), actualResponse.getOrderStatus());
@@ -138,21 +139,21 @@ class RestaurantOrderControllerIntegrationTest {
     @Test
     public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
         RestaurantOrder restaurantOrder2 = new RestaurantOrder(null, time, OrderStatus.PENDING,
-                null, "1234567890", new ArrayList<>()); //TODO: add menu records when new branch will be merged
+                null, "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder2);
 
         List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder, restaurantOrder2);
-        List<RestaurantOrderDTO> expected = new ArrayList<>();
-        restaurantOrderList.forEach(order -> expected.add(modelMapper.map(order, RestaurantOrderDTO.class)));
+        List<RestaurantOrderResponseDTO> expected = new ArrayList<>();
+        restaurantOrderList.forEach(order -> expected.add(modelMapper.map(order, RestaurantOrderResponseDTO.class)));
 
         webTestClient.get()
                 .uri("/api/order/findAll")
                 .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(RestaurantOrderDTO.class)
+                .expectBodyList(RestaurantOrderResponseDTO.class)
                 .consumeWith(response -> {
-                    List<RestaurantOrderDTO> actualResponse = response.getResponseBody();
+                    List<RestaurantOrderResponseDTO> actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
@@ -165,11 +166,11 @@ class RestaurantOrderControllerIntegrationTest {
         tableRepository.save(updatedTable);
         TableReservationDTO updatedTableDTO = modelMapper.map(updatedTable, TableReservationDTO.class);
         OrderStatus updatedStatus = OrderStatus.DONE;
-        RestaurantOrderDTO expected = new RestaurantOrderDTO(null, time, updatedStatus, updatedTableDTO,
-                "1234567890", new ArrayList<>());
+        RestaurantOrderResponseDTO expected = new RestaurantOrderResponseDTO(null, time, updatedStatus, updatedTableDTO,
+                "1234567890", 0, new ArrayList<>());
 
         //This is a body value of updating DTO
-        RestaurantOrderDTO updatingDTO = new RestaurantOrderDTO(null, time, updatedStatus, updatedTableDTO,
+        RestaurantOrderRequestDTO updatingDTO = new RestaurantOrderRequestDTO(updatedTableDTO,
                 "1234567890", new ArrayList<>());
 
         webTestClient.put()
@@ -178,9 +179,9 @@ class RestaurantOrderControllerIntegrationTest {
                 .bodyValue(updatingDTO)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(RestaurantOrderDTO.class)
+                .expectBody(RestaurantOrderResponseDTO.class)
                 .consumeWith(response -> {
-                    RestaurantOrderDTO actualResponse = response.getResponseBody();
+                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals(expected.getOrderStatus(), actualResponse.getOrderStatus());
                     assertEquals(expected.getTable(), actualResponse.getTable());
@@ -191,7 +192,7 @@ class RestaurantOrderControllerIntegrationTest {
     public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
         //This must be here because I create restaurantOrder in @BeforeAll and if I delete it here then I lost it for other methods
         RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, table,
-                "1234567890", new ArrayList<>()); //TODO: add menu records when new branch will be merged
+                "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
         restaurantOrderRepository.save(restaurantOrder);
 
         webTestClient.delete()
