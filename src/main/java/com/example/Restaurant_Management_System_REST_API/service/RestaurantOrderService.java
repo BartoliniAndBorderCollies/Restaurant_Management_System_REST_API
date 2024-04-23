@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class RestaurantOrderService implements GenericBasicCrudOperations<RestaurantOrderDTO, RestaurantOrderDTO, Long> {
+public class RestaurantOrderService implements GenericBasicCrudOperations<RestaurantOrderResponseDTO, RestaurantOrderRequestDTO, Long> {
 
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final ModelMapper modelMapper;
@@ -32,7 +33,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     @Transactional
-    public RestaurantOrderDTO create(RestaurantOrderDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
+    public RestaurantOrderResponseDTO create(RestaurantOrderRequestDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
         //1. Check if client provided meals which he wants to order
         if (restaurantOrderDTO.getMenuRecords() == null)
             throw new NotFoundInDatabaseException(MenuRecord.class);
@@ -100,18 +101,18 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     }
 
     @Override
-    public RestaurantOrderDTO findById(Long id) throws NotFoundInDatabaseException {
+    public RestaurantOrderResponseDTO findById(Long id) throws NotFoundInDatabaseException {
         RestaurantOrder restaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(() -> new
                 NotFoundInDatabaseException(RestaurantOrder.class));
 
-        return modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
+        return modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
     }
 
     @Override
-    public List<RestaurantOrderDTO> findAll() {
-        List<RestaurantOrderDTO> orderDTOList = new ArrayList<>();
+    public List<RestaurantOrderResponseDTO> findAll() {
+        List<RestaurantOrderResponseDTO> orderDTOList = new ArrayList<>();
         restaurantOrderRepository.findAll().forEach(restaurantOrder -> {
-            RestaurantOrderDTO orderDto = modelMapper.map(restaurantOrder, RestaurantOrderDTO.class);
+            RestaurantOrderResponseDTO orderDto = modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
             orderDTOList.add(orderDto);
 
         });
@@ -119,7 +120,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     }
 
     @Override
-    public RestaurantOrderDTO update(Long id, RestaurantOrderDTO updatedOrderDTO) throws NotFoundInDatabaseException {
+    public RestaurantOrderResponseDTO update(Long id, RestaurantOrderRequestDTO updatedOrderDTO) throws NotFoundInDatabaseException {
 
         RestaurantOrder existingRestaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(RestaurantOrder.class));
@@ -139,7 +140,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
         restaurantOrderRepository.save(existingRestaurantOrder);
 
-        return modelMapper.map(existingRestaurantOrder, RestaurantOrderDTO.class);
+        return modelMapper.map(existingRestaurantOrder, RestaurantOrderResponseDTO.class);
     }
 
     @Override
