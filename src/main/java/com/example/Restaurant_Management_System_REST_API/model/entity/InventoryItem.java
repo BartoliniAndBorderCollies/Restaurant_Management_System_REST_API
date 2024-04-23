@@ -3,7 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class InventoryItem extends CatalogItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Positive(message = "Amount must be above zero!")
+    @PositiveOrZero(message = "Amount must be above zero!")
     private double amount;
     @ManyToOne
     @JoinColumn(name = "supplier_id")
