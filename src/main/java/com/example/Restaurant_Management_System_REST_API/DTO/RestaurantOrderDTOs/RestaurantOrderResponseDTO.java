@@ -13,12 +13,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RestaurantOrderDTO {
+public class RestaurantOrderResponseDTO {
 
     private Long id;
     private LocalDateTime orderTime;
     private OrderStatus orderStatus;
     private TableReservationDTO table;
     private String telephoneNumber;
+    private double totalAmountToPay;
     private List<MenuRecordForOrderDTO> menuRecords;
 }
