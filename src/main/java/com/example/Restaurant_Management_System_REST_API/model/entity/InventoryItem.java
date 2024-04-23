@@ -26,7 +26,7 @@ public class InventoryItem extends CatalogItem {
     @Column(name = "id", nullable = false)
     private Long id;
     @Positive(message = "Amount must be above zero!")
-    private int amount;
+    private double amount;
     @ManyToOne
     @JoinColumn(name = "supplier_id")
     @JsonBackReference //Supplier and InventoryItem have bidirectional relationship and both have getters and setters.
