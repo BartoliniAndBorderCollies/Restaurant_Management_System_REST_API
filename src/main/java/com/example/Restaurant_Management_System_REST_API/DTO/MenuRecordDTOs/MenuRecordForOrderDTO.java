@@ -1,6 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs;
 
-import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +13,7 @@ public class MenuRecordForOrderDTO {
 
     private Long id;
     private String name;
-    private List<InventoryItem> inventoryItems;
+    private Double portionsAmount;
+    private List<Ingredient> ingredients;
 
 }
