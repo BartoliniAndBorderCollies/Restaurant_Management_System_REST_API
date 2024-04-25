@@ -1,7 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
-import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderDTO;
-import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
@@ -30,22 +30,24 @@ class RestaurantOrderServiceTest {
     private ModelMapper modelMapper;
     private RestaurantOrderService restaurantOrderService;
     private RestaurantOrderRepository restaurantOrderRepository;
-    private TableService tableService;
-    private RestaurantOrderDTO restaurantOrderDTO;
+    private RestaurantOrderResponseDTO restaurantOrderResponseDTO;
     private RestaurantOrder restaurantOrder;
     private Long id;
     private TableRepository tableRepository;
-    private MenuRecordService menuRecordService;
+    private RestaurantOrderRequestDTO restaurantOrderRequestDTO;
 
     @BeforeEach
     public void setUpEnvironment() {
         modelMapper = mock(ModelMapper.class);
         restaurantOrderRepository = mock(RestaurantOrderRepository.class);
         tableRepository = mock(TableRepository.class);
-        tableService = mock(TableService.class);
-        menuRecordService = mock(MenuRecordService.class);
-        restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService, menuRecordService);
-        restaurantOrderDTO = mock(RestaurantOrderDTO.class);
+        TableService tableService = mock(TableService.class);
+        MenuRecordService menuRecordService = mock(MenuRecordService.class);
+        InventoryItemService inventoryItemService = mock(InventoryItemService.class);
+        restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService,
+                menuRecordService, inventoryItemService);
+        restaurantOrderResponseDTO = mock(RestaurantOrderResponseDTO.class);
+        restaurantOrderRequestDTO = mock(RestaurantOrderRequestDTO.class);
         restaurantOrder = mock(RestaurantOrder.class);
         id = 1L;
     }
@@ -53,29 +55,29 @@ class RestaurantOrderServiceTest {
 
     @Test
     public void create_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven()
-            throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
+            throws NotFoundInDatabaseException {
         //Arrange
-        when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
-        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+        when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
 
         //Act
-        RestaurantOrderDTO actual = restaurantOrderService.create(restaurantOrderDTO);
+        RestaurantOrderResponseDTO actual = restaurantOrderService.create(restaurantOrderRequestDTO);
 
         //Assert
-        assertEquals(restaurantOrderDTO, actual);
+        assertEquals(restaurantOrderResponseDTO, actual);
     }
 
     @Test
     public void create_ShouldCallOnRepoExactlyOnce_WhenRestaurantOrderDTOIsGiven()
-            throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
+            throws NotFoundInDatabaseException {
         //Arrange
-        when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
-        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+        when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
 
         //Act
-        restaurantOrderService.create(restaurantOrderDTO);
+        restaurantOrderService.create(restaurantOrderRequestDTO);
 
         //Assert
         verify(restaurantOrderRepository, times(1)).save(restaurantOrder);
@@ -96,27 +98,27 @@ class RestaurantOrderServiceTest {
             throws NotFoundInDatabaseException {
         //Arrange
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
-        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+        when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
 
         //Act
-        RestaurantOrderDTO actual = restaurantOrderService.findById(id);
+        RestaurantOrderResponseDTO actual = restaurantOrderService.findById(id);
 
         //Assert
-        assertEquals(restaurantOrderDTO, actual);
+        assertEquals(restaurantOrderResponseDTO, actual);
     }
 
     @Test
     public void findAll_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTOList_WhenRestaurantOrderExist() {
         //Arrange
         List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder);
-        List<RestaurantOrderDTO> expected = Arrays.asList(restaurantOrderDTO);
+        List<RestaurantOrderResponseDTO> expected = Arrays.asList(restaurantOrderResponseDTO);
 
         when(restaurantOrderRepository.findAll()).thenReturn(restaurantOrderList);
         //I ensure that every RestaurantOrder is returned as DTO through model mapper:
-        when(modelMapper.map(any(RestaurantOrder.class), eq(RestaurantOrderDTO.class))).thenReturn(restaurantOrderDTO);
+        when(modelMapper.map(any(RestaurantOrder.class), eq(RestaurantOrderResponseDTO.class))).thenReturn(restaurantOrderResponseDTO);
 
         //Act
-        List<RestaurantOrderDTO> actual = restaurantOrderService.findAll();
+        List<RestaurantOrderResponseDTO> actual = restaurantOrderService.findAll();
 
         //Assert
         assertIterableEquals(expected, actual);
@@ -129,7 +131,7 @@ class RestaurantOrderServiceTest {
 
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderDTO));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderRequestDTO));
     }
 
     //TODO: this below test will need to be updated after merging new branch
@@ -142,20 +144,20 @@ class RestaurantOrderServiceTest {
         List<MenuRecord> menuRecordList = Arrays.asList(mockMenuRecord);
 
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
-        when(modelMapper.map(restaurantOrderDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrder.getOrderStatus()).thenReturn(OrderStatus.PENDING);
         when(restaurantOrder.getTable()).thenReturn(table);
         when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
         restaurantOrder.setTable(table);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
-        when(modelMapper.map(restaurantOrder, RestaurantOrderDTO.class)).thenReturn(restaurantOrderDTO);
+        when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
         when(restaurantOrder.getMenuRecords()).thenReturn(menuRecordList);
 
 
-        RestaurantOrderDTO expected = restaurantOrderDTO;
+        RestaurantOrderResponseDTO expected = restaurantOrderResponseDTO;
 
         //Act
-        RestaurantOrderDTO actual = restaurantOrderService.update(id, restaurantOrderDTO);
+        RestaurantOrderResponseDTO actual = restaurantOrderService.update(id, restaurantOrderRequestDTO);
 
         //Assert
         assertEquals(expected, actual);
