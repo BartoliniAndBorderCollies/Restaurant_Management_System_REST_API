@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
 import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
@@ -27,12 +28,22 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
     private final ModelMapper modelMapper;
 
     @Override
-    public InventoryItemDTOResponse create(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException {
-
-       //Checking if provided supplier exists in database - if not -> throwing an exception
-       Supplier supplier = supplierService.checkIfSupplierExist(inventoryItemDTORequest);
+    public InventoryItemDTOResponse create(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException,
+            ObjectAlreadyExistException {
+        //Checking if provided supplier exists in database - if not -> throwing an exception
+        Supplier supplier = supplierService.checkIfSupplierExist(inventoryItemDTORequest);
 
         InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
+
+        //Checking if provided inventory item with the same supplier already exists in database
+        Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByName(inventoryItemDTORequest.getName());
+        if (optionalInventoryItem.isPresent()) {
+            if (inventoryItemDTORequest.getName().equalsIgnoreCase(optionalInventoryItem.get().getName())
+                    && inventoryItemDTORequest.getSupplier().getContactDetails().getName().equalsIgnoreCase(optionalInventoryItem.get().getSupplier().getContactDetails().getName()))  {
+                throw new ObjectAlreadyExistException(InventoryItem.class);
+            }
+        }
+
         inventoryItem.setSupplier(supplier);
         inventoryItemRepository.save(inventoryItem);
 
@@ -41,7 +52,7 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
     @Override
     public InventoryItemDTOResponse findById(Long id) throws NotFoundInDatabaseException {
-        InventoryItem inventoryItem = inventoryItemRepository.findById(id).orElseThrow(()->
+        InventoryItem inventoryItem = inventoryItemRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(InventoryItem.class));
 
         return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
@@ -75,7 +86,7 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
 
     @Override
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
-        InventoryItem inventoryToDelete = inventoryItemRepository.findById(id).orElseThrow(()->
+        InventoryItem inventoryToDelete = inventoryItemRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(InventoryItem.class));
         inventoryItemRepository.delete(inventoryToDelete);
 
@@ -83,6 +94,6 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
     }
 
     public InventoryItem findByName(String name) throws NotFoundInDatabaseException {
-        return inventoryItemRepository.findByName(name).orElseThrow(()->new NotFoundInDatabaseException(InventoryItem.class));
+        return inventoryItemRepository.findByName(name).orElseThrow(() -> new NotFoundInDatabaseException(InventoryItem.class));
     }
 }
