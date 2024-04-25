@@ -1,8 +1,8 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
-import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
@@ -33,7 +33,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     @Transactional
-    public RestaurantOrderResponseDTO create(RestaurantOrderRequestDTO restaurantOrderDTO) throws NotFoundInDatabaseException, CustomerAlreadyHasReservationException {
+    public RestaurantOrderResponseDTO create(RestaurantOrderRequestDTO restaurantOrderDTO) throws NotFoundInDatabaseException {
         //1. Check if client provided meals which he wants to order
         if (restaurantOrderDTO.getMenuRecords() == null)
             throw new NotFoundInDatabaseException(MenuRecord.class);
@@ -44,9 +44,9 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         checkIfMealIsOnRestaurantMenu(restaurantOrder);
 
         //3 check if there are enough ingredients
-        if(!areThereEnoughIngredients(restaurantOrder))
+        if (!areThereEnoughIngredients(restaurantOrderDTO)) //I should take restaurantOrderDTO in this method,
+            //because I have the amount of portions there
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Not enough ingredients to make this order!");
-
 
         //4. If table is not null, meaning that it is not take away order check if such table exist
         if (restaurantOrder.getTable() != null)
@@ -59,10 +59,12 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         restaurantOrder.setOrderStatus(OrderStatus.PENDING);
 
         //7. Update the stock amount
-        updateStockAmount(restaurantOrder);
+        updateStockAmount(restaurantOrderDTO); //I should take restaurantOrderDTO in this method,
+        //because I have the amount of portions there
 
         //8. Set the total price for the order
-        restaurantOrder.setTotalAmountToPay(countTotalPrice(restaurantOrder));
+        restaurantOrder.setTotalAmountToPay(countTotalPrice(restaurantOrderDTO)); //I should take restaurantOrderDTO in this method,
+        //because I have the amount of portions there
 
         restaurantOrderRepository.save(restaurantOrder);
 
