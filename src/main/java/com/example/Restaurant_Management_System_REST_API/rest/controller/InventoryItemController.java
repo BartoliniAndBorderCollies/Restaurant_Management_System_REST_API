@@ -80,7 +80,7 @@ public class InventoryItemController {
      * @throws NotFoundInDatabaseException If the requested item is not found in the database.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
+    public ResponseEntity<?> delete(@PathVariable Long id) throws NotFoundInDatabaseException {
         return inventoryItemService.delete(id);
     }
 }
