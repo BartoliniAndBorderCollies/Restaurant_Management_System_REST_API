@@ -36,6 +36,15 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
 
         //Checking if provided inventory item with the same supplier already exists in database
+        checkIfThisInventoryItemWithThisSupplierAlreadyExists(inventoryItemDTORequest);
+
+        inventoryItem.setSupplier(supplier);
+        inventoryItemRepository.save(inventoryItem);
+
+        return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
+    }
+
+    private void checkIfThisInventoryItemWithThisSupplierAlreadyExists(InventoryItemDTORequest inventoryItemDTORequest) throws ObjectAlreadyExistException {
         Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByName(inventoryItemDTORequest.getName());
         if (optionalInventoryItem.isPresent()) {
             if (inventoryItemDTORequest.getName().equalsIgnoreCase(optionalInventoryItem.get().getName())
@@ -43,11 +52,6 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
                 throw new ObjectAlreadyExistException(InventoryItem.class);
             }
         }
-
-        inventoryItem.setSupplier(supplier);
-        inventoryItemRepository.save(inventoryItem);
-
-        return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
     }
 
     @Override
