@@ -71,47 +71,6 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         return modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
     }
 
-    private double countTotalPrice(RestaurantOrder restaurantOrder) {
-        List<MenuRecord> allOrderedMeals = restaurantOrder.getMenuRecords();
-        double totalPrice = 0;
-        for (MenuRecord eachMeal: allOrderedMeals) {
-            totalPrice += eachMeal.getPrice();
-        }
-        return totalPrice;
-    }
-
-    private boolean areThereEnoughIngredients(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
-        List<MenuRecord> listOfMealsWhichClientWantsToOrder = restaurantOrder.getMenuRecords();
-
-        for (MenuRecord menuRecord : listOfMealsWhichClientWantsToOrder) {
-            List<Ingredient> ingredients = menuRecord.getIngredients();
-            for (Ingredient eachIngredient : ingredients) {
-                double requiredIngredientQuantity = eachIngredient.getAmountRequired();
-                InventoryItem inventoryItem = findByName(eachIngredient.getName());
-                if (inventoryItem == null || inventoryItem.getAmount() - requiredIngredientQuantity < 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private void updateStockAmount(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
-        List<MenuRecord> listOfMealsWhichClientWantsToOrder = restaurantOrder.getMenuRecords();
-
-        for (MenuRecord menuRecord : listOfMealsWhichClientWantsToOrder) {
-            List<Ingredient> ingredients = menuRecord.getIngredients();
-            for (Ingredient eachIngredient : ingredients) {
-                double requiredIngredientQuantity = eachIngredient.getAmountRequired();
-                InventoryItem inventoryItem = findByName(eachIngredient.getName());
-                inventoryItem.setAmount(inventoryItem.getAmount() - requiredIngredientQuantity);
-            }
-        }
-    }
-
-    private InventoryItem findByName(String name) throws NotFoundInDatabaseException {
-        return inventoryItemService.findByName(name);
-    }
 
     private void checkIfMealIsOnRestaurantMenu(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
         List<MenuRecord> managedMenuRecords = new ArrayList<>();
@@ -123,6 +82,53 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
             managedMenuRecords.add(managedMenuRecord);
         }
         restaurantOrder.setMenuRecords(managedMenuRecords);
+    }
+
+    private boolean areThereEnoughIngredients(RestaurantOrderRequestDTO restaurantOrderRequestDTO) throws NotFoundInDatabaseException {
+        List<MenuRecordForOrderDTO> listOfMealsWhichClientWantsToOrder = restaurantOrderRequestDTO.getMenuRecords();
+
+        for (MenuRecordForOrderDTO menuRecordForOrderDTO : listOfMealsWhichClientWantsToOrder) {
+            List<Ingredient> ingredients = menuRecordForOrderDTO.getIngredients();
+            for (Ingredient eachIngredient : ingredients) {
+                double requiredIngredientQuantity = eachIngredient.getAmountRequired() * menuRecordForOrderDTO.getPortionsAmount();
+                InventoryItem inventoryItem = findByName(eachIngredient.getName());
+                if (inventoryItem == null || inventoryItem.getAmount() - requiredIngredientQuantity < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void updateStockAmount(RestaurantOrderRequestDTO restaurantOrderRequestDTO) throws NotFoundInDatabaseException {
+        List<MenuRecordForOrderDTO> listOfMealsWhichClientWantsToOrder = restaurantOrderRequestDTO.getMenuRecords();
+
+        for (MenuRecordForOrderDTO menuRecordForOrderDTO : listOfMealsWhichClientWantsToOrder) {
+            List<Ingredient> ingredients = menuRecordForOrderDTO.getIngredients();
+            for (Ingredient eachIngredient : ingredients) {
+                double requiredIngredientQuantity = eachIngredient.getAmountRequired() * menuRecordForOrderDTO.getPortionsAmount();
+                InventoryItem inventoryItem = findByName(eachIngredient.getName());
+                inventoryItem.setAmount(inventoryItem.getAmount() - requiredIngredientQuantity);
+            }
+        }
+    }
+
+    private double countTotalPrice(RestaurantOrderRequestDTO restaurantOrderRequestDTO) throws NotFoundInDatabaseException {
+        List<MenuRecordForOrderDTO> allOrderedMealsDTO = restaurantOrderRequestDTO.getMenuRecords();
+        //RestaurantOrderRequestDTO has a List<MenuRecordForOrderDTO>, each MenuRecordForOrderDTO has portions amount.
+        //MenuRecord does not have portions amount (because each time when I save a MenuRecord to db it would be zero)
+        //but MenuRecord has a price. However, price is not in MenuRecordForOrderDTO.
+        //Therefore, I must combine them together. Price I take from MenuRecord, portions amount I take from MenuRecordForOrderDTO
+        double totalPrice = 0;
+        for (MenuRecordForOrderDTO eachMeal : allOrderedMealsDTO) {
+            MenuRecord menuRecord = menuRecordService.findByName(eachMeal.getName());
+            totalPrice += menuRecord.getPrice() * eachMeal.getPortionsAmount();
+        }
+        return totalPrice;
+    }
+
+    private InventoryItem findByName(String name) throws NotFoundInDatabaseException {
+        return inventoryItemService.findByName(name);
     }
 
     @Override
