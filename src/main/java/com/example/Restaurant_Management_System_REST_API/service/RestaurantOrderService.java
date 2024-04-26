@@ -41,7 +41,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         RestaurantOrder restaurantOrder = modelMapper.map(restaurantOrderDTO, RestaurantOrder.class);
 
         //2. Check if these meals exist in restaurant menu
-        checkIfMealIsOnRestaurantMenu(restaurantOrder);
+        checkIfMealIsOnRestaurantMenu(restaurantOrderDTO);
 
         //3 check if there are enough ingredients
         if (!areThereEnoughIngredients(restaurantOrderDTO)) //I should take restaurantOrderDTO in this method,
@@ -72,16 +72,12 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     }
 
 
-    private void checkIfMealIsOnRestaurantMenu(RestaurantOrder restaurantOrder) throws NotFoundInDatabaseException {
-        List<MenuRecord> managedMenuRecords = new ArrayList<>();
-        for (MenuRecord menuRecord : restaurantOrder.getMenuRecords()) {
-            MenuRecord managedMenuRecord = menuRecordService.findByName(menuRecord.getName());
-            //If I don't do the below then these fetched records from line above (from database) flow in the air. They
-            // become managed by the Hibernate session and I cannot save the RestaurantOrder because I got unsaved
-            // transient instance, because they were created outside of this session.
-            managedMenuRecords.add(managedMenuRecord);
+    private void checkIfMealIsOnRestaurantMenu(RestaurantOrderRequestDTO restaurantOrderRequestDTO)
+            throws NotFoundInDatabaseException {
+        List<MenuRecordForOrderDTO> menuRecordForOrderDTOS = restaurantOrderRequestDTO.getMenuRecords();
+        for (MenuRecordForOrderDTO eachMenuRecordDTO : menuRecordForOrderDTOS) {
+            menuRecordService.findByName(eachMenuRecordDTO.getName());
         }
-        restaurantOrder.setMenuRecords(managedMenuRecords);
     }
 
     private boolean areThereEnoughIngredients(RestaurantOrderRequestDTO restaurantOrderRequestDTO) throws NotFoundInDatabaseException {
