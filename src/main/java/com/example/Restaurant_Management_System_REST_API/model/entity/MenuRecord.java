@@ -38,4 +38,6 @@ public class MenuRecord extends CatalogItem {
     private Boolean isAvailable; //I use object to be able to hold null values (for updating process, I want to update
     //just fields which hold values, if some are skipped they should not be changed on db. if it was a primitive data type
     //of boolean then it would change to false as default
+    @OneToMany(mappedBy = "menuRecord")
+    private List<RestaurantOrderMenuRecord> menuRecords;
 }

@@ -27,10 +27,6 @@ public class RestaurantOrder {
     private Table table;
     private String telephoneNumber;
     private double totalAmountToPay;
-    @ManyToMany
-    @JoinTable(
-            name = "order_menu_record",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "menu_record_id"))
-    private List<MenuRecord> menuRecords;
+    @OneToMany(mappedBy = "restaurantOrder")
+    private List<RestaurantOrderMenuRecord> restaurantOrders;
 }
