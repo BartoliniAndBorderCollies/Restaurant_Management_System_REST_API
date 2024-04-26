@@ -54,34 +54,6 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         }
     }
 
-//    @Override
-//    public InventoryItemDTOResponse create(InventoryItemDTORequest inventoryItemDTORequest) throws NotFoundInDatabaseException, ObjectAlreadyExistException {
-//        Supplier supplier = supplierService.checkIfSupplierExist(inventoryItemDTORequest);
-//
-//        InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
-//
-//        checkInventoryItemExists(inventoryItemDTORequest);
-//
-//        inventoryItem.setSupplier(supplier);
-//        inventoryItemRepository.save(inventoryItem);
-//
-//        return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
-//    }
-//
-//    private void checkInventoryItemExists(InventoryItemDTORequest inventoryItemDTORequest) throws ObjectAlreadyExistException {
-//        inventoryItemRepository.findByName(inventoryItemDTORequest.getName())
-//                .ifPresent(inventoryItem -> {
-//                    if (isSameInventoryItem(inventoryItemDTORequest, inventoryItem)) {
-//                        throw new ObjectAlreadyExistException(InventoryItem.class);
-//                    }
-//                });
-//    }
-//
-//    private boolean isSameInventoryItem(InventoryItemDTORequest inventoryItemDTORequest, InventoryItem inventoryItem) {
-//        return inventoryItemDTORequest.getName().equalsIgnoreCase(inventoryItem.getName())
-//                && inventoryItemDTORequest.getSupplier().getContactDetails().getName().equalsIgnoreCase(inventoryItem.get().getSupplier().getContactDetails().getName());
-//    }
-
 
     @Override
     public InventoryItemDTOResponse findById(Long id) throws NotFoundInDatabaseException {
