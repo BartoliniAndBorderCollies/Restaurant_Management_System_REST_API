@@ -30,6 +30,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     private final TableService tableService;
     private final MenuRecordService menuRecordService;
     private final InventoryItemService inventoryItemService;
+    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
 
     @Override
     @Transactional
@@ -66,9 +67,31 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         restaurantOrder.setTotalAmountToPay(countTotalPrice(restaurantOrderDTO)); //I should take restaurantOrderDTO in this method,
         //because I have the amount of portions there
 
+        //9. Since RestaurantOrder is not an owning side anymore (because I have created intermediate entity called RestaurantOrderMenuRecord
+        // to have portionsAmount) now I must set restaurant orders and other dependencies manually
+        setRestaurantOrders(restaurantOrderDTO, restaurantOrder);
+
         restaurantOrderRepository.save(restaurantOrder);
 
         return modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
+    }
+
+    private void setRestaurantOrders(RestaurantOrderRequestDTO restaurantOrderDTO, RestaurantOrder restaurantOrder)
+            throws NotFoundInDatabaseException {
+        List<RestaurantOrderMenuRecord> recordsList = new ArrayList<>();
+
+        for (MenuRecordForOrderDTO menuRecordForOrderDTO : restaurantOrderDTO.getMenuRecords()) {
+            RestaurantOrderMenuRecord record = new RestaurantOrderMenuRecord();
+            record.setMenuRecord(menuRecordService.findByName(menuRecordForOrderDTO.getName()));//if I use here modelMapper I got
+            //transient unsaved, if I saved then it adds new MenuRecord to db which is also wrong. So I found such solution
+            //that I look for this menuRecord by name and Im setting it B) LOL
+            record.setRestaurantOrder(restaurantOrder);
+            record.setOrderQuantity(menuRecordForOrderDTO.getPortionsAmount());
+            restaurantOrderMenuRecordRepository.save(record);
+
+            recordsList.add(record);
+        }
+        restaurantOrder.setRestaurantOrders(recordsList);
     }
 
 
