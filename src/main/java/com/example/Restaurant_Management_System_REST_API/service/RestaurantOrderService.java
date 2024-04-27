@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
@@ -17,9 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -73,7 +73,31 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
         restaurantOrderRepository.save(restaurantOrder);
 
-        return modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
+        //because in DTOs I have List<MenuRecordForOrderDTO> and in RestaurantOrder I have List<RestaurantOrderMenuRecord>
+        // and they have different things inside I need to manually map between those 2 instances
+        return mapManuallyFromRestaurantOrderToRestaurantOrderResponseDTO(restaurantOrder);
+    }
+
+    private RestaurantOrderResponseDTO mapManuallyFromRestaurantOrderToRestaurantOrderResponseDTO(RestaurantOrder restaurantOrder) {
+        RestaurantOrderResponseDTO restaurantOrderResponseDTO = new RestaurantOrderResponseDTO();
+        restaurantOrderResponseDTO.setId(restaurantOrder.getId());
+        restaurantOrderResponseDTO.setOrderTime(restaurantOrder.getOrderTime());
+        restaurantOrderResponseDTO.setOrderStatus(restaurantOrder.getOrderStatus());
+        restaurantOrderResponseDTO.setTable(modelMapper.map(restaurantOrder.getTable(), TableReservationDTO.class));
+        restaurantOrderResponseDTO.setTelephoneNumber(restaurantOrder.getTelephoneNumber());
+        restaurantOrderResponseDTO.setTotalAmountToPay(restaurantOrder.getTotalAmountToPay());
+        List<MenuRecord> menuRecordList = new ArrayList<>();
+        for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrder.getRestaurantOrders()) {
+            MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
+            menuRecordList.add(menuRecord);
+        }
+
+        List<MenuRecordForOrderDTO> menuRecordForOrderDTOS = menuRecordList.stream()
+                .map(menuRecord -> modelMapper.map(menuRecord, MenuRecordForOrderDTO.class))
+                .collect(Collectors.toList());
+
+        restaurantOrderResponseDTO.setMenuRecords(menuRecordForOrderDTOS);
+        return restaurantOrderResponseDTO;
     }
 
     private void setRestaurantOrders(RestaurantOrderRequestDTO restaurantOrderDTO, RestaurantOrder restaurantOrder)
