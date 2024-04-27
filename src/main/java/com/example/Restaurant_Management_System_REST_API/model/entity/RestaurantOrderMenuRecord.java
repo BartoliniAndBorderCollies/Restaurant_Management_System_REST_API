@@ -21,5 +21,5 @@ public class RestaurantOrderMenuRecord {
     @JoinColumn(name = "restaurantOrder_id")
     private RestaurantOrder restaurantOrder;
 
-    private double orderQuantity;
+     private Double portionsAmount;
 }
