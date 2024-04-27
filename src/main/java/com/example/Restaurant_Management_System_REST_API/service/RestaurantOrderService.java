@@ -104,20 +104,31 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
             throws NotFoundInDatabaseException {
         List<RestaurantOrderMenuRecord> recordsList = new ArrayList<>();
 
+        // Save the RestaurantOrder entity first
+        RestaurantOrder savedRestaurantOrder = restaurantOrderRepository.save(restaurantOrder);
+
         for (MenuRecordForOrderDTO menuRecordForOrderDTO : restaurantOrderDTO.getMenuRecords()) {
             RestaurantOrderMenuRecord record = new RestaurantOrderMenuRecord();
-            record.setMenuRecord(menuRecordService.findByName(menuRecordForOrderDTO.getName()));//if I use here modelMapper I got
-            //transient unsaved, if I saved then it adds new MenuRecord to db which is also wrong. So I found such solution
-            //that I look for this menuRecord by name and Im setting it B) LOL
-            record.setRestaurantOrder(restaurantOrder);
-            record.setOrderQuantity(menuRecordForOrderDTO.getPortionsAmount());
-            restaurantOrderMenuRecordRepository.save(record);
 
-            recordsList.add(record);
+            // Retrieve the existing MenuRecord from the database
+            MenuRecord menuRecord = menuRecordService.findByName(menuRecordForOrderDTO.getName());
+
+            // Set the existing MenuRecord to the record
+            record.setMenuRecord(menuRecord);
+
+            // Set the saved RestaurantOrder to the record
+            record.setRestaurantOrder(savedRestaurantOrder);
+            record.setPortionsAmount(menuRecordForOrderDTO.getPortionsAmount());
+
+            // Save the record and fetch the saved entity
+            RestaurantOrderMenuRecord savedRecord = restaurantOrderMenuRecordRepository.save(record);
+
+            // Add the saved entity to the list
+            recordsList.add(savedRecord);
         }
-        restaurantOrder.setRestaurantOrders(recordsList);
+        // Update the savedRestaurantOrder with the recordsList
+        savedRestaurantOrder.setRestaurantOrders(recordsList);
     }
-
 
     private void checkIfMealIsOnRestaurantMenu(RestaurantOrderRequestDTO restaurantOrderRequestDTO)
             throws NotFoundInDatabaseException {
