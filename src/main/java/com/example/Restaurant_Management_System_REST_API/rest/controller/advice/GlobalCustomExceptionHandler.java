@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller.advice;
 
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
+import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngredientsException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import jakarta.validation.ConstraintViolationException;
@@ -44,5 +45,10 @@ public class GlobalCustomExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> handleResponseStatusException (ResponseStatusException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(NotEnoughIngredientsException.class)
+    public ResponseEntity<?> handleNotEnoughIngredientsException(NotEnoughIngredientsException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
