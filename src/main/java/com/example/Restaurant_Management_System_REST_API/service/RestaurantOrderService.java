@@ -212,6 +212,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         RestaurantOrder restaurantOrder = modelMapper.map(updatedOrderDTO, RestaurantOrder.class);
 
         Optional.ofNullable(restaurantOrder.getOrderStatus()).ifPresent(existingRestaurantOrder::setOrderStatus);
+        Optional.ofNullable(restaurantOrder.getTelephoneNumber()).ifPresent(existingRestaurantOrder::setTelephoneNumber);
 
         if (restaurantOrder.getTable() != null) { //its easier to use here if instead of Optional.ofNullable, because
             //I would need to try-catch the block with RuntimeException class, because lambda is not caught
@@ -219,9 +220,6 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
             Table table = tableService.checkIfTableExist(restaurantOrder.getTable().getId());
             existingRestaurantOrder.setTable(table);
         }
-
-        Optional.ofNullable(restaurantOrder.getMenuRecords()).ifPresent(existingRestaurantOrder::setMenuRecords);
-        //TODO: finish this logic in the next branch
 
         restaurantOrderRepository.save(existingRestaurantOrder);
 
