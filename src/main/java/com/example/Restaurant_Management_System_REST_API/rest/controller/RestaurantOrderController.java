@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
+import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngredientsException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.RestaurantOrderService;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class RestaurantOrderController {
 
     @PostMapping("/add")
     public RestaurantOrderResponseDTO add(@RequestBody RestaurantOrderRequestDTO restaurantOrderResponseDTO)
-            throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException {
+            throws CustomerAlreadyHasReservationException, NotFoundInDatabaseException, NotEnoughIngredientsException {
         return restaurantOrderService.create(restaurantOrderResponseDTO);
     }
 
