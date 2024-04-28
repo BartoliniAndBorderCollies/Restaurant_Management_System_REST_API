@@ -4,6 +4,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.Menu
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngredientsException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
@@ -15,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,7 +33,8 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
     @Override
     @Transactional
-    public RestaurantOrderResponseDTO create(RestaurantOrderRequestDTO restaurantOrderDTO) throws NotFoundInDatabaseException {
+    public RestaurantOrderResponseDTO create(RestaurantOrderRequestDTO restaurantOrderDTO) throws NotFoundInDatabaseException,
+            NotEnoughIngredientsException {
         //1. Check if client provided meals which he wants to order
         if (restaurantOrderDTO.getMenuRecords() == null)
             throw new NotFoundInDatabaseException(MenuRecord.class);
@@ -46,7 +47,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         //3 check if there are enough ingredients
         if (!areThereEnoughIngredients(restaurantOrderDTO)) //I should take restaurantOrderDTO in this method,
             //because I have the amount of portions there
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Not enough ingredients to make this order!");
+            throw new NotEnoughIngredientsException();
 
         //4. If table is not null, meaning that it is not take away order check if such table exist
         if (restaurantOrder.getTable() != null)
