@@ -161,7 +161,8 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         List<MenuRecordForOrderDTO> listOfMealsWhichClientWantsToOrder = restaurantOrderRequestDTO.getMenuRecords();
 
         for (MenuRecordForOrderDTO menuRecordForOrderDTO : listOfMealsWhichClientWantsToOrder) {
-            List<Ingredient> ingredients = menuRecordForOrderDTO.getIngredients();
+            MenuRecord existingMenuRecord = menuRecordService.findByName(menuRecordForOrderDTO.getName());
+            List<Ingredient> ingredients = existingMenuRecord.getIngredients();
             for (Ingredient eachIngredient : ingredients) {
                 double requiredIngredientQuantity = eachIngredient.getAmountRequired() * menuRecordForOrderDTO.getPortionsAmount();
                 InventoryItem inventoryItem = findByName(eachIngredient.getName());
