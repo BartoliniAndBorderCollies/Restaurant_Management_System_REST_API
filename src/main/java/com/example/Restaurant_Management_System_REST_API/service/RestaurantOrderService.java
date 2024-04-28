@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -86,19 +85,22 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         restaurantOrderResponseDTO.setTable(modelMapper.map(restaurantOrder.getTable(), TableReservationDTO.class));
         restaurantOrderResponseDTO.setTelephoneNumber(restaurantOrder.getTelephoneNumber());
         restaurantOrderResponseDTO.setTotalAmountToPay(restaurantOrder.getTotalAmountToPay());
-        List<MenuRecord> menuRecordList = new ArrayList<>();
+
+        List<MenuRecordForOrderDTO> menuRecordForOrderDTOS = new ArrayList<>();
         for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrder.getRestaurantOrders()) {
             MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
-            menuRecordList.add(menuRecord);
-        }
+            Double portionsAmount = eachRestaurantOrderMenuRecord.getPortionsAmount();
 
-        List<MenuRecordForOrderDTO> menuRecordForOrderDTOS = menuRecordList.stream()
-                .map(menuRecord -> modelMapper.map(menuRecord, MenuRecordForOrderDTO.class))
-                .collect(Collectors.toList());
+            MenuRecordForOrderDTO menuRecordForOrderDTO = modelMapper.map(menuRecord, MenuRecordForOrderDTO.class);
+            menuRecordForOrderDTO.setPortionsAmount(portionsAmount);
+
+            menuRecordForOrderDTOS.add(menuRecordForOrderDTO);
+        }
 
         restaurantOrderResponseDTO.setMenuRecords(menuRecordForOrderDTOS);
         return restaurantOrderResponseDTO;
     }
+
 
     private void setRestaurantOrders(RestaurantOrderRequestDTO restaurantOrderDTO, RestaurantOrder restaurantOrder)
             throws NotFoundInDatabaseException {
