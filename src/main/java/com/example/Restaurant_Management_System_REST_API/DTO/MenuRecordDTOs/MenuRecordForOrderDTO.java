@@ -1,11 +1,13 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class MenuRecordForOrderDTO {
 
     private Long id;
