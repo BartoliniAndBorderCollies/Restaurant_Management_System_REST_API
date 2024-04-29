@@ -1,18 +1,14 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
-import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
-import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
+import com.example.Restaurant_Management_System_REST_API.model.entity.*;
+import com.example.Restaurant_Management_System_REST_API.repository.*;
 import org.junit.jupiter.api.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +50,58 @@ class RestaurantOrderControllerIntegrationTest {
     @Autowired
     private TableRepository tableRepository;
     private TableReservationDTO tableDTO;
-    private RestaurantOrder restaurantOrder;
+    private MenuRecord chopWithPotatoes;
+    private MenuRecord lechBeer;
+    private List<MenuRecordForOrderDTO> menuRecordForOrderDTOList;
+    @Autowired
+    private MenuRecordRepository menuRecordRepository;
+    @Autowired
+    private InventoryItemRepository inventoryItemRepository;
+    @Autowired
+    private SupplierRepository supplierRepository;
+    private Supplier lidlSupplier;
+    @Autowired
+    private RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
+
+
+    @BeforeAll
+    public void prepareMenuRecordsSupplierAndInventoryItem() {
+
+        Ingredient lechBeerIngredient = new Ingredient("Lech beer", 1);
+        Ingredient porkMeat = new Ingredient("Pork meat", 0.3);
+        Ingredient potatoes = new Ingredient("Potatoes", 0.5);
+        Ingredient pickles = new Ingredient("Pickles", 0.4);
+        List<Ingredient> chopWithPotatoesIngredientsList = Arrays.asList(porkMeat, potatoes, pickles);
+        List<Ingredient> lechBeerIngredientsList = Arrays.asList(lechBeerIngredient);
+
+        chopWithPotatoes = new MenuRecord(chopWithPotatoesIngredientsList, Category.MAIN_DISH,
+                "Chop with potatoes and pickles", "Yumiiii", 15.0, true);
+        lechBeer = new MenuRecord(lechBeerIngredientsList, Category.BEVERAGE, "Lech beer 0.5",
+                "0,5L", 7.0, true);
+
+        menuRecordRepository.save(chopWithPotatoes);
+        menuRecordRepository.save(lechBeer);
+
+        ContactDetails contactDetails = new ContactDetails("Lidl", "Lidlowa", "14", "Poznań",
+                "11-015", "123456789");
+
+        lidlSupplier = new Supplier(null, contactDetails, new ArrayList<>());
+        supplierRepository.save(lidlSupplier);
+
+        InventoryItem lechBeerInventoryItem = new InventoryItem(null, 100, lidlSupplier, "Lech beer",
+                "0,5L", 1.99);
+        InventoryItem porkMeatInventoryItem = new InventoryItem(null, 100, lidlSupplier, "Pork meat",
+                "fresh nice meat!", 3.99);
+        InventoryItem potatoesInventoryItem = new InventoryItem(null, 100, lidlSupplier, "Potatoes",
+                "Potatoes", 0.99);
+        InventoryItem picklesInventoryItem = new InventoryItem(null, 100, lidlSupplier, "Pickles",
+                "Cabbage and so on", 0.59);
+        inventoryItemRepository.save(lechBeerInventoryItem);
+        inventoryItemRepository.save(porkMeatInventoryItem);
+        inventoryItemRepository.save(potatoesInventoryItem);
+        inventoryItemRepository.save(picklesInventoryItem);
+
+    }
 
     @BeforeAll
     public void prepareEnvironment() {
@@ -62,9 +109,12 @@ class RestaurantOrderControllerIntegrationTest {
         table = new Table(null, true, new ArrayList<>(), new ArrayList<>());
         tableRepository.save(table);
         tableDTO = modelMapper.map(table, TableReservationDTO.class);
-        restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table, "1234567890",
-                0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
-        restaurantOrderRepository.save(restaurantOrder);
+
+        menuRecordForOrderDTOList = new ArrayList<>();
+        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles", 2.0);
+        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 2.0);
+        menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
+        menuRecordForOrderDTOList.add(menuRecordForOrderDTO2);
     }
 
     @BeforeAll
