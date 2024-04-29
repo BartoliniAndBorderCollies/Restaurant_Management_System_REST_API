@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Map;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,5 +18,5 @@ public class RestaurantOrderRequestDTO {
 
     private TableReservationDTO table;
     private String telephoneNumber;
-    private Map<MenuRecordForOrderDTO, Double> menuRecords;
+    private List<MenuRecordForOrderDTO> menuRecords;
 }
