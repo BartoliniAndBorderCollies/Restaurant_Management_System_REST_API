@@ -2,10 +2,12 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
+import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngredientsException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
+import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrderMenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
@@ -44,8 +46,9 @@ class RestaurantOrderServiceTest {
         TableService tableService = mock(TableService.class);
         MenuRecordService menuRecordService = mock(MenuRecordService.class);
         InventoryItemService inventoryItemService = mock(InventoryItemService.class);
+        RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository = mock(RestaurantOrderMenuRecordRepository.class);
         restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService,
-                menuRecordService, inventoryItemService);
+                menuRecordService, inventoryItemService, restaurantOrderMenuRecordRepository);
         restaurantOrderResponseDTO = mock(RestaurantOrderResponseDTO.class);
         restaurantOrderRequestDTO = mock(RestaurantOrderRequestDTO.class);
         restaurantOrder = mock(RestaurantOrder.class);
