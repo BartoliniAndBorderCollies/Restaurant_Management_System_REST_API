@@ -58,7 +58,7 @@ class RestaurantOrderServiceTest {
 
     @Test
     public void create_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven()
-            throws NotFoundInDatabaseException {
+            throws NotFoundInDatabaseException, NotEnoughIngredientsException {
         //Arrange
         when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
@@ -73,7 +73,7 @@ class RestaurantOrderServiceTest {
 
     @Test
     public void create_ShouldCallOnRepoExactlyOnce_WhenRestaurantOrderDTOIsGiven()
-            throws NotFoundInDatabaseException {
+            throws NotFoundInDatabaseException, NotEnoughIngredientsException {
         //Arrange
         when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
