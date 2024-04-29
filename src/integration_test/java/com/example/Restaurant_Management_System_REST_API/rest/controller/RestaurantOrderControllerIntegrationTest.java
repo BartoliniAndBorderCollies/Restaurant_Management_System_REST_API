@@ -139,10 +139,14 @@ class RestaurantOrderControllerIntegrationTest {
 
     @AfterAll
     public void cleanDatabases() {
+        restaurantOrderMenuRecordRepository.deleteAll();
         restaurantOrderRepository.deleteAll();
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
         tableRepository.deleteAll();
+        inventoryItemRepository.deleteAll();
+        menuRecordRepository.deleteAll();
+        supplierRepository.deleteAll();
     }
 
     @Test
