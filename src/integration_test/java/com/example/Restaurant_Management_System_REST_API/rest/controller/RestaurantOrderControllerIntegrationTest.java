@@ -14,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -106,7 +105,7 @@ class RestaurantOrderControllerIntegrationTest {
     @BeforeAll
     public void prepareEnvironment() {
         time = LocalDateTime.of(2020, 10, 10, 19, 55);
-        table = new Table(null, true, new ArrayList<>(), new ArrayList<>());
+        table = new Table(null, true, null, null);
         tableRepository.save(table);
         tableDTO = modelMapper.map(table, TableReservationDTO.class);
 
@@ -171,5 +170,106 @@ class RestaurantOrderControllerIntegrationTest {
                     assertEquals(restaurantOrderRequestDTO.getMenuRecords(), actualResponse.getMenuRecords());
                 });
     }
+
+    @Test
+    public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
+        LocalDateTime time = LocalDateTime.of(2024, 9, 8, 21, 0);
+        double amountToPay = 99.0;
+
+        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table, "1234567890",
+                amountToPay, null);
+        restaurantOrderRepository.save(restaurantOrder);
+
+        webTestClient.get()
+                .uri("/api/order/find/" + restaurantOrder.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(RestaurantOrderResponseDTO.class)
+                .consumeWith(response -> {
+                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(restaurantOrder.getOrderTime(), actualResponse.getOrderTime());
+                    assertEquals(restaurantOrder.getOrderStatus(), actualResponse.getOrderStatus());
+                    assertEquals(modelMapper.map(restaurantOrder.getTable(), TableReservationDTO.class), actualResponse.getTable());
+                    assertEquals(restaurantOrder.getTelephoneNumber(), actualResponse.getTelephoneNumber());
+                    assertEquals(restaurantOrder.getTotalAmountToPay(), actualResponse.getTotalAmountToPay());
+                });
+    }
+
+//    @Test
+//    public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
+//        RestaurantOrder restaurantOrder2 = new RestaurantOrder(null, time, OrderStatus.PENDING,
+//                null, "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
+//        restaurantOrderRepository.save(restaurantOrder2);
+//
+//        List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder, restaurantOrder2);
+//        List<RestaurantOrderResponseDTO> expected = new ArrayList<>();
+//        restaurantOrderList.forEach(order -> expected.add(modelMapper.map(order, RestaurantOrderResponseDTO.class)));
+//
+//        webTestClient.get()
+//                .uri("/api/order/findAll")
+//                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .expectBodyList(RestaurantOrderResponseDTO.class)
+//                .consumeWith(response -> {
+//                    List<RestaurantOrderResponseDTO> actualResponse = response.getResponseBody();
+//                    assertNotNull(actualResponse);
+//                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+//                });
+//    }
+//
+//    @Test
+//    public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
+//        //These are expected update details:
+//        Table updatedTable = new Table(100L, false, new ArrayList<>(), new ArrayList<>());
+//        tableRepository.save(updatedTable);
+//        TableReservationDTO updatedTableDTO = modelMapper.map(updatedTable, TableReservationDTO.class);
+//        OrderStatus updatedStatus = OrderStatus.DONE;
+//        RestaurantOrderResponseDTO expected = new RestaurantOrderResponseDTO(null, time, updatedStatus, updatedTableDTO,
+//                "1234567890", 0, new ArrayList<>());
+//
+//        //This is a body value of updating DTO
+//        RestaurantOrderRequestDTO updatingDTO = new RestaurantOrderRequestDTO(updatedTableDTO,
+//                "1234567890", new ArrayList<>());
+//
+//        webTestClient.put()
+//                .uri("/api/order/update/" + restaurantOrder.getId())
+//                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+//                .bodyValue(updatingDTO)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .expectBody(RestaurantOrderResponseDTO.class)
+//                .consumeWith(response -> {
+//                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
+//                    assertNotNull(actualResponse);
+//                    assertEquals(expected.getOrderStatus(), actualResponse.getOrderStatus());
+//                    assertEquals(expected.getTable(), actualResponse.getTable());
+//                });
+//    }
+//
+//    @Test
+//    public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
+//        //This must be here because I create restaurantOrder in @BeforeAll and if I delete it here then I lost it for other methods
+//        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, table,
+//                "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
+//        restaurantOrderRepository.save(restaurantOrder);
+//
+//        webTestClient.delete()
+//                .uri("/api/order/delete/" + restaurantOrder.getId())
+//                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .expectBody(String.class)
+//                .consumeWith(response -> {
+//                    String actualResponse = response.getResponseBody();
+//                    assertNotNull(actualResponse);
+//                    assertEquals("Order number " + restaurantOrder.getId() + " has been deleted!", actualResponse);
+//                    assertEquals(HttpStatus.OK, response.getStatus());
+//                    Optional<RestaurantOrder> shouldBeDeleted = restaurantOrderRepository.findById(restaurantOrder.getId());
+//                    assertTrue(shouldBeDeleted.isEmpty());
+//                });
+//    }
 
 }
