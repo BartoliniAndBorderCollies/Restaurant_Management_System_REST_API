@@ -62,6 +62,18 @@ class RestaurantOrderControllerIntegrationTest {
     @Autowired
     private RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
 
+    @BeforeAll
+    public void prepareEnvironment() {
+        time = LocalDateTime.of(2020, 10, 10, 19, 55);
+        table = new Table(null, true, null, null);
+        tableRepository.save(table);
+        tableDTO = modelMapper.map(table, TableReservationDTO.class);
+        menuRecordForOrderDTOList = new ArrayList<>();
+        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles", 2.0);
+        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 2.0);
+        menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
+        menuRecordForOrderDTOList.add(menuRecordForOrderDTO2);
+    }
 
     @BeforeAll
     public void prepareMenuRecordsSupplierAndInventoryItem() {
@@ -100,20 +112,6 @@ class RestaurantOrderControllerIntegrationTest {
         inventoryItemRepository.save(potatoesInventoryItem);
         inventoryItemRepository.save(picklesInventoryItem);
 
-    }
-
-    @BeforeAll
-    public void prepareEnvironment() {
-        time = LocalDateTime.of(2020, 10, 10, 19, 55);
-        table = new Table(null, true, null, null);
-        tableRepository.save(table);
-        tableDTO = modelMapper.map(table, TableReservationDTO.class);
-
-        menuRecordForOrderDTOList = new ArrayList<>();
-        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles", 2.0);
-        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 2.0);
-        menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
-        menuRecordForOrderDTOList.add(menuRecordForOrderDTO2);
     }
 
     @BeforeAll
@@ -173,12 +171,20 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
-        LocalDateTime time = LocalDateTime.of(2024, 9, 8, 21, 0);
-        double amountToPay = 99.0;
-
-        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table, "1234567890",
-                amountToPay, null);
+        double amountToPay = 10.0;
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = new ArrayList<>();
+        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
+                "1234567890", amountToPay, null);
         restaurantOrderRepository.save(restaurantOrder);
+
+        RestaurantOrderMenuRecord restaurantOrderMenuRecord = new RestaurantOrderMenuRecord(null, chopWithPotatoes,
+                restaurantOrder, 1.0);
+        restaurantOrderMenuRecordRepository.save(restaurantOrderMenuRecord);
+        restaurantOrderMenuRecordList.add(restaurantOrderMenuRecord);
+
+        restaurantOrder.setRestaurantOrders(restaurantOrderMenuRecordList);
+        restaurantOrderRepository.save(restaurantOrder);
+
 
         webTestClient.get()
                 .uri("/api/order/find/" + restaurantOrder.getId())
@@ -194,6 +200,17 @@ class RestaurantOrderControllerIntegrationTest {
                     assertEquals(modelMapper.map(restaurantOrder.getTable(), TableReservationDTO.class), actualResponse.getTable());
                     assertEquals(restaurantOrder.getTelephoneNumber(), actualResponse.getTelephoneNumber());
                     assertEquals(restaurantOrder.getTotalAmountToPay(), actualResponse.getTotalAmountToPay());
+
+                    List<RestaurantOrderMenuRecord> restaurantOrders = restaurantOrder.getRestaurantOrders();
+                    List<MenuRecordForOrderDTO> expected = new ArrayList<>();
+                    for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord: restaurantOrders) {
+                        MenuRecord eachMenuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
+                        MenuRecordForOrderDTO menuRecordForOrderDTO = modelMapper.map(eachMenuRecord, MenuRecordForOrderDTO.class);
+                        menuRecordForOrderDTO.setPortionsAmount(restaurantOrderMenuRecord.getPortionsAmount());
+                        expected.add(menuRecordForOrderDTO);
+                    }
+
+                    assertIterableEquals(expected, actualResponse.getMenuRecords());
                 });
     }
 
