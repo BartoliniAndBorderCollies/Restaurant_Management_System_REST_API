@@ -7,7 +7,7 @@ import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDat
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
-import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrderMenuRecordRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderMenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
