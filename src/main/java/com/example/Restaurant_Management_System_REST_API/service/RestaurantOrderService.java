@@ -88,6 +88,13 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         restaurantOrderResponseDTO.setTelephoneNumber(restaurantOrder.getTelephoneNumber());
         restaurantOrderResponseDTO.setTotalAmountToPay(restaurantOrder.getTotalAmountToPay());
 
+        List<MenuRecordForOrderDTO> menuRecordForOrderDTOS = getMenuRecordForOrderDTOS(restaurantOrder);
+
+        restaurantOrderResponseDTO.setMenuRecords(menuRecordForOrderDTOS);
+        return restaurantOrderResponseDTO;
+    }
+
+    private List<MenuRecordForOrderDTO> getMenuRecordForOrderDTOS(RestaurantOrder restaurantOrder) {
         List<MenuRecordForOrderDTO> menuRecordForOrderDTOS = new ArrayList<>();
         for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrder.getRestaurantOrders()) {
             MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
@@ -98,9 +105,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
 
             menuRecordForOrderDTOS.add(menuRecordForOrderDTO);
         }
-
-        restaurantOrderResponseDTO.setMenuRecords(menuRecordForOrderDTOS);
-        return restaurantOrderResponseDTO;
+        return menuRecordForOrderDTOS;
     }
 
 
