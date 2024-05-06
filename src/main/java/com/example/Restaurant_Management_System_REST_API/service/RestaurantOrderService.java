@@ -200,8 +200,11 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     public RestaurantOrderResponseDTO findById(Long id) throws NotFoundInDatabaseException {
         RestaurantOrder restaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(() -> new
                 NotFoundInDatabaseException(RestaurantOrder.class));
+        RestaurantOrderResponseDTO responseDTO = modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
 
-        return modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
+        responseDTO.setMenuRecords(getMenuRecordForOrderDTOS(restaurantOrder));
+
+        return responseDTO;
     }
 
     @Override
