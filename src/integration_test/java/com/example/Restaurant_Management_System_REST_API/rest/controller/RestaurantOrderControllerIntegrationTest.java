@@ -256,35 +256,42 @@ class RestaurantOrderControllerIntegrationTest {
                     assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
                 });
     }
-//
-//    @Test
-//    public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
-//        //These are expected update details:
-//        Table updatedTable = new Table(100L, false, new ArrayList<>(), new ArrayList<>());
-//        tableRepository.save(updatedTable);
-//        TableReservationDTO updatedTableDTO = modelMapper.map(updatedTable, TableReservationDTO.class);
-//        OrderStatus updatedStatus = OrderStatus.DONE;
-//        RestaurantOrderResponseDTO expected = new RestaurantOrderResponseDTO(null, time, updatedStatus, updatedTableDTO,
-//                "1234567890", 0, new ArrayList<>());
-//
-//        //This is a body value of updating DTO
-//        RestaurantOrderRequestDTO updatingDTO = new RestaurantOrderRequestDTO(updatedTableDTO,
-//                "1234567890", new ArrayList<>());
-//
-//        webTestClient.put()
-//                .uri("/api/order/update/" + restaurantOrder.getId())
-//                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
-//                .bodyValue(updatingDTO)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBody(RestaurantOrderResponseDTO.class)
-//                .consumeWith(response -> {
-//                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
-//                    assertNotNull(actualResponse);
-//                    assertEquals(expected.getOrderStatus(), actualResponse.getOrderStatus());
-//                    assertEquals(expected.getTable(), actualResponse.getTable());
-//                });
-//    }
+
+    @Test
+    public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
+        RestaurantOrder restaurantOrderToBeUpdated = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
+                "2222222222",0, null);
+        restaurantOrderRepository.save(restaurantOrderToBeUpdated);
+
+        //These are expected update details:
+        Table updatedTable = new Table(100L, false, new ArrayList<>(), new ArrayList<>());
+        tableRepository.save(updatedTable);
+        TableReservationDTO updatedTableDTO = modelMapper.map(updatedTable, TableReservationDTO.class);
+        OrderStatus updatedStatus = OrderStatus.DONE;
+        String updatedTelephoneNumber = "9999999999";
+
+        RestaurantOrderResponseDTO expected = new RestaurantOrderResponseDTO(null, time, updatedStatus, updatedTableDTO,
+                updatedTelephoneNumber, 0, new ArrayList<>());
+
+        //This is a body value of updating DTO
+        RestaurantOrderRequestDTO updatingDTO = new RestaurantOrderRequestDTO(updatedStatus, updatedTableDTO,
+                updatedTelephoneNumber, new ArrayList<>());
+
+        webTestClient.put()
+                .uri("/api/order/update/" + restaurantOrderToBeUpdated.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .bodyValue(updatingDTO)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(RestaurantOrderResponseDTO.class)
+                .consumeWith(response -> {
+                    RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals(expected.getOrderStatus(), actualResponse.getOrderStatus());
+                    assertEquals(expected.getTable(), actualResponse.getTable());
+                    assertEquals(expected.getTelephoneNumber(), actualResponse.getTelephoneNumber());
+                });
+    }
 //
 //    @Test
 //    public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
