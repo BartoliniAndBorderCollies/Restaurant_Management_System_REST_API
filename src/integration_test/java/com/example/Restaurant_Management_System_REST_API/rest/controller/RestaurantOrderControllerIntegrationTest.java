@@ -216,28 +216,46 @@ class RestaurantOrderControllerIntegrationTest {
         restaurantOrderRepository.deleteAll();
     }
 
-//    @Test
-//    public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
-//        RestaurantOrder restaurantOrder2 = new RestaurantOrder(null, time, OrderStatus.PENDING,
-//                null, "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
-//        restaurantOrderRepository.save(restaurantOrder2);
-//
-//        List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder, restaurantOrder2);
-//        List<RestaurantOrderResponseDTO> expected = new ArrayList<>();
-//        restaurantOrderList.forEach(order -> expected.add(modelMapper.map(order, RestaurantOrderResponseDTO.class)));
-//
-//        webTestClient.get()
-//                .uri("/api/order/findAll")
-//                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBodyList(RestaurantOrderResponseDTO.class)
-//                .consumeWith(response -> {
-//                    List<RestaurantOrderResponseDTO> actualResponse = response.getResponseBody();
-//                    assertNotNull(actualResponse);
-//                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
-//                });
-//    }
+    @Test
+    public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
+        double amountToPay = 99.0;
+        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
+                "1234567890", amountToPay, null);
+        restaurantOrderRepository.save(restaurantOrder);
+
+        RestaurantOrderMenuRecord restaurantOrderMenuRecord = new RestaurantOrderMenuRecord(null, chopWithPotatoes,
+                restaurantOrder, 1.0);
+        restaurantOrderMenuRecordRepository.save(restaurantOrderMenuRecord);
+
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = new ArrayList<>();
+        restaurantOrderMenuRecordList.add(restaurantOrderMenuRecord);
+        restaurantOrder.setRestaurantOrders(restaurantOrderMenuRecordList);
+        restaurantOrderRepository.save(restaurantOrder);
+
+        List<MenuRecordForOrderDTO> menuRecordForOrderDTOList = new ArrayList<>();
+        MenuRecord menuRecord = restaurantOrderMenuRecord.getMenuRecord();
+        MenuRecordForOrderDTO menuRecordForOrderDTO = modelMapper.map(menuRecord, MenuRecordForOrderDTO.class);
+        menuRecordForOrderDTO.setPortionsAmount(restaurantOrderMenuRecord.getPortionsAmount());
+        menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
+
+        RestaurantOrderResponseDTO expectedRestaurantOrderResponseDTO1 = new RestaurantOrderResponseDTO(restaurantOrder.getId(), time,
+                OrderStatus.PENDING, tableDTO, "1234567890", amountToPay, menuRecordForOrderDTOList);
+
+        List<RestaurantOrderResponseDTO> expected = new ArrayList<>();
+        expected.add(expectedRestaurantOrderResponseDTO1);
+
+        webTestClient.get()
+                .uri("/api/order/findAll")
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(RestaurantOrderResponseDTO.class)
+                .consumeWith(response -> {
+                    List<RestaurantOrderResponseDTO> actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertThat(actualResponse).containsExactlyInAnyOrderElementsOf(expected);
+                });
+    }
 //
 //    @Test
 //    public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
