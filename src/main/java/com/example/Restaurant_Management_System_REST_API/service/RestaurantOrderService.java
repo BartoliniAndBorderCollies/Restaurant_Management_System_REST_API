@@ -212,6 +212,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
         List<RestaurantOrderResponseDTO> orderDTOList = new ArrayList<>();
         restaurantOrderRepository.findAll().forEach(restaurantOrder -> {
             RestaurantOrderResponseDTO orderDto = modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class);
+            orderDto.setMenuRecords(getMenuRecordForOrderDTOS(restaurantOrder));
             orderDTOList.add(orderDto);
 
         });
