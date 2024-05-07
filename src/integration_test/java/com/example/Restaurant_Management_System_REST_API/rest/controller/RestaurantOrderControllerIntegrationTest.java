@@ -148,7 +148,7 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void add_ShouldAddRestaurantOrderToDatabaseAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven() {
-        RestaurantOrderRequestDTO restaurantOrderRequestDTO = new RestaurantOrderRequestDTO(tableDTO,
+        RestaurantOrderRequestDTO restaurantOrderRequestDTO = new RestaurantOrderRequestDTO(OrderStatus.PENDING, tableDTO,
                 "1234567890", menuRecordForOrderDTOList);
         double amountToPay = 44.0;
 
@@ -162,7 +162,7 @@ class RestaurantOrderControllerIntegrationTest {
                 .consumeWith(response -> {
                     RestaurantOrderResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals(OrderStatus.PENDING, actualResponse.getOrderStatus());
+                    assertEquals(restaurantOrderRequestDTO.getOrderStatus(), actualResponse.getOrderStatus());
                     assertEquals(restaurantOrderRequestDTO.getTable(), actualResponse.getTable());
                     assertEquals(amountToPay, actualResponse.getTotalAmountToPay());
                     assertEquals(restaurantOrderRequestDTO.getMenuRecords(), actualResponse.getMenuRecords());
