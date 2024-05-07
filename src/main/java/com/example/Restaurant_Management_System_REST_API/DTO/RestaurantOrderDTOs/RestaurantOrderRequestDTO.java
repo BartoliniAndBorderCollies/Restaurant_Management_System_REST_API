@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTO
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 
+import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RestaurantOrderRequestDTO {
 
+    private OrderStatus orderStatus;
     private TableReservationDTO table;
     private String telephoneNumber;
     private List<MenuRecordForOrderDTO> menuRecords;
