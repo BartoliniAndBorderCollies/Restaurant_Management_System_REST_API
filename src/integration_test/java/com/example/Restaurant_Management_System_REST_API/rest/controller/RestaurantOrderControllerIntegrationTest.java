@@ -212,6 +212,8 @@ class RestaurantOrderControllerIntegrationTest {
 
                     assertIterableEquals(expected, actualResponse.getMenuRecords());
                 });
+        restaurantOrderMenuRecordRepository.deleteAll();
+        restaurantOrderRepository.deleteAll();
     }
 
 //    @Test
