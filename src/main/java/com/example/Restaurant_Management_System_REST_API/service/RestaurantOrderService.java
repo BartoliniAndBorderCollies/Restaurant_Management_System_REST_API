@@ -246,10 +246,8 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
         RestaurantOrder restaurantOrderToBeDeleted = restaurantOrderRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(RestaurantOrder.class));
-        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordsToBeDeleted = restaurantOrderMenuRecordService
-                .findRestaurantOrderMenuRecordsForDeletionByRestaurantOrderId(id);
-        restaurantOrderMenuRecordService.deleteGivenRestaurantOrderMenuRecords(restaurantOrderMenuRecordsToBeDeleted);
 
+        restaurantOrderMenuRecordService.deleteRestaurantOrderMenuRecordsByRestaurantOrderId(id);
         restaurantOrderRepository.delete(restaurantOrderToBeDeleted);
 
         return new ResponseEntity<>("Order number " + restaurantOrderToBeDeleted.getId() + " has been deleted!", HttpStatus.OK);
