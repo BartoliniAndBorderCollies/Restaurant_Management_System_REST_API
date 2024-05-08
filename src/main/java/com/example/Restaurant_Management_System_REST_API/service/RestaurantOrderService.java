@@ -30,7 +30,8 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     private final TableService tableService;
     private final MenuRecordService menuRecordService;
     private final InventoryItemService inventoryItemService;
-    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
+    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository; //TODO - should not be here
+    private final RestaurantOrderMenuRecordService restaurantOrderMenuRecordService;
 
     @Override
     @Transactional
@@ -245,6 +246,9 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
         RestaurantOrder restaurantOrderToBeDeleted = restaurantOrderRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(RestaurantOrder.class));
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordsToBeDeleted = restaurantOrderMenuRecordService
+                .findRestaurantOrderMenuRecordsForDeletionByRestaurantOrderId(id);
+        restaurantOrderMenuRecordService.deleteGivenRestaurantOrderMenuRecords(restaurantOrderMenuRecordsToBeDeleted);
 
         restaurantOrderRepository.delete(restaurantOrderToBeDeleted);
 
