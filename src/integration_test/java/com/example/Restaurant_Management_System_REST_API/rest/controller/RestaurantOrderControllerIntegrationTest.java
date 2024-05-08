@@ -212,7 +212,7 @@ class RestaurantOrderControllerIntegrationTest {
 
                     List<RestaurantOrderMenuRecord> restaurantOrders = restaurantOrder.getRestaurantOrders();
                     List<MenuRecordForOrderDTO> expected = new ArrayList<>();
-                    for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord: restaurantOrders) {
+                    for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrders) {
                         MenuRecord eachMenuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
                         MenuRecordForOrderDTO menuRecordForOrderDTO = modelMapper.map(eachMenuRecord, MenuRecordForOrderDTO.class);
                         menuRecordForOrderDTO.setPortionsAmount(restaurantOrderMenuRecord.getPortionsAmount());
@@ -284,28 +284,23 @@ class RestaurantOrderControllerIntegrationTest {
                     assertEquals(expected.getTelephoneNumber(), actualResponse.getTelephoneNumber());
                 });
     }
-//
-//    @Test
-//    public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
-//        //This must be here because I create restaurantOrder in @BeforeAll and if I delete it here then I lost it for other methods
-//        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.DONE, table,
-//                "1234567890", 0, new ArrayList<>()); //TODO: add menu records when new branch will be merged
-//        restaurantOrderRepository.save(restaurantOrder);
-//
-//        webTestClient.delete()
-//                .uri("/api/order/delete/" + restaurantOrder.getId())
-//                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBody(String.class)
-//                .consumeWith(response -> {
-//                    String actualResponse = response.getResponseBody();
-//                    assertNotNull(actualResponse);
-//                    assertEquals("Order number " + restaurantOrder.getId() + " has been deleted!", actualResponse);
-//                    assertEquals(HttpStatus.OK, response.getStatus());
-//                    Optional<RestaurantOrder> shouldBeDeleted = restaurantOrderRepository.findById(restaurantOrder.getId());
-//                    assertTrue(shouldBeDeleted.isEmpty());
-//                });
-//    }
 
+    @Test
+    public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
+
+        webTestClient.delete()
+                .uri("/api/order/delete/" + restaurantOrder.getId())
+                .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .consumeWith(response -> {
+                    String actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals("Order number " + restaurantOrder.getId() + " has been deleted!", actualResponse);
+                    assertEquals(HttpStatus.OK, response.getStatus());
+                    Optional<RestaurantOrder> shouldBeDeleted = restaurantOrderRepository.findById(restaurantOrder.getId());
+                    assertTrue(shouldBeDeleted.isEmpty());
+                });
+    }
 }
