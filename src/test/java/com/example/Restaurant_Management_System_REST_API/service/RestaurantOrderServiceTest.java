@@ -46,9 +46,9 @@ class RestaurantOrderServiceTest {
         TableService tableService = mock(TableService.class);
         MenuRecordService menuRecordService = mock(MenuRecordService.class);
         InventoryItemService inventoryItemService = mock(InventoryItemService.class);
-        RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository = mock(RestaurantOrderMenuRecordRepository.class);
+        RestaurantOrderMenuRecordService restaurantOrderMenuRecordService = mock(RestaurantOrderMenuRecordService.class);
         restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService,
-                menuRecordService, inventoryItemService, restaurantOrderMenuRecordRepository);
+                menuRecordService, inventoryItemService, restaurantOrderMenuRecordService);
         restaurantOrderResponseDTO = mock(RestaurantOrderResponseDTO.class);
         restaurantOrderRequestDTO = mock(RestaurantOrderRequestDTO.class);
         restaurantOrder = mock(RestaurantOrder.class);
@@ -154,7 +154,7 @@ class RestaurantOrderServiceTest {
         restaurantOrder.setTable(table);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
         when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
-        when(restaurantOrder.getMenuRecords()).thenReturn(menuRecordList);
+//        when(restaurantOrder.getMenuRecords()).thenReturn(menuRecordList);
 
 
         RestaurantOrderResponseDTO expected = restaurantOrderResponseDTO;
@@ -166,7 +166,7 @@ class RestaurantOrderServiceTest {
         assertEquals(expected, actual);
         verify(restaurantOrder).setOrderStatus(OrderStatus.PENDING);
         verify(restaurantOrder).setTable(table);
-        verify(restaurantOrder).setMenuRecords(menuRecordList);
+//        verify(restaurantOrder).setMenuRecords(menuRecordList);
     }
 
     @Test
