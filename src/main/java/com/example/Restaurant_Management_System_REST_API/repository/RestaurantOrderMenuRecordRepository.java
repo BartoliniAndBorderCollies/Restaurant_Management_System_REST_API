@@ -1,7 +1,10 @@
 package com.example.Restaurant_Management_System_REST_API.repository;
 
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrderMenuRecord;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface RestaurantOrderMenuRecordRepository extends JpaRepository<RestaurantOrderMenuRecord, Long> {
+@Repository
+public interface RestaurantOrderMenuRecordRepository extends CrudRepository<RestaurantOrderMenuRecord, Long> {
+
 }
