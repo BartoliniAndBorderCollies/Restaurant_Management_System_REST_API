@@ -21,4 +21,8 @@ public class RestaurantOrderMenuRecordService {
             restaurantOrderMenuRecordRepository.delete(eachRecord);
         }
     }
+
+    public RestaurantOrderMenuRecord save(RestaurantOrderMenuRecord record) {
+        return restaurantOrderMenuRecordRepository.save(record);
+    }
 }
