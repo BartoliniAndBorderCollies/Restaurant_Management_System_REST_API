@@ -42,7 +42,6 @@ class RestaurantOrderControllerIntegrationTest {
     private String basicHeaderOwner;
     @Autowired
     private RestaurantOrderRepository restaurantOrderRepository;
-    private Customer restaurantOwner;
     @Autowired
     private ModelMapper modelMapper;
     private LocalDateTime time;
@@ -51,7 +50,6 @@ class RestaurantOrderControllerIntegrationTest {
     private TableRepository tableRepository;
     private TableReservationDTO tableDTO;
     private MenuRecord chopWithPotatoes;
-    private MenuRecord lechBeer;
     private List<MenuRecordForOrderDTO> menuRecordForOrderDTOList;
     @Autowired
     private MenuRecordRepository menuRecordRepository;
@@ -59,7 +57,6 @@ class RestaurantOrderControllerIntegrationTest {
     private InventoryItemRepository inventoryItemRepository;
     @Autowired
     private SupplierRepository supplierRepository;
-    private Supplier lidlSupplier;
     @Autowired
     private RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
     private RestaurantOrder restaurantOrder;
@@ -91,7 +88,7 @@ class RestaurantOrderControllerIntegrationTest {
 
         chopWithPotatoes = new MenuRecord(chopWithPotatoesIngredientsList, Category.MAIN_DISH,
                 "Chop with potatoes and pickles", "Yumiiii", 15.0, true);
-        lechBeer = new MenuRecord(lechBeerIngredientsList, Category.BEVERAGE, "Lech beer 0.5",
+        MenuRecord lechBeer = new MenuRecord(lechBeerIngredientsList, Category.BEVERAGE, "Lech beer 0.5",
                 "0,5L", 7.0, true);
 
         menuRecordRepository.save(chopWithPotatoes);
@@ -100,7 +97,7 @@ class RestaurantOrderControllerIntegrationTest {
         ContactDetails contactDetails = new ContactDetails("Lidl", "Lidlowa", "14", "Poznań",
                 "11-015", "123456789");
 
-        lidlSupplier = new Supplier(null, contactDetails, new ArrayList<>());
+        Supplier lidlSupplier = new Supplier(null, contactDetails, new ArrayList<>());
         supplierRepository.save(lidlSupplier);
 
         InventoryItem lechBeerInventoryItem = new InventoryItem(null, 100, lidlSupplier, "Lech beer",
@@ -115,7 +112,6 @@ class RestaurantOrderControllerIntegrationTest {
         inventoryItemRepository.save(porkMeatInventoryItem);
         inventoryItemRepository.save(potatoesInventoryItem);
         inventoryItemRepository.save(picklesInventoryItem);
-
     }
 
     @BeforeAll
@@ -131,7 +127,7 @@ class RestaurantOrderControllerIntegrationTest {
         Set<Authority> authorities = new HashSet<>();
         authorities.add(owner);
 
-        restaurantOwner = new Customer(null, LocalDateTime.now(), null, contactDetails, encodedPassword, true, true,
+        Customer restaurantOwner = new Customer(null, LocalDateTime.now(), null, contactDetails, encodedPassword, true, true,
                 true, true, "owner@owner.eu", authorities);
         customerRepository.save(restaurantOwner);
         basicHeaderOwner = "Basic " + Base64.getEncoder()
@@ -225,8 +221,6 @@ class RestaurantOrderControllerIntegrationTest {
 
                     assertIterableEquals(expected, actualResponse.getMenuRecords());
                 });
-        restaurantOrderMenuRecordRepository.deleteAll();
-        restaurantOrderRepository.deleteAll();
     }
 
     @Test
