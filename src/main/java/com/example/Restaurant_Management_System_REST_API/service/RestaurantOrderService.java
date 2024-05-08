@@ -8,7 +8,6 @@ import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngr
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
-import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderMenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,6 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     private final TableService tableService;
     private final MenuRecordService menuRecordService;
     private final InventoryItemService inventoryItemService;
-    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository; //TODO - should not be here
     private final RestaurantOrderMenuRecordService restaurantOrderMenuRecordService;
 
     @Override
@@ -131,7 +129,7 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
             record.setPortionsAmount(menuRecordForOrderDTO.getPortionsAmount());
 
             // Save the record and fetch the saved entity
-            RestaurantOrderMenuRecord savedRecord = restaurantOrderMenuRecordRepository.save(record);
+            RestaurantOrderMenuRecord savedRecord = restaurantOrderMenuRecordService.save(record);
 
             // Add the saved entity to the list
             recordsList.add(savedRecord);
