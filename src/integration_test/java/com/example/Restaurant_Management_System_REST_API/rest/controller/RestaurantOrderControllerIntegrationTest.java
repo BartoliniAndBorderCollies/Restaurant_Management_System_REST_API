@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -61,6 +62,9 @@ class RestaurantOrderControllerIntegrationTest {
     private Supplier lidlSupplier;
     @Autowired
     private RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
+    private RestaurantOrder restaurantOrder;
+    private RestaurantOrderMenuRecord restaurantOrderMenuRecord;
+
 
     @BeforeAll
     public void prepareEnvironment() {
@@ -134,6 +138,29 @@ class RestaurantOrderControllerIntegrationTest {
                 .encodeToString((restaurantOwner.getEmailAddress() + ":" + rawPassword).getBytes());
     }
 
+    @BeforeEach
+    public void prepareRestaurantOrder() {
+        double amountToPay = 10.0;
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = new ArrayList<>();
+        restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
+                "1234567890", amountToPay, null);
+        restaurantOrderRepository.save(restaurantOrder);
+
+        restaurantOrderMenuRecord = new RestaurantOrderMenuRecord(null, chopWithPotatoes,
+                restaurantOrder, 1.0);
+        restaurantOrderMenuRecordRepository.save(restaurantOrderMenuRecord);
+        restaurantOrderMenuRecordList.add(restaurantOrderMenuRecord);
+
+        restaurantOrder.setRestaurantOrders(restaurantOrderMenuRecordList);
+        restaurantOrderRepository.save(restaurantOrder);
+    }
+
+    @AfterEach
+    public void cleanRestaurantOrders() {
+        restaurantOrderMenuRecordRepository.deleteAll();
+        restaurantOrderRepository.deleteAll();
+    }
+
     @AfterAll
     public void cleanDatabases() {
         restaurantOrderMenuRecordRepository.deleteAll();
@@ -171,20 +198,6 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExistAndIdIsGiven() {
-        double amountToPay = 10.0;
-        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = new ArrayList<>();
-        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
-                "1234567890", amountToPay, null);
-        restaurantOrderRepository.save(restaurantOrder);
-
-        RestaurantOrderMenuRecord restaurantOrderMenuRecord = new RestaurantOrderMenuRecord(null, chopWithPotatoes,
-                restaurantOrder, 1.0);
-        restaurantOrderMenuRecordRepository.save(restaurantOrderMenuRecord);
-        restaurantOrderMenuRecordList.add(restaurantOrderMenuRecord);
-
-        restaurantOrder.setRestaurantOrders(restaurantOrderMenuRecordList);
-        restaurantOrderRepository.save(restaurantOrder);
-
 
         webTestClient.get()
                 .uri("/api/order/find/" + restaurantOrder.getId())
@@ -218,19 +231,7 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void findAll_ShouldReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
-        double amountToPay = 99.0;
-        RestaurantOrder restaurantOrder = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
-                "1234567890", amountToPay, null);
-        restaurantOrderRepository.save(restaurantOrder);
-
-        RestaurantOrderMenuRecord restaurantOrderMenuRecord = new RestaurantOrderMenuRecord(null, chopWithPotatoes,
-                restaurantOrder, 1.0);
-        restaurantOrderMenuRecordRepository.save(restaurantOrderMenuRecord);
-
-        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = new ArrayList<>();
-        restaurantOrderMenuRecordList.add(restaurantOrderMenuRecord);
-        restaurantOrder.setRestaurantOrders(restaurantOrderMenuRecordList);
-        restaurantOrderRepository.save(restaurantOrder);
+        double amountToPay = 10.0;
 
         List<MenuRecordForOrderDTO> menuRecordForOrderDTOList = new ArrayList<>();
         MenuRecord menuRecord = restaurantOrderMenuRecord.getMenuRecord();
@@ -259,9 +260,6 @@ class RestaurantOrderControllerIntegrationTest {
 
     @Test
     public void update_ShouldUpdateRestaurantOrderAndSaveAndReturnUpdatedRestaurantOrderDTO_WhenRestaurantOrderDTOAndIdAreGIven() {
-        RestaurantOrder restaurantOrderToBeUpdated = new RestaurantOrder(null, time, OrderStatus.PENDING, table,
-                "2222222222",0, null);
-        restaurantOrderRepository.save(restaurantOrderToBeUpdated);
 
         //These are expected update details:
         Table updatedTable = new Table(100L, false, new ArrayList<>(), new ArrayList<>());
@@ -278,7 +276,7 @@ class RestaurantOrderControllerIntegrationTest {
                 updatedTelephoneNumber, new ArrayList<>());
 
         webTestClient.put()
-                .uri("/api/order/update/" + restaurantOrderToBeUpdated.getId())
+                .uri("/api/order/update/" + restaurantOrder.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
                 .bodyValue(updatingDTO)
                 .exchange()
