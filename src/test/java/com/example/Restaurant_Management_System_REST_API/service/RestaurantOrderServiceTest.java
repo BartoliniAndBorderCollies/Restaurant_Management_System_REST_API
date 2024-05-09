@@ -1,14 +1,14 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngredientsException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
-import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
-import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderMenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Table;
+import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.TableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +43,8 @@ class RestaurantOrderServiceTest {
         restaurantOrderRepository = mock(RestaurantOrderRepository.class);
         tableRepository = mock(TableRepository.class);
         TableService tableService = mock(TableService.class);
-        MenuRecordService menuRecordService = mock(MenuRecordService.class);
+        MenuRecordRepository menuRecordRepository = mock(MenuRecordRepository.class);
+        MenuRecordService menuRecordService = new MenuRecordService(menuRecordRepository, modelMapper);
         InventoryItemService inventoryItemService = mock(InventoryItemService.class);
         RestaurantOrderMenuRecordService restaurantOrderMenuRecordService = mock(RestaurantOrderMenuRecordService.class);
         restaurantOrderService = new RestaurantOrderService(restaurantOrderRepository, modelMapper, tableService,
@@ -55,6 +55,15 @@ class RestaurantOrderServiceTest {
         id = 1L;
     }
 
+    @Test
+    public void create_ShouldThrowNotFoundInDatabaseException_WhenMenuRecordsIsNull() {
+        // Arrange
+        RestaurantOrderRequestDTO restaurantOrderDTO = new RestaurantOrderRequestDTO();
+        restaurantOrderDTO.setMenuRecords(null);
+
+        // Act and Assert
+        assertThrows(NotFoundInDatabaseException.class, () -> restaurantOrderService.create(restaurantOrderDTO));
+    }
 
     @Test
     public void create_ShouldThrowNotFoundInDatabaseException_WhenMealNotInMenu() {
