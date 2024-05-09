@@ -137,25 +137,22 @@ class RestaurantOrderServiceTest {
         assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderRequestDTO));
     }
 
-    //TODO: this below test will need to be updated after merging new branch
     @Test
     public void update_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenIdAndRestaurantOrderDTOsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
         Table table = mock(Table.class);
-        MenuRecord mockMenuRecord = mock(MenuRecord.class);
-        List<MenuRecord> menuRecordList = Arrays.asList(mockMenuRecord);
+        String telephoneNumber = "888888888";
 
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
-        when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrderRequestDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrder.getOrderStatus()).thenReturn(OrderStatus.PENDING);
+        when(restaurantOrder.getTelephoneNumber()).thenReturn(telephoneNumber);
         when(restaurantOrder.getTable()).thenReturn(table);
         when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
         restaurantOrder.setTable(table);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
         when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
-//        when(restaurantOrder.getMenuRecords()).thenReturn(menuRecordList);
-
 
         RestaurantOrderResponseDTO expected = restaurantOrderResponseDTO;
 
@@ -166,7 +163,6 @@ class RestaurantOrderServiceTest {
         assertEquals(expected, actual);
         verify(restaurantOrder).setOrderStatus(OrderStatus.PENDING);
         verify(restaurantOrder).setTable(table);
-//        verify(restaurantOrder).setMenuRecords(menuRecordList);
     }
 
     @Test
