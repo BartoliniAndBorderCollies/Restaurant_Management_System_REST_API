@@ -94,6 +94,9 @@ class RestaurantOrderServiceTest {
         verify(restaurantOrderRepository, times(2)).save(restaurantOrder);
     }
 
+    //I am not able to make more methods for create because point 2 blocks it. It requires to have menuRecord
+    //in repository, but I cannot do this because this is a unit test and I should not prepare instances in repository
+
     @Test
     public void findById_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
