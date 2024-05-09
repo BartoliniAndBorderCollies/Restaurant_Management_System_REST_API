@@ -57,18 +57,18 @@ class RestaurantOrderServiceTest {
 
 
     @Test
-    public void create_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven()
-            throws NotFoundInDatabaseException, NotEnoughIngredientsException {
-        //Arrange
-        when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
-        when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
-        when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
+    public void create_ShouldThrowNotFoundInDatabaseException_WhenMealNotInMenu() {
+        // Arrange
+        RestaurantOrderRequestDTO restaurantOrderDTO = createRestaurantOrderDTOWithInvalidMeal();
 
-        //Act
-        RestaurantOrderResponseDTO actual = restaurantOrderService.create(restaurantOrderRequestDTO);
+        // Act and Assert
+        assertThrows(NotFoundInDatabaseException.class, () -> restaurantOrderService.create(restaurantOrderDTO));
+    }
 
-        //Assert
-        assertEquals(restaurantOrderResponseDTO, actual);
+    private RestaurantOrderRequestDTO createRestaurantOrderDTOWithInvalidMeal() {
+        RestaurantOrderRequestDTO restaurantOrderDTO = new RestaurantOrderRequestDTO();
+        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(1L, "Not valid meal", 1.0)));
+        return restaurantOrderDTO;
     }
 
     @Test
