@@ -6,6 +6,7 @@ import lombok.*;
 @Setter
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class TableReservationDTO {
 
     private Long id;
