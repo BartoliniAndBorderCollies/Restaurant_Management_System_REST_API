@@ -72,18 +72,17 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
-    public void create_ShouldCallOnRepoExactlyOnce_WhenRestaurantOrderDTOIsGiven()
+    public void create_ShouldCallOnRepoExactlyTwice_WhenRestaurantOrderDTOIsGiven()
             throws NotFoundInDatabaseException, NotEnoughIngredientsException {
         //Arrange
-        when(modelMapper.map(restaurantOrderResponseDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
+        when(modelMapper.map(restaurantOrderRequestDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrderRepository.save(restaurantOrder)).thenReturn(restaurantOrder);
-        when(modelMapper.map(restaurantOrder, RestaurantOrderResponseDTO.class)).thenReturn(restaurantOrderResponseDTO);
 
         //Act
         restaurantOrderService.create(restaurantOrderRequestDTO);
 
         //Assert
-        verify(restaurantOrderRepository, times(1)).save(restaurantOrder);
+        verify(restaurantOrderRepository, times(2)).save(restaurantOrder);
     }
 
     @Test
