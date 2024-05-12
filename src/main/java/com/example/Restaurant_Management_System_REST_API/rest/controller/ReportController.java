@@ -25,4 +25,9 @@ public class ReportController {
         return reportService.getInventoryItemByAmountLessThan(amount);
     }
 
+    @GetMapping("/inventory/stockAmount/findBySupplier")
+    public List<InventoryItem> getInventoryItemBySupplierName(@RequestParam("supplier") String name) {
+        return reportService.getInventoryItemBySupplierName(name);
+    }
+
 }
