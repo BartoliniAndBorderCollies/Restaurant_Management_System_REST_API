@@ -20,4 +20,8 @@ public class ReportService {
     public List<InventoryItem> getInventoryItemByAmountLessThan(double amount) {
         return inventoryItemRepository.findByAmountLessThan(amount);
     }
+
+    public List<InventoryItem> getInventoryItemBySupplierName(String name) {
+        return inventoryItemRepository.findBySupplier_ContactDetails_Name(name);
+    }
 }
