@@ -39,4 +39,10 @@ public class ReportController {
         return reportService.getCustomerByRole(roleName);
     }
 
+    @GetMapping("/customer/findWithReservation")
+    public List<Customer> getCustomerWithReservation() {
+        return reportService.getCustomerWithReservation();
+    }
+
+
 }

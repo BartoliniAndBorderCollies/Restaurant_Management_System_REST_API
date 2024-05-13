@@ -34,6 +34,8 @@ public class ReportService {
         return customerRepository.findByAuthorities_Authority_name(roleName);
     }
 
-    //customer with reservations
+    public List<Customer> getCustomerWithReservation() {
+        return customerRepository.findByReservation();
+    }
 
 }
