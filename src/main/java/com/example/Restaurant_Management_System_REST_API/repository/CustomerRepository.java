@@ -14,4 +14,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
     Optional<Customer> findByEmailAddress(String email);
     @Query("SELECT c FROM Customer c JOIN c.authorities a WHERE a.name = :name")
     List<Customer> findByAuthorities_Authority_name(String name);
+    @Query("SELECT c FROM Customer c WHERE c.reservation IS NOT NULL")
+    List<Customer> findByReservation();
 }
