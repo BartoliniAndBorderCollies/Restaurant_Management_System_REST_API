@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
@@ -31,6 +32,7 @@ public class Customer implements UserDetails {
     private Long id;
     private LocalDateTime creationTime;
     @OneToOne(mappedBy = "customer")
+    @JsonBackReference //I have added this annotation cause there was a problem with infinitive recursion ("/customer/findWithReservation")
     private Reservation reservation;
     @Embedded
     private ContactDetails contactDetails;
