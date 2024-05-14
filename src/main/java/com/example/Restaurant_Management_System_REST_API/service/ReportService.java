@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
@@ -43,5 +44,8 @@ public class ReportService {
 
     public List<MenuRecord> getAvailableMenuRecords(){
         return menuRecordRepository.findByIsAvailable(true);
+    }
+    public List<MenuRecord> getMenuRecordsByCategory(Category category) {
+        return menuRecordRepository.findByCategory(category);
     }
 }

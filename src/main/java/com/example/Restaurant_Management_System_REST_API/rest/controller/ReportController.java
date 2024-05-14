@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
@@ -49,6 +50,11 @@ public class ReportController {
     @GetMapping("/menuRecord/findAvailable")
     List<MenuRecord> getAvailableMenuRecords() {
         return reportService.getAvailableMenuRecords();
+    }
+
+    @GetMapping("/menuRecord/findByCategory")
+    public List<MenuRecord> getMenuRecordsByCategory(@RequestParam("category")Category category) {
+        return reportService.getMenuRecordsByCategory(category);
     }
 
 
