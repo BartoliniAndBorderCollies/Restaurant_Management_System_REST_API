@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
+import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,12 @@ public class ReportController {
     @GetMapping("/customer/findWithReservation")
     public List<Customer> getCustomerWithReservation() {
         return reportService.getCustomerWithReservation();
+    }
+
+    //section for MenuRecord reports
+    @GetMapping("/menuRecord/findAvailable")
+    List<MenuRecord> getAvailableMenuRecords() {
+        return reportService.getAvailableMenuRecords();
     }
 
 
