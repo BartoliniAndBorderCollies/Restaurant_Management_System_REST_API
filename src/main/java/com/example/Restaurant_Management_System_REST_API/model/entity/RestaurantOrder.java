@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,5 +29,6 @@ public class RestaurantOrder {
     private String telephoneNumber;
     private double totalAmountToPay;
     @OneToMany(mappedBy = "restaurantOrder")
+    @JsonManagedReference
     private List<RestaurantOrderMenuRecord> restaurantOrders;
 }
