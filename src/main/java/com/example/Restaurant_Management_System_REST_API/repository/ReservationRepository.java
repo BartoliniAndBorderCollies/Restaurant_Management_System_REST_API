@@ -8,4 +8,5 @@ import java.util.List;
 public interface ReservationRepository extends CrudRepository<Reservation, Long> {
 
     List<Reservation> findByName(String name);
+    List<Reservation> findByPeopleAmountGreaterThan(int peopleAmount);
 }
