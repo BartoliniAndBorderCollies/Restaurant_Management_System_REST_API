@@ -64,7 +64,12 @@ public class ReportController {
         return reportService.getReservationByName(name);
     }
 
-    //findByPeopleAmountGreaterThan
+    @GetMapping("/reservation/findByPeopleAmount/GreaterThan")
+    public List<Reservation> getReservationByPeopleAmountGreaterThan(@RequestParam("amount") int peopleAmount) {
+        return reportService.getReservationByPeopleAmountGreaterThan(peopleAmount);
+    }
+
+
     //findByPeopleAmountLessThan
 
     //findByDate

@@ -51,8 +51,10 @@ public class ReportService {
     public List<MenuRecord> getMenuRecordsByCategory(Category category) {
         return menuRecordRepository.findByCategory(category);
     }
-
     public List<Reservation> getReservationByName(String name) {
         return reservationRepository.findByName(name);
+    }
+    public List<Reservation> getReservationByPeopleAmountGreaterThan(int peopleAmount) {
+        return reservationRepository.findByPeopleAmountGreaterThan(peopleAmount);
     }
 }
