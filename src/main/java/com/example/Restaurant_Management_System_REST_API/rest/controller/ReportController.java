@@ -4,6 +4,7 @@ import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +57,20 @@ public class ReportController {
     public List<MenuRecord> getMenuRecordsByCategory(@RequestParam("category")Category category) {
         return reportService.getMenuRecordsByCategory(category);
     }
+
+    //section for Reservation reports
+    @GetMapping("/reservation/findByName")
+    public List<Reservation> getReservationByName(@RequestParam("name") String name) {
+        return reportService.getReservationByName(name);
+    }
+
+    //findByPeopleAmountGreaterThan
+    //findByPeopleAmountLessThan
+
+    //findByDate
+    //findByCustomer
+    //findByTables
+    //findByCustomerAndDate
 
 
 }

@@ -4,9 +4,11 @@ import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ public class ReportService {
     private final InventoryItemRepository inventoryItemRepository;
     private final CustomerRepository customerRepository;
     private final MenuRecordRepository menuRecordRepository;
+    private final ReservationRepository reservationRepository;
 
     //section for InventoryItem reports
     public List<InventoryItem> getInventoryItemByAmountGreaterThan(double amount) {
@@ -47,5 +50,9 @@ public class ReportService {
     }
     public List<MenuRecord> getMenuRecordsByCategory(Category category) {
         return menuRecordRepository.findByCategory(category);
+    }
+
+    public List<Reservation> getReservationByName(String name) {
+        return reservationRepository.findByName(name);
     }
 }
