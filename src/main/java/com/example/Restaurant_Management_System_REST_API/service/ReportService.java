@@ -57,4 +57,9 @@ public class ReportService {
     public List<Reservation> getReservationByPeopleAmountGreaterThan(int peopleAmount) {
         return reservationRepository.findByPeopleAmountGreaterThan(peopleAmount);
     }
+    public List<Reservation> getReservationByPeopleAmountLessThan(int peopleAmount) {
+        return reservationRepository.findByPeopleAmountLessThan(peopleAmount);
+    }
+
+
 }
