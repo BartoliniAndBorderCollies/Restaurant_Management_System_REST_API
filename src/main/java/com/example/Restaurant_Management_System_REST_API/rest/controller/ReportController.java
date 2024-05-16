@@ -9,6 +9,7 @@ import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -74,9 +75,13 @@ public class ReportController {
         return reportService.getReservationByPeopleAmountLessThan(peopleAmount);
     }
 
+    @GetMapping("/reservation/findByDate")
+    public List<Reservation> getReservationByDateTimeAndAfter(@RequestParam("date_from")LocalDateTime dateTime) {
+        return reportService.getReservationByDateTimeAndAfter(dateTime);
+    }
 
 
-    //findByDate
+
     //findByCustomer
     //findByTables
     //findByCustomerAndDate

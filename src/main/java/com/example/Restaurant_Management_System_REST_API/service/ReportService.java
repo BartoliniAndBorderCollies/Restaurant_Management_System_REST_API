@@ -12,6 +12,7 @@ import com.example.Restaurant_Management_System_REST_API.repository.ReservationR
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,6 +60,9 @@ public class ReportService {
     }
     public List<Reservation> getReservationByPeopleAmountLessThan(int peopleAmount) {
         return reservationRepository.findByPeopleAmountLessThan(peopleAmount);
+    }
+    public List<Reservation> getReservationByDateTimeAndAfter(LocalDateTime dateTime) {
+        return reservationRepository.findByStartAndAfter(dateTime);
     }
 
 
