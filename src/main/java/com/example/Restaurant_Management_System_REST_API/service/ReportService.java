@@ -65,5 +65,9 @@ public class ReportService {
         return reservationRepository.findByStartAndAfter(dateTime);
     }
 
+    public List<Reservation> getReservationByCustomerName(String name) {
+        return reservationRepository.findByCustomer_ContactDetails_Name(name);
+    }
+
 
 }

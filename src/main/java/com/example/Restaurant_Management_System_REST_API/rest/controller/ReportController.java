@@ -80,9 +80,12 @@ public class ReportController {
         return reportService.getReservationByDateTimeAndAfter(dateTime);
     }
 
+    @GetMapping("/reservation/findByCustomer")
+    public List<Reservation> getReservationByCustomerName(@RequestParam("name") String name) {
+        return reportService.getReservationByCustomerName(name);
+    }
 
 
-    //findByCustomer
     //findByTables
     //findByCustomerAndDate
 
