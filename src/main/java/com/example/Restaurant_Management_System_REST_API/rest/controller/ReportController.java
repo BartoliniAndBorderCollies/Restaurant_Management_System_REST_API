@@ -85,8 +85,12 @@ public class ReportController {
         return reportService.getReservationByCustomerName(name);
     }
 
+    @GetMapping("/reservation/findByTable")
+    public List<Reservation> getReservationByTable(@RequestParam("id")Long id) {
+        return reportService.getReservationByTable(id);
+    }
 
-    //findByTables
+
     //findByCustomerAndDate
 
 
