@@ -16,6 +16,7 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     @Query("SELECT r FROM Reservation r WHERE r.start >= :dateTime")
     List<Reservation> findByStartAndAfter(@Param("dateTime") LocalDateTime dateTime);
     List<Reservation> findByCustomer_ContactDetails_Name(String name);
+    List<Reservation> findByTables_Id(Long id);
 
 
 }
