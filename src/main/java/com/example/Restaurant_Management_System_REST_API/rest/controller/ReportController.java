@@ -9,6 +9,7 @@ import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class ReportController {
     }
 
     @GetMapping("/menuRecord/findByCategory")
-    public List<MenuRecord> getMenuRecordsByCategory(@RequestParam("category")Category category) {
+    public List<MenuRecord> getMenuRecordsByCategory(@RequestParam("category") Category category) {
         return reportService.getMenuRecordsByCategory(category);
     }
 
@@ -76,7 +77,7 @@ public class ReportController {
     }
 
     @GetMapping("/reservation/findByDate")
-    public List<Reservation> getReservationByDateTimeAndAfter(@RequestParam("date_from")LocalDateTime dateTime) {
+    public List<Reservation> getReservationByDateTimeAndAfter(@RequestParam("date_from") LocalDateTime dateTime) {
         return reportService.getReservationByDateTimeAndAfter(dateTime);
     }
 
@@ -86,12 +87,16 @@ public class ReportController {
     }
 
     @GetMapping("/reservation/findByTable")
-    public List<Reservation> getReservationByTable(@RequestParam("id")Long id) {
+    public List<Reservation> getReservationByTable(@RequestParam("id") Long id) {
         return reportService.getReservationByTable(id);
     }
 
-
-    //findByCustomerAndDate
+    @GetMapping("reservation/findByCustomerAndTimePeriod")
+    public List<Reservation> getReservationByCustomerNameAndTimePeriod(@RequestParam("name") String name,
+                                                                       @RequestParam("date_from") LocalDate dateFrom,
+                                                                       @RequestParam("date_to") LocalDate dateTo) {
+        return reportService.getReservationByCustomerNameAndTimePeriod(name, dateFrom, dateTo);
+    }
 
 
 }
