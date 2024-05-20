@@ -192,14 +192,16 @@ class RestaurantOrderServiceTest {
         //Arrange
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(restaurantOrder.getId()).thenReturn(1L);
-        ResponseEntity<?> expected = new ResponseEntity<>("Order number " + restaurantOrder.getId() +
-                " has been deleted!", HttpStatus.OK);
+
+        String expectedBody = "Order number " + restaurantOrder.getId() + " has been deleted!";
+        HttpStatus expectedStatus = HttpStatus.OK;
 
         //Act
         ResponseEntity<?> actual = restaurantOrderService.delete(id);
 
         //Assert
-        assertEquals(expected, actual);
+        assertEquals(expectedBody, actual.getBody());
+        assertEquals(expectedStatus, actual.getStatusCode());
     }
 
     @Test
