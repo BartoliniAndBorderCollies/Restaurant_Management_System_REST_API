@@ -36,6 +36,11 @@ class RestaurantOrderServiceTest {
     private Long id;
     private TableRepository tableRepository;
     private RestaurantOrderRequestDTO restaurantOrderRequestDTO;
+    private static final String TELEPHONE_NUMBER = "888888888";
+    private static final Long INVALID_MEAL_ID = 1L;
+    private static final String INVALID_MEAL_NAME = "Not valid meal";
+    private static final Double INVALID_PORTIONS_AMOUNT = 1.0;
+    private static final Long NON_EXISTENT_ORDER_ID = 999L;
 
     @BeforeEach
     public void setUpEnvironment() {
@@ -76,7 +81,7 @@ class RestaurantOrderServiceTest {
 
     private RestaurantOrderRequestDTO createRestaurantOrderDTOWithInvalidMeal() {
         RestaurantOrderRequestDTO restaurantOrderDTO = new RestaurantOrderRequestDTO();
-        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(1L, "Not valid meal", 1.0)));
+        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(INVALID_MEAL_ID, INVALID_MEAL_NAME, INVALID_PORTIONS_AMOUNT)));
         return restaurantOrderDTO;
     }
 
@@ -100,11 +105,9 @@ class RestaurantOrderServiceTest {
     @Test
     public void findById_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistentOrderId = 999L;
-
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(nonExistentOrderId));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(NON_EXISTENT_ORDER_ID));
     }
 
     @Test
@@ -141,11 +144,9 @@ class RestaurantOrderServiceTest {
     @Test
     public void update_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistentOrderId = 999L;
-
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistentOrderId, restaurantOrderRequestDTO));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(NON_EXISTENT_ORDER_ID, restaurantOrderRequestDTO));
     }
 
     @Test
@@ -153,12 +154,11 @@ class RestaurantOrderServiceTest {
             throws NotFoundInDatabaseException {
         //Arrange
         Table table = mock(Table.class);
-        String telephoneNumber = "888888888";
 
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(modelMapper.map(restaurantOrderRequestDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrder.getOrderStatus()).thenReturn(OrderStatus.PENDING);
-        when(restaurantOrder.getTelephoneNumber()).thenReturn(telephoneNumber);
+        when(restaurantOrder.getTelephoneNumber()).thenReturn(TELEPHONE_NUMBER);
         when(restaurantOrder.getTable()).thenReturn(table);
         when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
         restaurantOrder.setTable(table);
@@ -179,11 +179,9 @@ class RestaurantOrderServiceTest {
     @Test
     public void delete_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistentOrderId = 999L;
-
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(nonExistentOrderId));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(NON_EXISTENT_ORDER_ID));
     }
 
     @Test
