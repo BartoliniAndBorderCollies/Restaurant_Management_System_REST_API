@@ -100,11 +100,11 @@ class RestaurantOrderServiceTest {
     @Test
     public void findById_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistedId = 999L;
+        Long nonExistentOrderId = 999L;
 
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(nonExistedId));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(nonExistentOrderId));
     }
 
     @Test
@@ -141,11 +141,11 @@ class RestaurantOrderServiceTest {
     @Test
     public void update_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistedId = 999L;
+        Long nonExistentOrderId = 999L;
 
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderRequestDTO));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistentOrderId, restaurantOrderRequestDTO));
     }
 
     @Test
@@ -179,11 +179,11 @@ class RestaurantOrderServiceTest {
     @Test
     public void delete_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistedId = 999L;
+        Long nonExistentOrderId = 999L;
 
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(nonExistedId));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(nonExistentOrderId));
     }
 
     @Test
