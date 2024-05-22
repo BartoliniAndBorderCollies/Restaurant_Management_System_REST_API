@@ -21,7 +21,7 @@ public class MenuRecordController {
 
     @PostMapping("/add") // This will be done only by owner and manager
     @ResponseStatus(HttpStatus.CREATED)
-    public MenuRecordDTOResponse create(@RequestBody MenuRecordDTORequest menuRecordDTORequest) {
+    public MenuRecordDTOResponse create(@RequestBody MenuRecordDTORequest menuRecordDTORequest) throws NotFoundInDatabaseException {
         return menuRecordService.create(menuRecordDTORequest);
     }
 

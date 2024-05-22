@@ -4,6 +4,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.Menu
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class MenuRecordServiceTest {
     private MenuRecordDTORequest menuRecordDTORequest;
     private MenuRecord menuRecord;
     private MenuRecordDTOResponse menuRecordDTOResponse;
-    private Set<String> ingredients;
+    private List<Ingredient> ingredients;
     private Long id;
     private MenuRecordDTOResponse menuRecordDTOResponse1;
 
@@ -37,10 +38,13 @@ class MenuRecordServiceTest {
         modelMapper = mock(ModelMapper.class);
         menuRecordService = new MenuRecordService(menuRecordRepository, modelMapper);
 
-        ingredients = new HashSet<>();
-        ingredients.add("water");
-        ingredients.add("hops");
-        ingredients.add("barley");
+        ingredients = new ArrayList<>();
+        Ingredient potatoes = new Ingredient("Potatoes", 0.3);
+        Ingredient chop = new Ingredient("Chop", 0.2);
+        Ingredient pickledCabbage = new Ingredient("Pickled cabbage", 0.2);
+        ingredients.add(potatoes);
+        ingredients.add(chop);
+        ingredients.add(pickledCabbage);
     }
 
 
@@ -53,11 +57,11 @@ class MenuRecordServiceTest {
                     ingredients, Category.FOR_KIDS, true);
             menuRecord = new MenuRecord(ingredients, Category.BEVERAGE, "Drink", "Thirsty very much!",
                     6.0, true);
-            menuRecordDTOResponse = new MenuRecordDTOResponse(1L, ingredients, Category.BEVERAGE, false);
+            menuRecordDTOResponse = new MenuRecordDTOResponse(1L, "Lech beer", ingredients, Category.BEVERAGE, false, new ArrayList<>());
         }
 
         @Test
-        public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() {
+        public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
@@ -71,7 +75,7 @@ class MenuRecordServiceTest {
         }
 
         @Test
-        public void create_ShouldReturnTypeMenuRecordDTOResponse_WhenMenuRecordDTORequestIsGiven() {
+        public void create_ShouldReturnTypeMenuRecordDTOResponse_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange - takes from @BeforeEach
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
@@ -85,7 +89,7 @@ class MenuRecordServiceTest {
         }
 
         @Test
-        public void create_ShouldCallExactlyOnceOnMenuRecordRepo_WhenMenuRecordDTORequestIsGiven() {
+        public void create_ShouldCallExactlyOnceOnMenuRecordRepo_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange - takes from @BeforeEach
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
@@ -105,7 +109,8 @@ class MenuRecordServiceTest {
         @BeforeEach
         public void setUp() {
             id = 1L;
-            menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, ingredients, Category.DESSERT, true);
+            menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, "Lech beer", ingredients, Category.DESSERT,
+                    true, new ArrayList<>());
             menuRecord = new MenuRecord(ingredients, Category.DESSERT, "Lovely dessert!", "mhmmm",
                     6.5, true);
         }
@@ -136,7 +141,8 @@ class MenuRecordServiceTest {
             List<MenuRecord> listMenuRecords = Arrays.asList(menuRecord, menuRecord2);
             when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
 
-            MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, ingredients, Category.BEVERAGE, true);
+            MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, "Lech beer", ingredients,
+                    Category.BEVERAGE, true, new ArrayList<>());
             when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
             when(modelMapper.map(menuRecord2, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse2);
 

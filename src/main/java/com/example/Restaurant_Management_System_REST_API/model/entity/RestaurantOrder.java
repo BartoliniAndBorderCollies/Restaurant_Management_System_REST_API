@@ -23,15 +23,10 @@ public class RestaurantOrder {
     private LocalDateTime orderTime;
     private OrderStatus orderStatus;
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-    @ManyToOne
     @JoinColumn(name = "table_id")
     private Table table;
-    @ManyToMany
-    @JoinTable(
-            name = "order_menu_record",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "menu_record_id"))
-    private List<MenuRecord> menuRecords;
+    private String telephoneNumber;
+    private double totalAmountToPay;
+    @OneToMany(mappedBy = "restaurantOrder")
+    private List<RestaurantOrderMenuRecord> restaurantOrders;
 }

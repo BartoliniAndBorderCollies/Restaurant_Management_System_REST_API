@@ -3,12 +3,10 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -16,21 +14,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class InventoryItem extends CatalogItem {
 
-    public InventoryItem(Long id, LocalDateTime deliveryDate, int stockAmount, Supplier supplier, String name,
+    public InventoryItem(Long id, int amount, Supplier supplier, String name,
                          String description, Double price ) {
         super(name, description, price);
         this.id = id;
-        this.deliveryDate = deliveryDate;
-        this.stockAmount = stockAmount;
+        this.amount = amount;
         this.supplier = supplier;
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private LocalDateTime deliveryDate;
-    @Positive(message = "Stock amount must be above zero!")
-    private int stockAmount;
+    @PositiveOrZero(message = "Amount must be above zero!")
+    private double amount;
     @ManyToOne
     @JoinColumn(name = "supplier_id")
     @JsonBackReference //Supplier and InventoryItem have bidirectional relationship and both have getters and setters.

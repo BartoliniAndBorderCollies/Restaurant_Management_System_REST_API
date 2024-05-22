@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
@@ -45,7 +46,7 @@ class InventoryItemServiceTest {
     public void setUpInstances() {
         inventoryItemMock = mock(InventoryItem.class);
         inventoryItemDTOResponseMock = mock(InventoryItemDTOResponse.class);
-        inventoryItemInstance = new InventoryItem(1L, null, 100, null, "Onion",
+        inventoryItemInstance = new InventoryItem(1L, 100, null, "Onion",
                 "Onion", 0.39 );
     }
 
@@ -70,7 +71,8 @@ class InventoryItemServiceTest {
     }
 
     @Test
-    public void create_ShouldInteractWithDependenciesCorrectly_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException {
+    public void create_ShouldInteractWithDependenciesCorrectly_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException,
+            ObjectAlreadyExistException {
         //Arrange
         InventoryItemDTORequest inventoryItemDTORequest = mock(InventoryItemDTORequest.class);
 
@@ -86,7 +88,8 @@ class InventoryItemServiceTest {
     }
 
     @Test
-    public void create_ShouldCallExactlyOnceOnInventoryItemRepo_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException {
+    public void create_ShouldCallExactlyOnceOnInventoryItemRepo_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException,
+            ObjectAlreadyExistException {
         //Arrange
         InventoryItemDTORequest inventoryItemDTORequest = mock(InventoryItemDTORequest.class);
 

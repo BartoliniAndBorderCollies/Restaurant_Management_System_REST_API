@@ -5,6 +5,7 @@ import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.Menu
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // (this is called per-class test instance lifecycle), and the @BeforeAll method doesn’t need to be static.
 class MenuRecordControllerIntegrationTest {
 
-    private Set<String> ingredients;
+    private List<Ingredient> ingredients;
     @Autowired
     private WebTestClient webTestClient;
     private String basicAuthHeaderOwner;
@@ -84,11 +85,14 @@ class MenuRecordControllerIntegrationTest {
     }
 
     @BeforeEach
-    public void setUp() {
-        ingredients = new HashSet<>();
-        ingredients.add("water");
-        ingredients.add("hops");
-        ingredients.add("barley");
+    public void setUpIngredients() {
+        ingredients = new ArrayList<>();
+        Ingredient potatoes = new Ingredient("Potatoes", 0.3);
+        Ingredient chop = new Ingredient("Chop", 0.2);
+        Ingredient pickledCabbage = new Ingredient("Pickled cabbage", 0.2);
+        ingredients.add(potatoes);
+        ingredients.add(chop);
+        ingredients.add(pickledCabbage);
     }
 
     @AfterEach

@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
 import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.service.generic.GenericBasicCrudOperations;
@@ -24,8 +25,11 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
     private final ModelMapper modelMapper;
 
     @Override
-    public MenuRecordDTOResponse create(MenuRecordDTORequest menuRecordDTORequest) {
+    public MenuRecordDTOResponse create(MenuRecordDTORequest menuRecordDTORequest) throws NotFoundInDatabaseException {
         MenuRecord menuRecord = modelMapper.map(menuRecordDTORequest, MenuRecord.class);
+        if (menuRecordDTORequest.getIngredients() == null)
+            throw new NotFoundInDatabaseException(Ingredient.class);
+
         menuRecordRepository.save(menuRecord);
 
         return modelMapper.map(menuRecord, MenuRecordDTOResponse.class);
@@ -71,5 +75,9 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
         menuRecordRepository.delete(menuRecord);
 
         return new ResponseEntity<>("Menu record has been deleted!", HttpStatus.OK);
+    }
+
+    MenuRecord findByName(String name) throws NotFoundInDatabaseException {
+        return menuRecordRepository.findByName(name).orElseThrow(() -> new NotFoundInDatabaseException(MenuRecord.class));
     }
 }
