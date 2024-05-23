@@ -9,7 +9,6 @@ import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -91,11 +90,10 @@ public class ReportController {
         return reportService.getReservationByTable(id);
     }
 
-    @GetMapping("reservation/findByCustomerAndTimePeriod")
-    public List<Reservation> getReservationByCustomerNameAndTimePeriod(@RequestParam("name") String name,
-                                                                       @RequestParam("date_from") LocalDate dateFrom,
-                                                                       @RequestParam("date_to") LocalDate dateTo) {
-        return reportService.getReservationByCustomerNameAndTimePeriod(name, dateFrom, dateTo);
+    @GetMapping("/reservation/findByCustomerNameAndStartTime")
+    public List<Reservation> getReservationByCustomerNameAndByStartTime(@RequestParam("name") String name,
+                                                                       @RequestParam("date_from") LocalDateTime dateTimeFrom) {
+        return reportService.getReservationByCustomerNameAndByStartTime(name, dateTimeFrom);
     }
 
 

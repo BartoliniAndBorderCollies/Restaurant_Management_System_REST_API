@@ -71,5 +71,9 @@ public class ReportService {
         return reservationRepository.findByTables_Id(id);
     }
 
+    public List<Reservation> getReservationByCustomerNameAndByStartTime(String name, LocalDateTime dateTimeFrom) {
+        return reservationRepository.findByCustomer_ContactDetails_NameAndByStart(name, dateTimeFrom);
+    }
+
 
 }
