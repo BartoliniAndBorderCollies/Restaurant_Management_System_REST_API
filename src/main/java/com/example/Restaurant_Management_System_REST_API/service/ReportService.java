@@ -1,17 +1,12 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.model.Category;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
-import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
-import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
-import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.MenuRecordRepository;
-import com.example.Restaurant_Management_System_REST_API.repository.ReservationRepository;
+import com.example.Restaurant_Management_System_REST_API.model.entity.*;
+import com.example.Restaurant_Management_System_REST_API.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +18,7 @@ public class ReportService {
     private final CustomerRepository customerRepository;
     private final MenuRecordRepository menuRecordRepository;
     private final ReservationRepository reservationRepository;
+    private final RestaurantOrderRepository restaurantOrderRepository;
 
     //section for InventoryItem reports
     public List<InventoryItem> getInventoryItemByAmountGreaterThan(double amount) {
@@ -49,24 +45,31 @@ public class ReportService {
     public List<MenuRecord> getAvailableMenuRecords(){
         return menuRecordRepository.findByIsAvailable(true);
     }
+
     public List<MenuRecord> getMenuRecordsByCategory(Category category) {
         return menuRecordRepository.findByCategory(category);
     }
+
     public List<Reservation> getReservationByName(String name) {
         return reservationRepository.findByName(name);
     }
+
     public List<Reservation> getReservationByPeopleAmountGreaterThan(int peopleAmount) {
         return reservationRepository.findByPeopleAmountGreaterThan(peopleAmount);
     }
+
     public List<Reservation> getReservationByPeopleAmountLessThan(int peopleAmount) {
         return reservationRepository.findByPeopleAmountLessThan(peopleAmount);
     }
+
     public List<Reservation> getReservationByDateTimeAndAfter(LocalDateTime dateTime) {
         return reservationRepository.findByStartAndAfter(dateTime);
     }
+
     public List<Reservation> getReservationByCustomerName(String name) {
         return reservationRepository.findByCustomer_ContactDetails_Name(name);
     }
+
     public List<Reservation> getReservationByTable(Long id) {
         return reservationRepository.findByTables_Id(id);
     }
@@ -74,6 +77,12 @@ public class ReportService {
     public List<Reservation> getReservationByCustomerNameAndByStartTime(String name, LocalDateTime dateTimeFrom) {
         return reservationRepository.findByCustomer_ContactDetails_NameAndByStart(name, dateTimeFrom);
     }
+
+    public List<RestaurantOrder> getRestaurantOrderByOrderTimeRange(LocalDate startDate, LocalDate endDate) {
+        return restaurantOrderRepository.findByOrderTimeRange(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+    }
+
+
 
 
 }

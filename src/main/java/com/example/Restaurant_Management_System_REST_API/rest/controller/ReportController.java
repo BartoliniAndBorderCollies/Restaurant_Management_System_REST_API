@@ -1,14 +1,13 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.model.Category;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
-import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
-import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
+import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -95,6 +94,19 @@ public class ReportController {
                                                                        @RequestParam("date_from") LocalDateTime dateTimeFrom) {
         return reportService.getReservationByCustomerNameAndByStartTime(name, dateTimeFrom);
     }
+
+    @GetMapping("/restaurantOrder/findByOrderTimeRange")
+    public List<RestaurantOrder> getRestaurantOrderByOrderTimeRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
+    }
+
+
+
+    //find restaurantOrder By orderStatus, table, totalAmountToPayGreaterThan
+
+    //TODO: add spring security coverage for this module
 
 
 }
