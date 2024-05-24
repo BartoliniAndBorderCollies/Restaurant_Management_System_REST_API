@@ -18,5 +18,7 @@ public interface RestaurantOrderRepository extends CrudRepository<RestaurantOrde
 
     List<RestaurantOrder> findByOrderStatus(OrderStatus orderStatus);
 
+    List<RestaurantOrder> findByTableId(Long id);
+
 
 }
