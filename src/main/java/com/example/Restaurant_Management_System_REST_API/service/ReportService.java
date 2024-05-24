@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.model.Category;
+import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.repository.*;
 import lombok.AllArgsConstructor;
@@ -80,6 +81,10 @@ public class ReportService {
 
     public List<RestaurantOrder> getRestaurantOrderByOrderTimeRange(LocalDate startDate, LocalDate endDate) {
         return restaurantOrderRepository.findByOrderTimeRange(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+    }
+
+    public List<RestaurantOrder> getRestaurantOrderByOrderStatus(OrderStatus orderStatus) {
+        return restaurantOrderRepository.findByOrderStatus(orderStatus);
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.model.Category;
+import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
@@ -101,6 +102,13 @@ public class ReportController {
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
     }
+
+    @GetMapping("restaurantOrder/findByOrderStatus")
+    public List<RestaurantOrder> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
+        return reportService.getRestaurantOrderByOrderStatus(orderStatus);
+    }
+
+
 
 
 
