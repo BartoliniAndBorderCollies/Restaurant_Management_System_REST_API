@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.repository;
 
+import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.RestaurantOrder;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,4 +15,8 @@ public interface RestaurantOrderRepository extends CrudRepository<RestaurantOrde
 
     @Query("SELECT ro FROM RestaurantOrder ro WHERE ro.orderTime >= :startDateTime AND ro.orderTime < :endDateTime")
     List<RestaurantOrder> findByOrderTimeRange(@Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
+
+    List<RestaurantOrder> findByOrderStatus(OrderStatus orderStatus);
+
+
 }
