@@ -87,6 +87,10 @@ public class ReportService {
         return restaurantOrderRepository.findByOrderStatus(orderStatus);
     }
 
+    public List<RestaurantOrder> getRestaurantOrderByTable(Long id) {
+        return restaurantOrderRepository.findByTableId(id);
+    }
+
 
 
 

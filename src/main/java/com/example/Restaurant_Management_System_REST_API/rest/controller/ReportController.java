@@ -108,11 +108,18 @@ public class ReportController {
         return reportService.getRestaurantOrderByOrderStatus(orderStatus);
     }
 
+    @GetMapping("restaurantOrder/findByTable")
+    public List<RestaurantOrder> getRestaurantOrderByTable(@RequestParam("table_id") Long id) {
+        return reportService.getRestaurantOrderByTable(id);
+    }
+
+    //TODO: byTableAndTimeRange
 
 
 
 
-    //find restaurantOrder By orderStatus, table, totalAmountToPayGreaterThan
+
+    //find restaurantOrder By table, totalAmountToPayGreaterThan
 
     //TODO: add spring security coverage for this module
 
