@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,10 @@ public interface RestaurantOrderRepository extends CrudRepository<RestaurantOrde
     List<RestaurantOrder> findByOrderStatus(OrderStatus orderStatus);
 
     List<RestaurantOrder> findByTableId(Long id);
+
+    @Query("SELECT ro FROM RestaurantOrder ro WHERE ro.table.id = :id AND ro.orderTime >= :startDateTime AND ro.orderTime < :endDateTime")
+    List<RestaurantOrder> findByTableIdAndOrderTimeRange(@Param("id") Long id, @Param("startDateTime") LocalDateTime startDateTime,
+                                                         @Param("endDateTime") LocalDateTime endDateTime);
 
 
 }
