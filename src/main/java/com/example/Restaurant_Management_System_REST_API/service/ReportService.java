@@ -91,6 +91,10 @@ public class ReportService {
         return restaurantOrderRepository.findByTableId(id);
     }
 
+    public List<RestaurantOrder> getRestaurantOrderByTableAndTimeRange(Long id, LocalDate startDate, LocalDate endDate) {
+        return restaurantOrderRepository.findByTableIdAndOrderTimeRange(id, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+    }
+
 
 
 

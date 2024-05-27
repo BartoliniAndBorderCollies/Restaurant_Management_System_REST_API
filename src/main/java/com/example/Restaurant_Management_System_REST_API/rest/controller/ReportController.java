@@ -113,13 +113,17 @@ public class ReportController {
         return reportService.getRestaurantOrderByTable(id);
     }
 
-    //TODO: byTableAndTimeRange
+    @GetMapping("restaurantOrder/findByTableAndTimePeriod")
+    public List<RestaurantOrder> getRestaurantOrderByTableAndTimeRange(@RequestParam("table_id") Long id,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return reportService.getRestaurantOrderByTableAndTimeRange(id, startDate, endDate);
+    }
 
 
 
 
-
-    //find restaurantOrder By table, totalAmountToPayGreaterThan
+    //find restaurantOrder by totalAmountToPayRange
 
     //TODO: add spring security coverage for this module
 
