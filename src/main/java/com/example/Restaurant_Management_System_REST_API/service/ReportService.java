@@ -95,6 +95,10 @@ public class ReportService {
         return restaurantOrderRepository.findByTableIdAndOrderTimeRange(id, startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
     }
 
+    public List<RestaurantOrder> getRestaurantOrderByTotalAmountToPayRange(double amountFrom, double amountTo) {
+        return restaurantOrderRepository.findByTotalAmountToPayRange(amountFrom, amountTo);
+    }
+
 
 
 

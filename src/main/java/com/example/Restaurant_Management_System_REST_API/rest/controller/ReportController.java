@@ -103,27 +103,30 @@ public class ReportController {
         return reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
     }
 
-    @GetMapping("restaurantOrder/findByOrderStatus")
+    @GetMapping("/restaurantOrder/findByOrderStatus")
     public List<RestaurantOrder> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
         return reportService.getRestaurantOrderByOrderStatus(orderStatus);
     }
 
-    @GetMapping("restaurantOrder/findByTable")
+    @GetMapping("/restaurantOrder/findByTable")
     public List<RestaurantOrder> getRestaurantOrderByTable(@RequestParam("table_id") Long id) {
         return reportService.getRestaurantOrderByTable(id);
     }
 
-    @GetMapping("restaurantOrder/findByTableAndTimePeriod")
+    @GetMapping("/restaurantOrder/findByTableAndTimePeriod")
     public List<RestaurantOrder> getRestaurantOrderByTableAndTimeRange(@RequestParam("table_id") Long id,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return reportService.getRestaurantOrderByTableAndTimeRange(id, startDate, endDate);
     }
 
+    @GetMapping("/restaurantOrder/findByTotalAmountToPayRange")
+    public List<RestaurantOrder> getRestaurantOrderByTotalAmountToPayRange(@RequestParam("amount_from") double amountFrom,
+                                                                           @RequestParam("amount_to") double amountTo) {
+        return reportService.getRestaurantOrderByTotalAmountToPayRange(amountFrom, amountTo);
+    }
 
 
-
-    //find restaurantOrder by totalAmountToPayRange
 
     //TODO: add spring security coverage for this module
 
