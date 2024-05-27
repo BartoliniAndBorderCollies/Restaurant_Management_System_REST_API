@@ -23,6 +23,8 @@ public interface RestaurantOrderRepository extends CrudRepository<RestaurantOrde
     @Query("SELECT ro FROM RestaurantOrder ro WHERE ro.table.id = :id AND ro.orderTime >= :startDateTime AND ro.orderTime < :endDateTime")
     List<RestaurantOrder> findByTableIdAndOrderTimeRange(@Param("id") Long id, @Param("startDateTime") LocalDateTime startDateTime,
                                                          @Param("endDateTime") LocalDateTime endDateTime);
+    @Query("SELECT ro FROM RestaurantOrder ro WHERE ro.totalAmountToPay >= :amountFrom AND ro.totalAmountToPay < :amountTo")
+    List<RestaurantOrder> findByTotalAmountToPayRange(@Param("amountFrom") double amountFrom, @Param("amountTo")double amountTo);
 
 
 }
