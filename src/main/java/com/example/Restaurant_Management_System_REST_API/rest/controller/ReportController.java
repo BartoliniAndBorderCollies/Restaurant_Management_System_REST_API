@@ -11,7 +11,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -30,10 +33,10 @@ public class ReportController {
     //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public StreamingResponseBody getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
+    public ResponseEntity<StreamingResponseBody> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
         List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
 
-        return outputStream -> {
+        StreamingResponseBody stream = outputStream -> {
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("InventoryItems");
 
@@ -73,8 +76,13 @@ public class ReportController {
             workbook.write(outputStream);
             workbook.close();
         };
-    }
+        //Because in headers I didn't have a Content-Disposition I got response a zip file with html and xml files.
+        //When I add below I manually add the header Content-Disposition. In this case I got a response as report xls file
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
 
+        return new ResponseEntity<>(stream, headers, HttpStatus.OK);
+    }
 
     @GetMapping("/inventory/stockAmount/lessThan")
     public List<InventoryItem> getInventoryItemByAmountLessThan(@RequestParam("amount") double amount) {
