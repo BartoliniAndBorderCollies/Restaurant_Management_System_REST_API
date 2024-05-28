@@ -104,5 +104,9 @@ public class ReportService {
         return supplierRepository.findByContactDetails_Name(name);
     }
 
+    public List<Supplier> getSupplierByCity(String cityName) {
+        return supplierRepository.findByContactDetails_City(cityName);
+    }
+
 
 }

@@ -172,8 +172,12 @@ public class ReportController {
         return reportService.getSupplierByName(name);
     }
 
+    @GetMapping("/supplier/findByCity")
+    public List<Supplier> getSupplierByCity(@RequestParam("city") String cityName) {
+        return reportService.getSupplierByCity(cityName);
+    }
 
-    //findSupplierByCity
+
     //findTableById
     //findTableByAvailability
 
