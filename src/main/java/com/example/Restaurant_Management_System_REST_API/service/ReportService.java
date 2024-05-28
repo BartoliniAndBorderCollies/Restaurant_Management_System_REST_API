@@ -20,6 +20,7 @@ public class ReportService {
     private final MenuRecordRepository menuRecordRepository;
     private final ReservationRepository reservationRepository;
     private final RestaurantOrderRepository restaurantOrderRepository;
+    private final SupplierRepository supplierRepository;
 
     //section for InventoryItem reports
     public List<InventoryItem> getInventoryItemByAmountGreaterThan(double amount) {
@@ -43,7 +44,7 @@ public class ReportService {
         return customerRepository.findByReservation();
     }
 
-    public List<MenuRecord> getAvailableMenuRecords(){
+    public List<MenuRecord> getAvailableMenuRecords() {
         return menuRecordRepository.findByIsAvailable(true);
     }
 
@@ -99,7 +100,9 @@ public class ReportService {
         return restaurantOrderRepository.findByTotalAmountToPayRange(amountFrom, amountTo);
     }
 
-
+    public List<Supplier> getSupplierByName(String name) {
+        return supplierRepository.findByContactDetails_Name(name);
+    }
 
 
 }
