@@ -26,7 +26,8 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    //This part is useful for staff (waitress, kitchen staff, manager and owner)
+    //This part is useful for staff (waitress, kitchen staff, manager and owner) and is covered with spring security
+    //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public StreamingResponseBody getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
@@ -178,7 +179,8 @@ public class ReportController {
 
 
 
-    //This part is restricted for manager and owner only!
+    //This part is restricted for manager and owner only! and of course is covered with spring security
+    //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping("/customer/findByRole")
     public List<Customer> getCustomerByRole(@RequestParam("role") String roleName) {
