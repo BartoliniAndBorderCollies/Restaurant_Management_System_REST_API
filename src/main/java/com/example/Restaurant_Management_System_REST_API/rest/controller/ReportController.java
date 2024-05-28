@@ -1,12 +1,19 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.model.Category;
+import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,13 +26,54 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    //This will be done by manager and owner only
+    //This part is useful for staff (waitress, kitchen staff, manager and owner)
 
-    //section for InventoryItem reports
-    @GetMapping("/inventory/stockAmount/greaterThan")
-    public List<InventoryItem> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
-        return reportService.getInventoryItemByAmountGreaterThan(amount);
+    @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public StreamingResponseBody getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
+        List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
+
+        return outputStream -> {
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("InventoryItems");
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("ID");
+            headerRow.createCell(1).setCellValue("Name");
+            headerRow.createCell(2).setCellValue("Description");
+            headerRow.createCell(3).setCellValue("Price");
+            headerRow.createCell(4).setCellValue("Amount");
+            headerRow.createCell(5).setCellValue("Supplier Name");
+            headerRow.createCell(6).setCellValue("Supplier Street");
+            headerRow.createCell(7).setCellValue("Supplier House Number");
+            headerRow.createCell(8).setCellValue("Supplier City");
+            headerRow.createCell(9).setCellValue("Supplier Postal Code");
+            headerRow.createCell(10).setCellValue("Supplier Telephone Number");
+
+            // Fill data rows
+            for (int i = 0; i < items.size(); i++) {
+                InventoryItem item = items.get(i);
+                Supplier supplier = item.getSupplier();
+                ContactDetails contactDetails = supplier.getContactDetails();
+                Row row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(item.getId());
+                row.createCell(1).setCellValue(item.getName());
+                row.createCell(2).setCellValue(item.getDescription());
+                row.createCell(3).setCellValue(item.getPrice());
+                row.createCell(4).setCellValue(item.getAmount());
+                row.createCell(5).setCellValue(contactDetails.getName());
+                row.createCell(6).setCellValue(contactDetails.getStreet());
+                row.createCell(7).setCellValue(contactDetails.getHouseNumber());
+                row.createCell(8).setCellValue(contactDetails.getCity());
+                row.createCell(9).setCellValue(contactDetails.getPostalCode());
+                row.createCell(10).setCellValue(contactDetails.getTelephoneNumber());
+            }
+
+            workbook.write(outputStream);
+            workbook.close();
+        };
     }
+
 
     @GetMapping("/inventory/stockAmount/lessThan")
     public List<InventoryItem> getInventoryItemByAmountLessThan(@RequestParam("amount") double amount) {
