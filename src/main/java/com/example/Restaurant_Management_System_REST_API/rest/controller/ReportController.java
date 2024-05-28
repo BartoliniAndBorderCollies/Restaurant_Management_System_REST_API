@@ -85,18 +85,11 @@ public class ReportController {
         return reportService.getInventoryItemBySupplierName(name);
     }
 
-    //section for Customer reports
-    @GetMapping("/customer/findByRole")
-    public List<Customer> getCustomerByRole(@RequestParam("role") String roleName) {
-        return reportService.getCustomerByRole(roleName);
-    }
-
     @GetMapping("/customer/findWithReservation")
     public List<Customer> getCustomerWithReservation() {
         return reportService.getCustomerWithReservation();
     }
 
-    //section for MenuRecord reports
     @GetMapping("/menuRecord/findAvailable")
     List<MenuRecord> getAvailableMenuRecords() {
         return reportService.getAvailableMenuRecords();
@@ -107,7 +100,6 @@ public class ReportController {
         return reportService.getMenuRecordsByCategory(category);
     }
 
-    //section for Reservation reports
     @GetMapping("/reservation/findByName")
     public List<Reservation> getReservationByName(@RequestParam("name") String name) {
         return reportService.getReservationByName(name);
@@ -174,9 +166,31 @@ public class ReportController {
         return reportService.getRestaurantOrderByTotalAmountToPayRange(amountFrom, amountTo);
     }
 
+    @GetMapping("/supplier/findByName")
+    public List<Supplier> getSupplierByName(@RequestParam("name") String name) {
+        return reportService.getSupplierByName(name);
+    }
 
 
+    //findSupplierByCity
+    //findTableById
+    //findTableByAvailability
+
+
+
+    //This part is restricted for manager and owner only!
+
+    @GetMapping("/customer/findByRole")
+    public List<Customer> getCustomerByRole(@RequestParam("role") String roleName) {
+        return reportService.getCustomerByRole(roleName);
+    }
+
+
+    //amount of money for sales in period of time
+
+
+
+
+    //TODO: finish exporting to excel file
     //TODO: add spring security coverage for this module
-
-
 }
