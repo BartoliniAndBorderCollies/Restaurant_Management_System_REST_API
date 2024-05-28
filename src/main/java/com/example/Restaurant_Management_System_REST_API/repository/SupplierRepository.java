@@ -12,4 +12,5 @@ public interface SupplierRepository extends CrudRepository<Supplier, Long> {
 
     Optional<Supplier> findByContactDetails_NameAndContactDetails_Street(String name, String street);
     List<Supplier> findByContactDetails_Name(String name);
+    List<Supplier> findByContactDetails_City(String cityName);
 }
