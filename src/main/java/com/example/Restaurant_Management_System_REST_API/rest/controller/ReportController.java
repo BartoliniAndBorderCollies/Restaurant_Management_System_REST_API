@@ -34,12 +34,15 @@ public class ReportController {
     //This part is useful for staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)      //MIME binary data type
     public ResponseEntity<StreamingResponseBody> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
         List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
 
+       // The StreamingResponseBody is used to stream the response back to the client. This is particularly useful for large files which can’t be held in memory.
+
+        //Below I create an excel file using Apache POI library and then I write it to outputStream for the client to download it
         StreamingResponseBody stream = outputStream -> {
-            Workbook workbook = new XSSFWorkbook();
+            Workbook workbook = new XSSFWorkbook(); // a top level object to create sheets and other operations
             Sheet sheet = workbook.createSheet("InventoryItems");
 
             // Create header row
@@ -76,7 +79,7 @@ public class ReportController {
             }
 
             workbook.write(outputStream);
-            workbook.close();
+            workbook.close();//I close cause I want to free memory resources, save the input data,
         };
         //Because in headers I didn't have a Content-Disposition I got response a zip file with html and xml files.
         //When I add below I manually add the header Content-Disposition. In this case I got a response as report xls file
