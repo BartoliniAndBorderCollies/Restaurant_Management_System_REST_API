@@ -1,10 +1,13 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.repository.*;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +24,8 @@ public class ReportService {
     private final ReservationRepository reservationRepository;
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final SupplierRepository supplierRepository;
+    private final TableRepository tableRepository;
+    private final ModelMapper modelMapper;
 
     //section for InventoryItem reports
     public List<InventoryItem> getInventoryItemByAmountGreaterThan(double amount) {
@@ -106,6 +111,12 @@ public class ReportService {
 
     public List<Supplier> getSupplierByCity(String cityName) {
         return supplierRepository.findByContactDetails_City(cityName);
+    }
+
+    public TableForReportDTO getTableById(Long id) throws NotFoundInDatabaseException {
+        Table table = tableRepository.findById(id).orElseThrow(()-> new NotFoundInDatabaseException(Table.class));
+
+        return modelMapper.map(table, TableForReportDTO.class);
     }
 
 

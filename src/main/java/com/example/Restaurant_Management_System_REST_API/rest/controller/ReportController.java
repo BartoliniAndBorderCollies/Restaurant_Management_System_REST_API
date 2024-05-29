@@ -1,5 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
+import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
@@ -185,8 +187,12 @@ public class ReportController {
         return reportService.getSupplierByCity(cityName);
     }
 
+    @GetMapping("/table/findById")
+    public TableForReportDTO getTableById(@RequestParam("id") Long id) throws NotFoundInDatabaseException {
+        return reportService.getTableById(id);
+    }
 
-    //findTableById
+
     //findTableByAvailability
 
 
@@ -203,8 +209,5 @@ public class ReportController {
     //amount of money for sales in period of time
 
 
-
-
-    //TODO: finish exporting to excel file
     //TODO: add spring security coverage for this module
 }
