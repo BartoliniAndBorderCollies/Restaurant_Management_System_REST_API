@@ -119,5 +119,9 @@ public class ReportService {
         return modelMapper.map(table, TableForReportDTO.class);
     }
 
+    public List<Table> getTableByAvailability(boolean isAvailable) {
+        return tableRepository.findByIsAvailable(isAvailable);
+    }
+
 
 }

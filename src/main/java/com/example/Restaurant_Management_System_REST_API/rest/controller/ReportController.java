@@ -192,12 +192,12 @@ public class ReportController {
         return reportService.getTableById(id);
     }
 
+    @GetMapping("/table/findByAvailability")
+    public List<Table> getTableByAvailability(@RequestParam("available") boolean isAvailable) {
+        return reportService.getTableByAvailability(isAvailable);
+    }
 
-    //findTableByAvailability
-
-
-
-    //This part is restricted for manager and owner only! and of course is covered with spring security
+    //This part is restricted for manager and owner only! and of course it is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping("/customer/findByRole")
