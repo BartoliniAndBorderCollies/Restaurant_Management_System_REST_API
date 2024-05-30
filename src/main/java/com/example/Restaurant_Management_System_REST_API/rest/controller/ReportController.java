@@ -208,8 +208,12 @@ public class ReportController {
         return reportService.getCustomerByRole(roleName);
     }
 
+    @GetMapping("/restaurantOrder/findTotalSumInPeriodTime")
+    public double getTotalSumRestaurantOrdersInPeriodTime(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate timeFrom,
+                                             @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate timeTo) {
+        return reportService.getTotalSumRestaurantOrdersInPeriodTime(timeFrom, timeTo);
+    }
 
-    //amount of money for sales in period of time
 
 
     //TODO: add spring security coverage for this module
