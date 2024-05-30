@@ -114,13 +114,26 @@ public class ReportService {
     }
 
     public TableForReportDTO getTableById(Long id) throws NotFoundInDatabaseException {
-        Table table = tableRepository.findById(id).orElseThrow(()-> new NotFoundInDatabaseException(Table.class));
+        Table table = tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
 
         return modelMapper.map(table, TableForReportDTO.class);
     }
 
     public List<Table> getTableByAvailability(boolean isAvailable) {
         return tableRepository.findByIsAvailable(isAvailable);
+    }
+
+    public double getTotalSumRestaurantOrdersInPeriodTime(LocalDate timeFrom, LocalDate timeTo) {
+        double totalSpent = 0;
+
+        List<RestaurantOrder> allRestaurantOrdersInSpecificTimePeriod = restaurantOrderRepository.findByTimeRange(timeFrom.atStartOfDay(),
+                timeTo.plusDays(1).atStartOfDay());
+
+        for (RestaurantOrder restaurantOrder : allRestaurantOrdersInSpecificTimePeriod) {
+            double totalAmountToPayPerRestaurantOrder = restaurantOrder.getTotalAmountToPay();
+            totalSpent += totalAmountToPayPerRestaurantOrder;
+        }
+        return totalSpent;
     }
 
 
