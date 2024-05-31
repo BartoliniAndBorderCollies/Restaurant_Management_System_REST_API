@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderMenuRecordDTO.RestaurantOrderMenuRecordDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
@@ -179,6 +180,11 @@ public class ReportController {
     public List<RestaurantOrder> getRestaurantOrderByTotalAmountToPayRange(@RequestParam("amount_from") double amountFrom,
                                                                            @RequestParam("amount_to") double amountTo) {
         return reportService.getRestaurantOrderByTotalAmountToPayRange(amountFrom, amountTo);
+    }
+
+    @GetMapping("/restaurantOrder/getMenuRecordsFromRestaurantOrderId")
+    public RestaurantOrderMenuRecordDTO getMenuRecordsFromRestaurantOrderId(@RequestParam("restaurantOrder_id") Long id) throws NotFoundInDatabaseException {
+        return reportService.getMenuRecordsFromRestaurantOrderId(id);
     }
 
     @GetMapping("/supplier/findByName")
