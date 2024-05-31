@@ -34,11 +34,12 @@ public class ReportController {
     //This part is useful for staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)      //MIME binary data type
+    @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    //MIME binary data type
     public ResponseEntity<StreamingResponseBody> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
         List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
 
-       // The StreamingResponseBody is used to stream the response back to the client. This is particularly useful for large files which can’t be held in memory.
+        // The StreamingResponseBody is used to stream the response back to the client. This is particularly useful for large files which can’t be held in memory.
 
         //Below I create an excel file using Apache POI library and then I write it to outputStream for the client to download it
         StreamingResponseBody stream = outputStream -> {
@@ -146,7 +147,7 @@ public class ReportController {
 
     @GetMapping("/reservation/findByCustomerNameAndStartTime")
     public List<Reservation> getReservationByCustomerNameAndByStartTime(@RequestParam("name") String name,
-                                                                       @RequestParam("date_from") LocalDateTime dateTimeFrom) {
+                                                                        @RequestParam("date_from") LocalDateTime dateTimeFrom) {
         return reportService.getReservationByCustomerNameAndByStartTime(name, dateTimeFrom);
     }
 
@@ -209,11 +210,10 @@ public class ReportController {
     }
 
     @GetMapping("/restaurantOrder/findTotalSumInPeriodTime")
-    public double getTotalSumRestaurantOrdersInPeriodTime(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate timeFrom,
-                                             @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate timeTo) {
+    public double getTotalSumRestaurantOrdersInPeriodTime(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeFrom,
+                                                          @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
         return reportService.getTotalSumRestaurantOrdersInPeriodTime(timeFrom, timeTo);
     }
-
 
 
     //TODO: add spring security coverage for this module
