@@ -1,5 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderMenuRecordDTO.RestaurantOrderMenuRecordDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,6 +29,7 @@ public class ReportService {
     private final SupplierRepository supplierRepository;
     private final TableRepository tableRepository;
     private final ModelMapper modelMapper;
+    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
 
     //section for InventoryItem reports
     public List<InventoryItem> getInventoryItemByAmountGreaterThan(double amount) {
@@ -134,6 +138,32 @@ public class ReportService {
             totalSpent += totalAmountToPayPerRestaurantOrder;
         }
         return totalSpent;
+    }
+
+    public RestaurantOrderMenuRecordDTO getMenuRecordsFromRestaurantOrderId(Long id) throws NotFoundInDatabaseException {
+        List<MenuRecordForOrderDTO> menuRecordForOrderDTOList = new ArrayList<>();
+
+        //I use here object RestaurantOrder taken straight from repo because when I use service I got object without portions amount
+        RestaurantOrder restaurantOrder = restaurantOrderRepository.findById(id).orElseThrow(()-> new NotFoundInDatabaseException(RestaurantOrder.class));
+
+        // I fetch necessary data from repo. this is the list of RestaurantOrderMenuRecord given for specific RestaurantOrder
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = restaurantOrderMenuRecordRepository.findRestaurantOrderMenuRecordByRestaurantOrderId(id);
+
+        //Now I need to loop over this fetched list. I take menuRecords from this list. Then I convert it to menuRecordForOrderDTO
+        // and I set the portions amount and finally add it to the list of MenuRecordForOrderDTO
+        for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord: restaurantOrderMenuRecordList) {
+            MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
+            MenuRecordForOrderDTO menuRecordForOrderDTO = modelMapper.map(menuRecord, MenuRecordForOrderDTO.class);
+            menuRecordForOrderDTO.setPortionsAmount(eachRestaurantOrderMenuRecord.getPortionsAmount());
+            menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
+        }
+
+        RestaurantOrderMenuRecordDTO restaurantOrderMenuRecordDTO = new RestaurantOrderMenuRecordDTO();
+        restaurantOrderMenuRecordDTO.setMenuRecord(menuRecordForOrderDTOList);
+        restaurantOrderMenuRecordDTO.setTotalAmountToPay(restaurantOrder.getTotalAmountToPay());
+
+
+        return restaurantOrderMenuRecordDTO;
     }
 
 
