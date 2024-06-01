@@ -220,7 +220,4 @@ public class ReportController {
                                                           @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
         return reportService.getTotalSumRestaurantOrdersInPeriodTime(timeFrom, timeTo);
     }
-
-
-    //TODO: add spring security coverage for this module
 }
