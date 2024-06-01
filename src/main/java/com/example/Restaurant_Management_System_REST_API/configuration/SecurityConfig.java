@@ -63,6 +63,14 @@ public class SecurityConfig {
                         .requestMatchers(mvc.pattern("/api/order/**"))
                         .hasAnyRole("OWNER", "MANAGER", "STAFF")
 
+                        //Secured paths for information module
+                        .requestMatchers(mvc.pattern("/api/info/**"))
+                        .hasAnyRole("OWNER", "MANAGER", "STAFF")
+
+                        //Secured paths for reports
+                        .requestMatchers(mvc.pattern("/api/report/**"))
+                        .hasAnyRole("OWNER", "MANAGER")
+
                         //Permit all other requests
                         .anyRequest()
                         .permitAll())
