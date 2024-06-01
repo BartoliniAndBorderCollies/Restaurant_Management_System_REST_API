@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/report")
+@RequestMapping("/api/")
 @AllArgsConstructor
 public class ReportController {
 
@@ -35,7 +35,7 @@ public class ReportController {
     //This part is useful for staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping(value = "/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "info/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     //MIME binary data type
     public ResponseEntity<StreamingResponseBody> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
         List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
@@ -91,118 +91,118 @@ public class ReportController {
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/inventory/stockAmount/lessThan")
+    @GetMapping("info/inventory/stockAmount/lessThan")
     public List<InventoryItem> getInventoryItemByAmountLessThan(@RequestParam("amount") double amount) {
         return reportService.getInventoryItemByAmountLessThan(amount);
     }
 
-    @GetMapping("/inventory/stockAmount/findBySupplier")
+    @GetMapping("info/inventory/stockAmount/findBySupplier")
     public List<InventoryItem> getInventoryItemBySupplierName(@RequestParam("supplier") String name) {
         return reportService.getInventoryItemBySupplierName(name);
     }
 
-    @GetMapping("/customer/findWithReservation")
+    @GetMapping("info/customer/findWithReservation")
     public List<Customer> getCustomerWithReservation() {
         return reportService.getCustomerWithReservation();
     }
 
-    @GetMapping("/menuRecord/findAvailable")
+    @GetMapping("info/menuRecord/findAvailable")
     List<MenuRecord> getAvailableMenuRecords() {
         return reportService.getAvailableMenuRecords();
     }
 
-    @GetMapping("/menuRecord/findByCategory")
+    @GetMapping("info/menuRecord/findByCategory")
     public List<MenuRecord> getMenuRecordsByCategory(@RequestParam("category") Category category) {
         return reportService.getMenuRecordsByCategory(category);
     }
 
-    @GetMapping("/reservation/findByName")
+    @GetMapping("info/reservation/findByName")
     public List<Reservation> getReservationByName(@RequestParam("name") String name) {
         return reportService.getReservationByName(name);
     }
 
-    @GetMapping("/reservation/findByPeopleAmount/GreaterThan")
+    @GetMapping("info/reservation/findByPeopleAmount/GreaterThan")
     public List<Reservation> getReservationByPeopleAmountGreaterThan(@RequestParam("amount") int peopleAmount) {
         return reportService.getReservationByPeopleAmountGreaterThan(peopleAmount);
     }
 
-    @GetMapping("/reservation/findByPeopleAmount/LessThan")
+    @GetMapping("info/reservation/findByPeopleAmount/LessThan")
     public List<Reservation> getReservationByPeopleAmountLessThan(@RequestParam("amount") int peopleAmount) {
         return reportService.getReservationByPeopleAmountLessThan(peopleAmount);
     }
 
-    @GetMapping("/reservation/findByDate")
+    @GetMapping("info/reservation/findByDate")
     public List<Reservation> getReservationByDateTimeAndAfter(@RequestParam("date_from") LocalDateTime dateTime) {
         return reportService.getReservationByDateTimeAndAfter(dateTime);
     }
 
-    @GetMapping("/reservation/findByCustomer")
+    @GetMapping("info/reservation/findByCustomer")
     public List<Reservation> getReservationByCustomerName(@RequestParam("name") String name) {
         return reportService.getReservationByCustomerName(name);
     }
 
-    @GetMapping("/reservation/findByTable")
+    @GetMapping("info/reservation/findByTable")
     public List<Reservation> getReservationByTable(@RequestParam("id") Long id) {
         return reportService.getReservationByTable(id);
     }
 
-    @GetMapping("/reservation/findByCustomerNameAndStartTime")
+    @GetMapping("info/reservation/findByCustomerNameAndStartTime")
     public List<Reservation> getReservationByCustomerNameAndByStartTime(@RequestParam("name") String name,
                                                                         @RequestParam("date_from") LocalDateTime dateTimeFrom) {
         return reportService.getReservationByCustomerNameAndByStartTime(name, dateTimeFrom);
     }
 
-    @GetMapping("/restaurantOrder/findByOrderTimeRange")
+    @GetMapping("info/restaurantOrder/findByOrderTimeRange")
     public List<RestaurantOrder> getRestaurantOrderByOrderTimeRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
     }
 
-    @GetMapping("/restaurantOrder/findByOrderStatus")
+    @GetMapping("info/restaurantOrder/findByOrderStatus")
     public List<RestaurantOrder> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
         return reportService.getRestaurantOrderByOrderStatus(orderStatus);
     }
 
-    @GetMapping("/restaurantOrder/findByTable")
+    @GetMapping("info/restaurantOrder/findByTable")
     public List<RestaurantOrder> getRestaurantOrderByTable(@RequestParam("table_id") Long id) {
         return reportService.getRestaurantOrderByTable(id);
     }
 
-    @GetMapping("/restaurantOrder/findByTableAndTimePeriod")
+    @GetMapping("info/restaurantOrder/findByTableAndTimePeriod")
     public List<RestaurantOrder> getRestaurantOrderByTableAndTimeRange(@RequestParam("table_id") Long id,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return reportService.getRestaurantOrderByTableAndTimeRange(id, startDate, endDate);
     }
 
-    @GetMapping("/restaurantOrder/findByTotalAmountToPayRange")
+    @GetMapping("info/restaurantOrder/findByTotalAmountToPayRange")
     public List<RestaurantOrder> getRestaurantOrderByTotalAmountToPayRange(@RequestParam("amount_from") double amountFrom,
                                                                            @RequestParam("amount_to") double amountTo) {
         return reportService.getRestaurantOrderByTotalAmountToPayRange(amountFrom, amountTo);
     }
 
-    @GetMapping("/restaurantOrder/getMenuRecordsFromRestaurantOrderId")
+    @GetMapping("info/restaurantOrder/getMenuRecordsFromRestaurantOrderId")
     public RestaurantOrderMenuRecordDTO getMenuRecordsFromRestaurantOrderId(@RequestParam("restaurantOrder_id") Long id) throws NotFoundInDatabaseException {
         return reportService.getMenuRecordsFromRestaurantOrderId(id);
     }
 
-    @GetMapping("/supplier/findByName")
+    @GetMapping("info/supplier/findByName")
     public List<Supplier> getSupplierByName(@RequestParam("name") String name) {
         return reportService.getSupplierByName(name);
     }
 
-    @GetMapping("/supplier/findByCity")
+    @GetMapping("info/supplier/findByCity")
     public List<Supplier> getSupplierByCity(@RequestParam("city") String cityName) {
         return reportService.getSupplierByCity(cityName);
     }
 
-    @GetMapping("/table/findById")
+    @GetMapping("info/table/findById")
     public TableForReportDTO getTableById(@RequestParam("id") Long id) throws NotFoundInDatabaseException {
         return reportService.getTableById(id);
     }
 
-    @GetMapping("/table/findByAvailability")
+    @GetMapping("info/table/findByAvailability")
     public List<Table> getTableByAvailability(@RequestParam("available") boolean isAvailable) {
         return reportService.getTableByAvailability(isAvailable);
     }
@@ -210,12 +210,12 @@ public class ReportController {
     //This part is restricted for manager and owner only! and of course it is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("/customer/findByRole")
+    @GetMapping("report/customer/findByRole")
     public List<Customer> getCustomerByRole(@RequestParam("role") String roleName) {
         return reportService.getCustomerByRole(roleName);
     }
 
-    @GetMapping("/restaurantOrder/findTotalSumInPeriodTime")
+    @GetMapping("report/restaurantOrder/findTotalSumInPeriodTime")
     public double getTotalSumRestaurantOrdersInPeriodTime(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeFrom,
                                                           @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
         return reportService.getTotalSumRestaurantOrdersInPeriodTime(timeFrom, timeTo);
