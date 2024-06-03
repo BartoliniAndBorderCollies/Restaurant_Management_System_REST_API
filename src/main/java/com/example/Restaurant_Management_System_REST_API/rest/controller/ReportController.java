@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -152,11 +153,50 @@ public class ReportController {
         return reportService.getReservationByCustomerNameAndByStartTime(name, dateTimeFrom);
     }
 
-    @GetMapping("info/restaurantOrder/findByOrderTimeRange")
-    public List<RestaurantOrder> getRestaurantOrderByOrderTimeRange(
+    @GetMapping(value = "info/restaurantOrder/findByOrderTimeRange", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getRestaurantOrderByOrderTimeRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        return reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
+
+        List<RestaurantOrder> restaurantOrderByOrderTimeRange = reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("restaurantOrdersByTimeRange");
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("ID");
+            headerRow.createCell(1).setCellValue("Order time");
+            headerRow.createCell(2).setCellValue("Order status");
+            headerRow.createCell(3).setCellValue("Table id");
+            headerRow.createCell(4).setCellValue("Telephone number");
+            headerRow.createCell(5).setCellValue("Total amount to pay");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            // Fill data rows
+            for (int i = 0; i < restaurantOrderByOrderTimeRange.size(); i++) {
+                RestaurantOrder restaurantOrder = restaurantOrderByOrderTimeRange.get(i);
+                OrderStatus orderStatus = restaurantOrder.getOrderStatus();
+
+                Row row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(restaurantOrder.getId());
+                row.createCell(1).setCellValue(restaurantOrder.getOrderTime().format(formatter));
+                row.createCell(2).setCellValue(orderStatus.toString());
+                row.createCell(3).setCellValue(restaurantOrder.getTable().getId());
+                row.createCell(4).setCellValue(restaurantOrder.getTelephoneNumber());
+                row.createCell(5).setCellValue(restaurantOrder.getTotalAmountToPay());
+
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        };
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+
+        return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
 
     @GetMapping("info/restaurantOrder/findByOrderStatus")
