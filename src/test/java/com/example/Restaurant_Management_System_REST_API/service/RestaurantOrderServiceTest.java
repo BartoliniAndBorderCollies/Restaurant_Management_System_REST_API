@@ -76,7 +76,7 @@ class RestaurantOrderServiceTest {
 
     private RestaurantOrderRequestDTO createRestaurantOrderDTOWithInvalidMeal() {
         RestaurantOrderRequestDTO restaurantOrderDTO = new RestaurantOrderRequestDTO();
-        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(1L, "Not valid meal", 1.0)));
+        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(1L, "Not valid meal", 1.0, 1.0)));
         return restaurantOrderDTO;
     }
 

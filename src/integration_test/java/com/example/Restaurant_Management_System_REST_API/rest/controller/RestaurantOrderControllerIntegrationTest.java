@@ -70,8 +70,8 @@ class RestaurantOrderControllerIntegrationTest {
         tableRepository.save(table);
         tableDTO = modelMapper.map(table, TableReservationDTO.class);
         menuRecordForOrderDTOList = new ArrayList<>();
-        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles", 2.0);
-        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 2.0);
+        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles",1.0, 2.0);
+        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 1.0, 2.0);
         menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
         menuRecordForOrderDTOList.add(menuRecordForOrderDTO2);
     }
