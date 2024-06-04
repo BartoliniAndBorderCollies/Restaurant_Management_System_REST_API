@@ -20,13 +20,13 @@ public class RestaurantOrderMenuRecord {
 
     @ManyToOne
     @JoinColumn(name = "menuRecord_id")
-    @JsonBackReference(value="menuRecord-restaurantOrderMenuRecord")
+    @JsonBackReference(value = "menuRecord-restaurantOrderMenuRecord")
     private MenuRecord menuRecord;
 
     @ManyToOne
     @JoinColumn(name = "restaurantOrder_id")
-    @JsonBackReference(value="restaurantOrder-restaurantOrderMenuRecord")
+    @JsonBackReference(value = "restaurantOrder-restaurantOrderMenuRecord")
     private RestaurantOrder restaurantOrder;
 
-     private Double portionsAmount;
+    private Double portionsAmount;
 }
