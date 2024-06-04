@@ -33,7 +33,7 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    //This part is useful for staff (waitress, kitchen staff, manager and owner) and is covered with spring security
+    //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
     @GetMapping(value = "info/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
