@@ -22,9 +22,8 @@ public class Table {
     private Long id;
     private boolean isAvailable;
     @OneToMany(mappedBy = "table")
-    @JsonBackReference
     private List<RestaurantOrder> restaurantOrders;
     @ManyToMany(mappedBy = "tables")
-    @JsonBackReference
+    @JsonBackReference(value="reservation-table")
     private List<Reservation> reservationList;
 }
