@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
@@ -33,10 +34,9 @@ public class Reservation {
     @ManyToMany //now this is the owning side
     @JoinTable(name = "tables_and_reservations", joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id"))
-    @JsonManagedReference //I have added this annotation cause there was a problem with infinitive recursion ("report/reservation/findByName?")
     private List<Table> tables;
     @OneToOne
     @JoinColumn(name = "customer_id")
-    @JsonManagedReference //I have added this annotation cause there was a problem with infinitive recursion ("/customer/findWithReservation")
+    @JsonManagedReference(value="customer-reservation")
     private Customer customer;
 }

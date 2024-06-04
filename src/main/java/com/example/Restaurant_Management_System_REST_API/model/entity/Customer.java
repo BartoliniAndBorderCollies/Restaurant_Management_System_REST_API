@@ -32,7 +32,7 @@ public class Customer implements UserDetails {
     private Long id;
     private LocalDateTime creationTime;
     @OneToOne(mappedBy = "customer")
-    @JsonBackReference //I have added this annotation cause there was a problem with infinitive recursion ("/customer/findWithReservation")
+    @JsonBackReference(value="customer-reservation")
     private Reservation reservation;
     @Embedded
     private ContactDetails contactDetails;
