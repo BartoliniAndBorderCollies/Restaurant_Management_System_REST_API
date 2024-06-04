@@ -33,6 +33,7 @@ public class Reservation {
     @ManyToMany //now this is the owning side
     @JoinTable(name = "tables_and_reservations", joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "table_id"))
+//    @JsonManagedReference(value="reservation-table") this annotation would destroy tests
     private List<Table> tables;
     @OneToOne
     @JoinColumn(name = "customer_id")
