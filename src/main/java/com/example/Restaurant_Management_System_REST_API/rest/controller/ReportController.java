@@ -167,7 +167,7 @@ public class ReportController {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("ID");
+            headerRow.createCell(0).setCellValue("Restaurant Order ID");
             headerRow.createCell(1).setCellValue("Order time");
             headerRow.createCell(2).setCellValue("Order status");
             headerRow.createCell(3).setCellValue("Table id");
@@ -199,9 +199,56 @@ public class ReportController {
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
 
-    @GetMapping("info/restaurantOrder/findByOrderStatus")
-    public List<RestaurantOrder> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
-        return reportService.getRestaurantOrderByOrderStatus(orderStatus);
+    @GetMapping(value = "info/restaurantOrder/findByOrderStatus", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
+
+        List<RestaurantOrder> restaurantOrderByOrderStatus = reportService.getRestaurantOrderByOrderStatus(orderStatus);
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("restaurantOrdersByOrderStatus");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Restaurant Order ID");
+            headerRow.createCell(1).setCellValue("Order time");
+            headerRow.createCell(2).setCellValue("Order status");
+            headerRow.createCell(3).setCellValue("Table id");
+            headerRow.createCell(4).setCellValue("Telephone number");
+            headerRow.createCell(5).setCellValue("Total amount to pay");
+            headerRow.createCell(6).setCellValue("Menu record name");
+            headerRow.createCell(7).setCellValue("Portions amount");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            //fill the data
+            int rowIndex = 1;
+            for (int i = 0; i < restaurantOrderByOrderStatus.size(); i++) {
+                RestaurantOrder restaurantOrder = restaurantOrderByOrderStatus.get(i);
+                List<RestaurantOrderMenuRecord> restaurantOrders = restaurantOrder.getRestaurantOrders();
+
+                for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrders) {
+                    MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
+                    Double portionsAmount = eachRestaurantOrderMenuRecord.getPortionsAmount();
+
+                    Row row = sheet.createRow(rowIndex++);// this adds new row if restaurant order has multiple orders
+                    row.createCell(0).setCellValue(restaurantOrder.getId());
+                    row.createCell(1).setCellValue(restaurantOrder.getOrderTime().format(formatter));
+                    row.createCell(2).setCellValue(restaurantOrder.getOrderStatus().toString());
+                    row.createCell(3).setCellValue(restaurantOrder.getTable().getId());
+                    row.createCell(4).setCellValue(restaurantOrder.getTelephoneNumber());
+                    row.createCell(5).setCellValue(restaurantOrder.getTotalAmountToPay());
+                    row.createCell(6).setCellValue(menuRecord.getName());
+                    row.createCell(7).setCellValue(portionsAmount);
+                }
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        };
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+
+        return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
 
     @GetMapping("info/restaurantOrder/findByTable")
@@ -250,7 +297,7 @@ public class ReportController {
     //This part is restricted for manager and owner only! and of course it is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("report/customer/findByRole")
+    @GetMapping("report/customer/findByRole") //TODO: return an excel file
     public List<Customer> getCustomerByRole(@RequestParam("role") String roleName) {
         return reportService.getCustomerByRole(roleName);
     }
