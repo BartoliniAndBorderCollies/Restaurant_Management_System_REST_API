@@ -29,6 +29,6 @@ public class RestaurantOrder {
     private String telephoneNumber;
     private double totalAmountToPay;
     @OneToMany(mappedBy = "restaurantOrder")
-    @JsonManagedReference
+    @JsonManagedReference(value="restaurantOrder-restaurantOrderMenuRecord")
     private List<RestaurantOrderMenuRecord> restaurantOrders;
 }

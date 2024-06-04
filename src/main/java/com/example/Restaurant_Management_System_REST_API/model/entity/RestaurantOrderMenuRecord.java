@@ -20,13 +20,13 @@ public class RestaurantOrderMenuRecord {
 
     @ManyToOne
     @JoinColumn(name = "menuRecord_id")
-    @JsonBackReference // it will be omitted from serialization. No risk of infinitive recursion.
+    @JsonBackReference(value="menuRecord-restaurantOrderMenuRecord")
     private MenuRecord menuRecord;
 
     @ManyToOne
     @JoinColumn(name = "restaurantOrder_id")
-    @JsonBackReference // it will be omitted from serialization. No risk of infinitive recursion.
+    @JsonBackReference(value="restaurantOrder-restaurantOrderMenuRecord")
     private RestaurantOrder restaurantOrder;
 
-    private Double portionsAmount;
+     private Double portionsAmount;
 }
