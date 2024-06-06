@@ -166,5 +166,9 @@ public class ReportService {
         return restaurantOrderMenuRecordDTO;
     }
 
+    public List<RestaurantOrderMenuRecord> getRestaurantOrderMenuRecordInTimePeriod(LocalDate timeFrom, LocalDate timeTo) {
+        return restaurantOrderMenuRecordRepository.findRestaurantOrderMenuRecordByTimePeriod(timeFrom.atStartOfDay(),
+                timeTo.plusDays(1).atStartOfDay());
+    }
 
 }
