@@ -40,7 +40,6 @@ public class ReportController {
 
     private final ReportService reportService;
     private final RestaurantOrderMenuRecordService restaurantOrderMenuRecordService;
-    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
 
     //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
@@ -364,7 +363,7 @@ public class ReportController {
     public ResponseEntity<StreamingResponseBody> getPopularDishesInTimePeriod(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeFrom,
                                                                               @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
 
-        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = restaurantOrderMenuRecordService.getRestaurantOrderMenuRecordInTimePeriod(timeFrom, timeTo);
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = reportService.getRestaurantOrderMenuRecordInTimePeriod(timeFrom, timeTo);
 
         StreamingResponseBody stream = outputStream -> {
 
