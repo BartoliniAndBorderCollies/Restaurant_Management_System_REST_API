@@ -7,6 +7,7 @@ import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
+import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,13 +19,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
@@ -297,9 +301,52 @@ public class ReportController {
     //This part is restricted for manager and owner only! and of course it is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("report/customer/findByRole") //TODO: return an excel file
-    public List<Customer> getCustomerByRole(@RequestParam("role") String roleName) {
-        return reportService.getCustomerByRole(roleName);
+    @GetMapping(value = "report/customer/findByRole", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getCustomerByRole(@RequestParam("role") String roleName) {
+
+        List<Customer> customerByRole = reportService.getCustomerByRole(roleName);
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("customersByRoles");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Customer ID");
+            headerRow.createCell(1).setCellValue("Creation time");
+            headerRow.createCell(2).setCellValue("Reservation ID");
+            headerRow.createCell(3).setCellValue("Customer name");
+            headerRow.createCell(4).setCellValue("Account enabled");
+            headerRow.createCell(5).setCellValue("Roles");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            for (int i = 0; i< customerByRole.size(); i++) {
+                Customer customer = customerByRole.get(i);
+                Collection<? extends GrantedAuthority> authorities = customer.getAuthorities();
+
+                // Collect all roles into a single string with commas
+                String roles = authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(", "));
+
+                Row row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(customer.getId());
+                row.createCell(1).setCellValue(customer.getCreationTime().format(formatter));
+                if(customer.getReservation() != null)
+                    row.createCell(2).setCellValue(customer.getReservation().getId());
+                row.createCell(3).setCellValue(customer.getContactDetails().getName());
+                row.createCell(4).setCellValue(customer.getEnabled());
+                row.createCell(5).setCellValue(roles);
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        };
+
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Disposition", "attachment; filename=customerByRoles.xlsx");
+
+        return new ResponseEntity<>(stream, header, HttpStatus.OK);
     }
 
     @GetMapping("report/restaurantOrder/findTotalSumInPeriodTime")
