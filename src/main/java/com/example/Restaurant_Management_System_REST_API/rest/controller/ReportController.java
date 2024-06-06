@@ -7,7 +7,6 @@ import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
-import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -91,7 +90,7 @@ public class ReportController {
         //Because in headers I didn't have a Content-Disposition I got response a zip file with html and xml files.
         //When I add below I manually add the header Content-Disposition. In this case I got a response as report xls file
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=InventoryItems.xlsx");
 
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
@@ -198,7 +197,7 @@ public class ReportController {
             workbook.close();
         };
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByTimeRange.xlsx");
 
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
@@ -250,7 +249,7 @@ public class ReportController {
             workbook.close();
         };
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=report.xlsx");
+        headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByOrderStatus.xlsx");
 
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
