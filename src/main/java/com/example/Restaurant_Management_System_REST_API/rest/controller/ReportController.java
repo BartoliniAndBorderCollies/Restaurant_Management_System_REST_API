@@ -7,7 +7,9 @@ import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
+import com.example.Restaurant_Management_System_REST_API.repository.RestaurantOrderMenuRecordRepository;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
+import com.example.Restaurant_Management_System_REST_API.service.RestaurantOrderMenuRecordService;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,7 +28,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,6 +39,8 @@ import java.util.stream.Collectors;
 public class ReportController {
 
     private final ReportService reportService;
+    private final RestaurantOrderMenuRecordService restaurantOrderMenuRecordService;
+    private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
 
     //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
@@ -320,7 +326,7 @@ public class ReportController {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-            for (int i = 0; i< customerByRole.size(); i++) {
+            for (int i = 0; i < customerByRole.size(); i++) {
                 Customer customer = customerByRole.get(i);
                 Collection<? extends GrantedAuthority> authorities = customer.getAuthorities();
 
@@ -332,7 +338,7 @@ public class ReportController {
                 Row row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(customer.getId());
                 row.createCell(1).setCellValue(customer.getCreationTime().format(formatter));
-                if(customer.getReservation() != null)
+                if (customer.getReservation() != null)
                     row.createCell(2).setCellValue(customer.getReservation().getId());
                 row.createCell(3).setCellValue(customer.getContactDetails().getName());
                 row.createCell(4).setCellValue(customer.getEnabled());
@@ -353,4 +359,51 @@ public class ReportController {
                                                           @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
         return reportService.getTotalSumRestaurantOrdersInPeriodTime(timeFrom, timeTo);
     }
+
+    @GetMapping("report/getPopularDishes/inPeriod")
+    public ResponseEntity<StreamingResponseBody> getPopularDishesInTimePeriod(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeFrom,
+                                                                              @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
+
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = restaurantOrderMenuRecordService.getRestaurantOrderMenuRecordInTimePeriod(timeFrom, timeTo);
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("popularDishes");
+
+            Row periodRow = sheet.createRow(0);
+            periodRow.createCell(0).setCellValue("Time period: " + timeFrom + " - " + timeTo);
+
+            Row headerRow = sheet.createRow(1);
+            headerRow.createCell(0).setCellValue("Dish name");
+            headerRow.createCell(1).setCellValue("Total portions ordered");
+
+            Map<String, Double> dishPortionsMap = new HashMap<>();
+            for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrderMenuRecordList) {
+                String dishName = eachRestaurantOrderMenuRecord.getMenuRecord().getName();
+                Double portions = eachRestaurantOrderMenuRecord.getPortionsAmount();
+                //This below is retrieving the current total portions for the dish from the map. If the dish is not yet in the map
+                // (this is the first time seeing this dish), it returns a default value of 0.0.
+                //... + portions: This is adding the portions of the current RestaurantOrderMenuRecord to the total portions retrieved from the map.
+                dishPortionsMap.put(dishName, dishPortionsMap.getOrDefault(dishName, 0.0) + portions);
+            }
+
+            int rowIndex = 2;  // This variable is used to keep track of which row in the Excel sheet the code is currently writing to.
+            //below I iterate over each entry in the dishPortionsMap
+            for (Map.Entry<String, Double> entry : dishPortionsMap.entrySet()) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(0).setCellValue(entry.getKey());
+                row.createCell(1).setCellValue(entry.getValue());
+            }
+
+            workbook.write(outputStream);
+            workbook.close();
+        };
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Disposition", "attachment; filename=popularDishes.xlsx");
+
+        return new ResponseEntity<>(stream, header, HttpStatus.OK);
+    }
+
+
 }
