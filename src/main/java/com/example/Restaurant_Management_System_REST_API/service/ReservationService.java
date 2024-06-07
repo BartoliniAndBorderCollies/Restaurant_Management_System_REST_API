@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.TableNotAvailableException;
@@ -14,7 +15,6 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
     }
 
     @Override
-    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO delete(Long id) throws NotFoundInDatabaseException {
         Reservation reservationToDelete = reservationRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(Reservation.class));
 
@@ -133,8 +133,11 @@ public class ReservationService implements GenericBasicCrudOperations<Reservatio
             tableService.iterateAndSetReservationToNullInTablesAndSave(reservationToDelete);//because Table is owning side
         reservationRepository.delete(reservationToDelete);
 
-        return new ResponseEntity<>("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!",
-                HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Reservation: " + reservationToDelete.getName() + " has been successfully deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
+
+        return responseDTO;
     }
 
 }
