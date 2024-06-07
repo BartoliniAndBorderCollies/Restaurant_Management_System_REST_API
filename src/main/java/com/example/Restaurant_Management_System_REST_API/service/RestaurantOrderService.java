@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
@@ -13,7 +14,6 @@ import com.example.Restaurant_Management_System_REST_API.service.generic.Generic
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -241,13 +241,17 @@ public class RestaurantOrderService implements GenericBasicCrudOperations<Restau
     }
 
     @Override
-    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO delete(Long id) throws NotFoundInDatabaseException {
         RestaurantOrder restaurantOrderToBeDeleted = restaurantOrderRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(RestaurantOrder.class));
 
         restaurantOrderMenuRecordService.deleteRestaurantOrderMenuRecordsByRestaurantOrderId(id);
         restaurantOrderRepository.delete(restaurantOrderToBeDeleted);
 
-        return new ResponseEntity<>("Order number " + restaurantOrderToBeDeleted.getId() + " has been deleted!", HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Order number " + restaurantOrderToBeDeleted.getId() + " has been deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
+
+        return responseDTO;
     }
 }
