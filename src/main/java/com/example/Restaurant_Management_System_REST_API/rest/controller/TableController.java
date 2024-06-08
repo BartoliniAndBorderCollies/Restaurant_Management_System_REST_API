@@ -1,10 +1,10 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.TableService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class TableController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return tableService.deleteById(id);
     }
 }

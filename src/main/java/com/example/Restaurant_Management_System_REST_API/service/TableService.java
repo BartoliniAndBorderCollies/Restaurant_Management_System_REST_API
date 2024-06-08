@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
@@ -8,7 +9,6 @@ import com.example.Restaurant_Management_System_REST_API.repository.TableReposit
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -37,12 +37,16 @@ public class TableService {
         return tableList;
     }
 
-    public ResponseEntity<?> deleteById(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO deleteById(Long id) throws NotFoundInDatabaseException {
         Table tableToDelete = tableRepository.findById(id).orElseThrow(() -> new NotFoundInDatabaseException(Table.class));
 
         tableRepository.delete(tableToDelete);
 
-        return new ResponseEntity<>("Table with id " + tableToDelete.getId() + " has been deleted!", HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Table with id " + tableToDelete.getId() + " has been deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
+
+        return responseDTO;
     }
 
     void iterateAndSetTablesToReservationAndSave(Reservation reservation) throws NotFoundInDatabaseException {
