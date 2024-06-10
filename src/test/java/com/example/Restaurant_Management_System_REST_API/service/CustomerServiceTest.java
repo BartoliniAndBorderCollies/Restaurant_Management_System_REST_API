@@ -3,6 +3,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import jakarta.validation.Validator;
@@ -164,17 +164,17 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void delete_ShouldReturnResponseEntityWithStatusOKAndAppropriateMessage_WhenCustomerIdIsFound()
+    public void delete_ShouldReturnResponseDTOWithStatusOKAndAppropriateMessage_WhenCustomerIdIsFound()
             throws NotFoundInDatabaseException {
         //Arrange
         Customer customer = mock(Customer.class);
         when(customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
 
         //Act
-        ResponseEntity<?> actual = customerService.delete(customer.getId());
+        ResponseDTO actual = customerService.delete(customer.getId());
 
         //Assert
-        assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals("Customer: " + customer.getUsername() + " has been successfully deleted!", actual.getBody());
+        assertEquals(HttpStatus.OK, actual.getStatus());
+        assertEquals("Customer: " + customer.getUsername() + " has been successfully deleted!", actual.getMessage());
     }
 }

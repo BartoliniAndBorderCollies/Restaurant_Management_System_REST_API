@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotEnoughIngredientsException;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -187,16 +187,18 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
-    public void delete_ShouldInteractWithDependenciesCorrectlyAndReturnResponseEntity_WhenRestaurantOrderIdIsGiven()
+    public void delete_ShouldInteractWithDependenciesCorrectlyAndReturnResponseDTO_WhenRestaurantOrderIdIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(restaurantOrder.getId()).thenReturn(1L);
-        ResponseEntity<?> expected = new ResponseEntity<>("Order number " + restaurantOrder.getId() +
-                " has been deleted!", HttpStatus.OK);
+        ResponseDTO expected = new ResponseDTO();
+        expected.setMessage("Order number " + restaurantOrder.getId() +
+                " has been deleted!");
+        expected.setStatus(HttpStatus.OK);
 
         //Act
-        ResponseEntity<?> actual = restaurantOrderService.delete(id);
+        ResponseDTO actual = restaurantOrderService.delete(id);
 
         //Assert
         assertEquals(expected, actual);

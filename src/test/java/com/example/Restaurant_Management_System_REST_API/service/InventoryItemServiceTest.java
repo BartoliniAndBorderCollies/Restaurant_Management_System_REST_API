@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -192,16 +192,16 @@ class InventoryItemServiceTest {
     }
 
     @Test
-    public void delete_ShouldReturnResponseEntityWithAppropriateStatusCodeAndMessage_WhenCorrectInventoryIdIsGiven()
+    public void delete_ShouldReturnResponseDTOWithAppropriateStatusCodeAndMessage_WhenCorrectInventoryIdIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
         when(inventoryItemRepository.findById(inventoryItemInstance.getId())).thenReturn(Optional.of(inventoryItemInstance));
 
         //Act
-        ResponseEntity<?> actualResponse = inventoryItemService.delete(inventoryItemInstance.getId());
+        ResponseDTO actualResponse = inventoryItemService.delete(inventoryItemInstance.getId());
 
         //Assert
-        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        assertEquals("Inventory item: " + inventoryItemInstance.getName() + " has been deleted!", actualResponse.getBody());
+        assertEquals(HttpStatus.OK, actualResponse.getStatus());
+        assertEquals("Inventory item: " + inventoryItemInstance.getName() + " has been deleted!", actualResponse.getMessage());
     }
 }

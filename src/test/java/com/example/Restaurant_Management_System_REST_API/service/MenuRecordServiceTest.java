@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -208,11 +208,11 @@ class MenuRecordServiceTest {
             when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
 
             //Act
-            ResponseEntity<?> actualResponse = menuRecordService.delete(id);
+            ResponseDTO actualResponse = menuRecordService.delete(id);
 
             //Assert
-            assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-            assertEquals("Menu record has been deleted!", actualResponse.getBody());
+            assertEquals(HttpStatus.OK, actualResponse.getStatus());
+            assertEquals("Menu record has been deleted!", actualResponse.getMessage());
         }
     }
 }
