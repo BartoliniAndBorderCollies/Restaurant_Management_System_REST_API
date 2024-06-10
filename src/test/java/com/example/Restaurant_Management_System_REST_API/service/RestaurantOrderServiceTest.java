@@ -36,6 +36,11 @@ class RestaurantOrderServiceTest {
     private Long id;
     private TableRepository tableRepository;
     private RestaurantOrderRequestDTO restaurantOrderRequestDTO;
+    private static final String TELEPHONE_NUMBER = "888888888";
+    private static final Long INVALID_MEAL_ID = 1L;
+    private static final String INVALID_MEAL_NAME = "Not valid meal";
+    private static final Double INVALID_PORTIONS_AMOUNT = 1.0;
+    private static final Long NON_EXISTENT_ORDER_ID = 999L;
 
     @BeforeEach
     public void setUpEnvironment() {
@@ -76,7 +81,8 @@ class RestaurantOrderServiceTest {
 
     private RestaurantOrderRequestDTO createRestaurantOrderDTOWithInvalidMeal() {
         RestaurantOrderRequestDTO restaurantOrderDTO = new RestaurantOrderRequestDTO();
-        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(1L, "Not valid meal", 1.0, 1.0)));
+
+        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(INVALID_MEAL_ID, INVALID_MEAL_NAME, INVALID_PORTIONS_AMOUNT)));
         return restaurantOrderDTO;
     }
 
@@ -100,15 +106,13 @@ class RestaurantOrderServiceTest {
     @Test
     public void findById_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistedId = 999L;
-
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(nonExistedId));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.findById(NON_EXISTENT_ORDER_ID));
     }
 
     @Test
-    public void findById_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenRestaurantOrderIdIsGiven()
+    public void findById_ShouldFindAndReturnRestaurantOrderDTO_WhenRestaurantOrderExists()
             throws NotFoundInDatabaseException {
         //Arrange
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
@@ -122,7 +126,7 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
-    public void findAll_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTOList_WhenRestaurantOrderExist() {
+    public void findAll_ShouldFindAndReturnRestaurantOrderDTOList_WhenRestaurantOrdersExist() {
         //Arrange
         List<RestaurantOrder> restaurantOrderList = Arrays.asList(restaurantOrder);
         List<RestaurantOrderResponseDTO> expected = Arrays.asList(restaurantOrderResponseDTO);
@@ -139,26 +143,23 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
-    public void update_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderWithGivenIdNotExist() {
+    public void update_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistedId = 999L;
-
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(nonExistedId, restaurantOrderRequestDTO));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.update(NON_EXISTENT_ORDER_ID, restaurantOrderRequestDTO));
     }
 
     @Test
-    public void update_ShouldInteractWithDependenciesCorrectlyAndReturnRestaurantOrderDTO_WhenIdAndRestaurantOrderDTOsGiven()
+    public void update_ShouldUpdateAndReturnRestaurantOrderDTO_WhenIdIsGivenAndRestaurantOrderExists()
             throws NotFoundInDatabaseException {
         //Arrange
         Table table = mock(Table.class);
-        String telephoneNumber = "888888888";
 
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(modelMapper.map(restaurantOrderRequestDTO, RestaurantOrder.class)).thenReturn(restaurantOrder);
         when(restaurantOrder.getOrderStatus()).thenReturn(OrderStatus.PENDING);
-        when(restaurantOrder.getTelephoneNumber()).thenReturn(telephoneNumber);
+        when(restaurantOrder.getTelephoneNumber()).thenReturn(TELEPHONE_NUMBER);
         when(restaurantOrder.getTable()).thenReturn(table);
         when(tableRepository.findById(anyLong())).thenReturn(Optional.of(table));
         restaurantOrder.setTable(table);
@@ -177,29 +178,29 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
-    public void delete_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderWithGivenIdNotExist() {
+    public void delete_ShouldThrowNotFoundInDatabaseException_WhenRestaurantOrderNotExist() {
         //Arrange
-        Long nonExistedId = 999L;
-
         //Act
         //Assert
-        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(nonExistedId));
+        assertThrows(NotFoundInDatabaseException.class, ()-> restaurantOrderService.delete(NON_EXISTENT_ORDER_ID));
     }
 
     @Test
-    public void delete_ShouldInteractWithDependenciesCorrectlyAndReturnResponseEntity_WhenRestaurantOrderIdIsGiven()
+    public void delete_ShouldReturnOkResponse_WhenRestaurantOrderExists()
             throws NotFoundInDatabaseException {
         //Arrange
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));
         when(restaurantOrder.getId()).thenReturn(1L);
-        ResponseEntity<?> expected = new ResponseEntity<>("Order number " + restaurantOrder.getId() +
-                " has been deleted!", HttpStatus.OK);
+
+        String expectedBody = "Order number " + restaurantOrder.getId() + " has been deleted!";
+        HttpStatus expectedStatus = HttpStatus.OK;
 
         //Act
         ResponseEntity<?> actual = restaurantOrderService.delete(id);
 
         //Assert
-        assertEquals(expected, actual);
+        assertEquals(expectedBody, actual.getBody());
+        assertEquals(expectedStatus, actual.getStatusCode());
     }
 
     @Test
