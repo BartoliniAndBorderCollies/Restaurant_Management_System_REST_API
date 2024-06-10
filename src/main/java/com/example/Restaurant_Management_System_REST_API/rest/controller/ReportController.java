@@ -4,7 +4,6 @@ import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderMenu
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
-import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
@@ -43,54 +42,11 @@ public class ReportController {
     //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping(value = "info/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    //MIME binary data type
+    @GetMapping(value = "info/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE) //MIME binary data type
     public ResponseEntity<StreamingResponseBody> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
-        List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
 
-        // The StreamingResponseBody is used to stream the response back to the client. This is particularly useful for large files which can’t be held in memory.
+        StreamingResponseBody stream = reportService.getInventoryItemByAmountGreaterThan(amount);
 
-        //Below I create an excel file using Apache POI library and then I write it to outputStream for the client to download it
-        StreamingResponseBody stream = outputStream -> {
-            Workbook workbook = new XSSFWorkbook(); // a top level object to create sheets and other operations
-            Sheet sheet = workbook.createSheet("InventoryItems");
-
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("ID");
-            headerRow.createCell(1).setCellValue("Name");
-            headerRow.createCell(2).setCellValue("Description");
-            headerRow.createCell(3).setCellValue("Price");
-            headerRow.createCell(4).setCellValue("Amount");
-            headerRow.createCell(5).setCellValue("Supplier Name");
-            headerRow.createCell(6).setCellValue("Supplier Street");
-            headerRow.createCell(7).setCellValue("Supplier House Number");
-            headerRow.createCell(8).setCellValue("Supplier City");
-            headerRow.createCell(9).setCellValue("Supplier Postal Code");
-            headerRow.createCell(10).setCellValue("Supplier Telephone Number");
-
-            // Fill data rows
-            for (int i = 0; i < items.size(); i++) {
-                InventoryItem item = items.get(i);
-                Supplier supplier = item.getSupplier();
-                ContactDetails contactDetails = supplier.getContactDetails();
-                Row row = sheet.createRow(i + 1);
-                row.createCell(0).setCellValue(item.getId());
-                row.createCell(1).setCellValue(item.getName());
-                row.createCell(2).setCellValue(item.getDescription());
-                row.createCell(3).setCellValue(item.getPrice());
-                row.createCell(4).setCellValue(item.getAmount());
-                row.createCell(5).setCellValue(contactDetails.getName());
-                row.createCell(6).setCellValue(contactDetails.getStreet());
-                row.createCell(7).setCellValue(contactDetails.getHouseNumber());
-                row.createCell(8).setCellValue(contactDetails.getCity());
-                row.createCell(9).setCellValue(contactDetails.getPostalCode());
-                row.createCell(10).setCellValue(contactDetails.getTelephoneNumber());
-            }
-
-            workbook.write(outputStream);
-            workbook.close();//I close cause I want to free memory resources, save the input data,
-        };
         //Because in headers I didn't have a Content-Disposition I got response a zip file with html and xml files.
         //When I add below I manually add the header Content-Disposition. In this case I got a response as report xls file
         HttpHeaders headers = new HttpHeaders();
