@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,8 +144,45 @@ public class ReportService {
         return reservationRepository.findByCustomer_ContactDetails_NameAndByStart(name, dateTimeFrom);
     }
 
-    public List<RestaurantOrder> getRestaurantOrderByOrderTimeRange(LocalDate startDate, LocalDate endDate) {
-        return restaurantOrderRepository.findByOrderTimeRange(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+    public StreamingResponseBody getRestaurantOrderByOrderTimeRange(LocalDate startDate, LocalDate endDate) {
+
+        List<RestaurantOrder> restaurantOrderByOrderTimeRange = restaurantOrderRepository.findByOrderTimeRange(startDate.atStartOfDay(), endDate.plusDays(1).atStartOfDay());
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("restaurantOrdersByTimeRange");
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Restaurant Order ID");
+            headerRow.createCell(1).setCellValue("Order time");
+            headerRow.createCell(2).setCellValue("Order status");
+            headerRow.createCell(3).setCellValue("Table id");
+            headerRow.createCell(4).setCellValue("Telephone number");
+            headerRow.createCell(5).setCellValue("Total amount to pay");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            // Fill data rows
+            for (int i = 0; i < restaurantOrderByOrderTimeRange.size(); i++) {
+                RestaurantOrder restaurantOrder = restaurantOrderByOrderTimeRange.get(i);
+                OrderStatus orderStatus = restaurantOrder.getOrderStatus();
+
+                Row row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(restaurantOrder.getId());
+                row.createCell(1).setCellValue(restaurantOrder.getOrderTime().format(formatter));
+                row.createCell(2).setCellValue(orderStatus.toString());
+                row.createCell(3).setCellValue(restaurantOrder.getTable().getId());
+                row.createCell(4).setCellValue(restaurantOrder.getTelephoneNumber());
+                row.createCell(5).setCellValue(restaurantOrder.getTotalAmountToPay());
+
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        };
+
+        return stream;
     }
 
     public List<RestaurantOrder> getRestaurantOrderByOrderStatus(OrderStatus orderStatus) {
