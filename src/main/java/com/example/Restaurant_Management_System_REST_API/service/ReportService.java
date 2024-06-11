@@ -185,8 +185,53 @@ public class ReportService {
         return stream;
     }
 
-    public List<RestaurantOrder> getRestaurantOrderByOrderStatus(OrderStatus orderStatus) {
-        return restaurantOrderRepository.findByOrderStatus(orderStatus);
+    public StreamingResponseBody getRestaurantOrderByOrderStatus(OrderStatus orderStatus) {
+
+        List<RestaurantOrder> restaurantOrderByOrderStatus = restaurantOrderRepository.findByOrderStatus(orderStatus);
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("restaurantOrdersByOrderStatus");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Restaurant Order ID");
+            headerRow.createCell(1).setCellValue("Order time");
+            headerRow.createCell(2).setCellValue("Order status");
+            headerRow.createCell(3).setCellValue("Table id");
+            headerRow.createCell(4).setCellValue("Telephone number");
+            headerRow.createCell(5).setCellValue("Total amount to pay");
+            headerRow.createCell(6).setCellValue("Menu record name");
+            headerRow.createCell(7).setCellValue("Portions amount");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            //fill the data
+            int rowIndex = 1;
+            for (int i = 0; i < restaurantOrderByOrderStatus.size(); i++) {
+                RestaurantOrder restaurantOrder = restaurantOrderByOrderStatus.get(i);
+                List<RestaurantOrderMenuRecord> restaurantOrders = restaurantOrder.getRestaurantOrders();
+
+                for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrders) {
+                    MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
+                    Double portionsAmount = eachRestaurantOrderMenuRecord.getPortionsAmount();
+
+                    Row row = sheet.createRow(rowIndex++);// this adds new row if restaurant order has multiple orders
+                    row.createCell(0).setCellValue(restaurantOrder.getId());
+                    row.createCell(1).setCellValue(restaurantOrder.getOrderTime().format(formatter));
+                    row.createCell(2).setCellValue(restaurantOrder.getOrderStatus().toString());
+                    row.createCell(3).setCellValue(restaurantOrder.getTable().getId());
+                    row.createCell(4).setCellValue(restaurantOrder.getTelephoneNumber());
+                    row.createCell(5).setCellValue(restaurantOrder.getTotalAmountToPay());
+                    row.createCell(6).setCellValue(menuRecord.getName());
+                    row.createCell(7).setCellValue(portionsAmount);
+                }
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        };
+
+        return stream;
     }
 
     public List<RestaurantOrder> getRestaurantOrderByTable(Long id) {
