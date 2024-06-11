@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
@@ -196,7 +197,7 @@ class InventoryItemControllerIntegrationTest {
     }
 
     @Test
-    public void delete_ShouldDeleteInventoryItemAndReturnResponseEntity_WhenIdIsGiven() {
+    public void delete_ShouldDeleteInventoryItemAndReturnResponseDTO_WhenIdIsGiven() {
 
         InventoryItem inventoryItem = new InventoryItem(null, 55, null,
                 "Pepper", "Black pepper", 0.19);
@@ -207,11 +208,12 @@ class InventoryItemControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderStaff)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String actualResponse = response.getResponseBody();
-                    assertEquals("Inventory item: " + inventoryItem.getName() + " has been deleted!", actualResponse);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                    ResponseDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals("Inventory item: " + inventoryItem.getName() + " has been deleted!", actualResponse.getMessage());
+                    assertEquals(HttpStatus.OK, actualResponse.getStatus());
                     Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findById(inventoryItem.getId());
                     assertTrue(optionalInventoryItem.isEmpty());
                 });
