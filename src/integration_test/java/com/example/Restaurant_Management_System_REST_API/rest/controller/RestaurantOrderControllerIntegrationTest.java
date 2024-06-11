@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderRequestDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderDTOs.RestaurantOrderResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
@@ -293,12 +294,12 @@ class RestaurantOrderControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String actualResponse = response.getResponseBody();
+                    ResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals("Order number " + restaurantOrder.getId() + " has been deleted!", actualResponse);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                    assertEquals("Order number " + restaurantOrder.getId() + " has been deleted!", actualResponse.getMessage());
+                    assertEquals(HttpStatus.OK, actualResponse.getStatus());
                     Optional<RestaurantOrder> shouldBeDeleted = restaurantOrderRepository.findById(restaurantOrder.getId());
                     assertTrue(shouldBeDeleted.isEmpty());
                 });
