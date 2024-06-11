@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -22,7 +23,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -100,8 +103,48 @@ public class ReportService {
     }
 
     //section for Customer reports
-    public List<Customer> getCustomerByRole(String roleName) {
-        return customerRepository.findByAuthorities_Authority_name(roleName);
+    public StreamingResponseBody getCustomerByRole(String roleName) {
+
+        List<Customer> customerByRole = customerRepository.findByAuthorities_Authority_name(roleName);
+
+        StreamingResponseBody stream = outputStream -> {
+
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("customersByRoles");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Customer ID");
+            headerRow.createCell(1).setCellValue("Creation time");
+            headerRow.createCell(2).setCellValue("Reservation ID");
+            headerRow.createCell(3).setCellValue("Customer name");
+            headerRow.createCell(4).setCellValue("Account enabled");
+            headerRow.createCell(5).setCellValue("Roles");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            for (int i = 0; i < customerByRole.size(); i++) {
+                Customer customer = customerByRole.get(i);
+                Collection<? extends GrantedAuthority> authorities = customer.getAuthorities();
+
+                // Collect all roles into a single string with commas
+                String roles = authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(", "));
+
+                Row row = sheet.createRow(i + 1);
+                row.createCell(0).setCellValue(customer.getId());
+                row.createCell(1).setCellValue(customer.getCreationTime().format(formatter));
+                if (customer.getReservation() != null)
+                    row.createCell(2).setCellValue(customer.getReservation().getId());
+                row.createCell(3).setCellValue(customer.getContactDetails().getName());
+                row.createCell(4).setCellValue(customer.getEnabled());
+                row.createCell(5).setCellValue(roles);
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        };
+
+        return stream;
     }
 
     public List<Customer> getCustomerWithReservation() {
