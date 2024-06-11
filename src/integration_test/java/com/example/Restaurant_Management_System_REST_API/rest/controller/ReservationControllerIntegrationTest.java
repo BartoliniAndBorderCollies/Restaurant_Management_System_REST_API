@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.ReservationDTOs.ReservationDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableReservationDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
@@ -265,20 +266,20 @@ class ReservationControllerIntegrationTest {
     }
 
     @Test
-    public void delete_ShouldDeleteReservationAndReturnResponseEntity_WhenReservationIdIsGiven() {
+    public void delete_ShouldDeleteReservationAndReturnResponseDTO_WhenReservationIdIsGiven() {
 
         webTestClient.delete()
                 .uri("/api/reservation/delete/" + reservation.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthStaffHeader)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String actualResponse = response.getResponseBody();
+                    ResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
                     assertEquals("Reservation: " + reservation.getName() + " has been successfully deleted!",
-                            actualResponse);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                            actualResponse.getMessage());
+                    assertEquals(HttpStatus.OK, actualResponse.getStatus());
 
                    Optional<Reservation> shouldBeDeleted = reservationRepository.findById(reservation.getId());
                    assertTrue(shouldBeDeleted.isEmpty());
