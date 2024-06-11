@@ -7,7 +7,6 @@ import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
-import com.example.Restaurant_Management_System_REST_API.service.RestaurantOrderMenuRecordService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +27,6 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
-    private final RestaurantOrderMenuRecordService restaurantOrderMenuRecordService;
 
     //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
@@ -124,7 +122,6 @@ public class ReportController {
     public ResponseEntity<StreamingResponseBody> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
 
         StreamingResponseBody stream = reportService.getRestaurantOrderByOrderStatus(orderStatus);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByOrderStatus.xlsx");
 
