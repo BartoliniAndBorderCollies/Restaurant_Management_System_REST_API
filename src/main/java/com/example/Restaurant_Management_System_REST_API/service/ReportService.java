@@ -370,11 +370,11 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("popularDishes");
 
             Row periodRow = sheet.createRow(0);
-            periodRow.createCell(0).setCellValue("Time period: " + timeFrom + " - " + timeTo);
+            createCell(periodRow, 0, "Time period: " + timeFrom + " - " + timeTo);
 
             Row headerRow = sheet.createRow(1);
-            headerRow.createCell(0).setCellValue("Dish name");
-            headerRow.createCell(1).setCellValue("Total portions ordered");
+            createCell(headerRow, 0, "Dish name");
+            createCell(headerRow, 1, "Total portions ordered");
 
             Map<String, Double> dishPortionsMap = new HashMap<>();
             for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrderMenuRecordList) {
@@ -390,8 +390,8 @@ public class ReportService {
             //below I iterate over each entry in the dishPortionsMap
             for (Map.Entry<String, Double> entry : dishPortionsMap.entrySet()) {
                 Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(entry.getKey());
-                row.createCell(1).setCellValue(entry.getValue());
+                createCell(row, 0, entry.getKey());
+                createCell(row, 1, entry.getValue());
             }
 
             workbook.write(outputStream);
