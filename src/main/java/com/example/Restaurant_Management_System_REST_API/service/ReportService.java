@@ -125,12 +125,12 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("customersByRoles");
 
             Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Customer ID");
-            headerRow.createCell(1).setCellValue("Creation time");
-            headerRow.createCell(2).setCellValue("Reservation ID");
-            headerRow.createCell(3).setCellValue("Customer name");
-            headerRow.createCell(4).setCellValue("Account enabled");
-            headerRow.createCell(5).setCellValue("Roles");
+            createCell(headerRow, 0, "Customer ID");
+            createCell(headerRow, 1, "Creation time");
+            createCell(headerRow, 2, "Reservation ID");
+            createCell(headerRow, 3, "Customer name");
+            createCell(headerRow, 4, "Account enabled");
+            createCell(headerRow, 5, "Roles");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -144,13 +144,13 @@ public class ReportService {
                         .collect(Collectors.joining(", "));
 
                 Row row = sheet.createRow(i + 1);
-                row.createCell(0).setCellValue(customer.getId());
-                row.createCell(1).setCellValue(customer.getCreationTime().format(formatter));
+                createCell(row, 0, customer.getId());
+                createCell(row, 1, customer.getCreationTime().format(formatter));
                 if (customer.getReservation() != null)
-                    row.createCell(2).setCellValue(customer.getReservation().getId());
-                row.createCell(3).setCellValue(customer.getContactDetails().getName());
-                row.createCell(4).setCellValue(customer.getEnabled());
-                row.createCell(5).setCellValue(roles);
+                    createCell(row, 2, customer.getReservation().getId());
+                createCell(row, 3, customer.getContactDetails().getName());
+                createCell(row, 4, customer.getEnabled());
+                createCell(row, 5, roles);
             }
             workbook.write(outputStream);
             workbook.close();
