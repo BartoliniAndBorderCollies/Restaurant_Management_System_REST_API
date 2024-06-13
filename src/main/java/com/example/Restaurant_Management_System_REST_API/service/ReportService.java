@@ -117,12 +117,12 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("customersByRoles");
 
             Row headerRow = sheet.createRow(0);
-            createCell(headerRow, 0, "Customer ID");
-            createCell(headerRow, 1, "Creation time");
-            createCell(headerRow, 2, "Reservation ID");
-            createCell(headerRow, 3, "Customer name");
-            createCell(headerRow, 4, "Account enabled");
-            createCell(headerRow, 5, "Roles");
+            stringSetter.setCellValue(headerRow, 0, "Customer ID");
+            stringSetter.setCellValue(headerRow, 1, "Creation time");
+            stringSetter.setCellValue(headerRow, 2, "Reservation ID");
+            stringSetter.setCellValue(headerRow, 3, "Customer name");
+            stringSetter.setCellValue(headerRow, 4, "Account enabled");
+            stringSetter.setCellValue(headerRow, 5, "Roles");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -136,13 +136,13 @@ public class ReportService {
                         .collect(Collectors.joining(", "));
 
                 Row row = sheet.createRow(i + 1);
-                createCell(row, 0, customer.getId());
-                createCell(row, 1, customer.getCreationTime().format(formatter));
+                longSetter.setCellValue(row, 0, customer.getId());
+                stringSetter.setCellValue(row, 1, customer.getCreationTime().format(formatter));
                 if (customer.getReservation() != null)
-                    createCell(row, 2, customer.getReservation().getId());
-                createCell(row, 3, customer.getContactDetails().getName());
-                createCell(row, 4, customer.getEnabled());
-                createCell(row, 5, roles);
+                    longSetter.setCellValue(row, 2, customer.getReservation().getId());
+                stringSetter.setCellValue(row, 3, customer.getContactDetails().getName());
+                stringSetter.setCellValue(row, 4, customer.getEnabled().toString());//TODO: is that fine Szymon? boolean to string?it works but is that according to standards?
+                stringSetter.setCellValue(row, 5, roles);
             }
             workbook.write(outputStream);
             workbook.close();
