@@ -9,6 +9,7 @@ import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.repository.*;
+import com.example.Restaurant_Management_System_REST_API.util.*;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,19 +40,10 @@ public class ReportService {
     private final TableRepository tableRepository;
     private final ModelMapper modelMapper;
     private final RestaurantOrderMenuRecordRepository restaurantOrderMenuRecordRepository;
-
-    private void createCell(Row row, int cellIndex, Object value) {
-        Cell cell = row.createCell(cellIndex);
-        if (value instanceof String) {
-            cell.setCellValue((String) value);
-        } else if (value instanceof Double) {
-            cell.setCellValue((Double) value);
-        } else if (value instanceof Integer) {
-            cell.setCellValue((Integer) value);
-        } else if (value instanceof Long) {
-            cell.setCellValue((Long) value);
-        }
-    }
+    private final CellValueSetter<String> stringSetter = new StringValueSetter();
+    private final CellValueSetter<Long> longSetter = new LongValueSetter();
+    private final CellValueSetter<Double> doubleSetter = new DoubleValueSetter();
+    private final CellValueSetter<Integer> integerSetter = new IntegerValueSetter();
 
     //section for InventoryItem reports
     public StreamingResponseBody getInventoryItemByAmountGreaterThan(double amount) {
