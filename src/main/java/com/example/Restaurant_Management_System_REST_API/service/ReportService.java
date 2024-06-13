@@ -59,35 +59,35 @@ public class ReportService {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            createCell(headerRow, 0, "ID");
-            createCell(headerRow, 1, "Name");
-            createCell(headerRow, 2, "Description");
-            createCell(headerRow, 3, "Price");
-            createCell(headerRow, 4, "Amount");
-            createCell(headerRow, 5, "Supplier Name");
-            createCell(headerRow, 6, "Supplier Street");
-            createCell(headerRow, 7, "Supplier House Number");
-            createCell(headerRow, 8, "Supplier City");
-            createCell(headerRow, 9, "Supplier Postal Code");
-            createCell(headerRow, 10, "Supplier Telephone Number");
+            stringSetter.setCellValue(headerRow, 0, "ID");
+            stringSetter.setCellValue(headerRow, 1, "Name");
+            stringSetter.setCellValue(headerRow, 2, "Description");
+            stringSetter.setCellValue(headerRow, 3, "Price");
+            stringSetter.setCellValue(headerRow, 4, "Amount");
+            stringSetter.setCellValue(headerRow, 5, "Supplier Name");
+            stringSetter.setCellValue(headerRow, 6, "Supplier Street");
+            stringSetter.setCellValue(headerRow, 7, "Supplier House Number");
+            stringSetter.setCellValue(headerRow, 8, "Supplier City");
+            stringSetter.setCellValue(headerRow, 9, "Supplier Postal Code");
+            stringSetter.setCellValue(headerRow, 10, "Supplier Telephone Number");
 
             // Fill data rows
             for (int i = 0; i < items.size(); i++) {
                 InventoryItem item = items.get(i);
                 Supplier supplier = item.getSupplier();
-                ContactDetails contactDetails = supplier.getContactDetails();
+                ContactDetails supplierContactDetails = supplier.getContactDetails();
                 Row row = sheet.createRow(i + 1);
-                createCell(row, 0, item.getId());
-                createCell(row, 1, item.getName());
-                createCell(row, 2, item.getAmount());
-                createCell(row, 3, contactDetails.getName());
-                createCell(row, 4, contactDetails.getStreet());
-                createCell(row, 5, contactDetails.getName());
-                createCell(row, 6, contactDetails.getStreet());
-                createCell(row, 7, contactDetails.getHouseNumber());
-                createCell(row, 8, contactDetails.getCity());
-                createCell(row, 9, contactDetails.getPostalCode());
-                createCell(row, 10, contactDetails.getTelephoneNumber());
+                longSetter.setCellValue(row, 0, item.getId());
+                stringSetter.setCellValue(row, 1, item.getName());
+                stringSetter.setCellValue(row, 2, item.getDescription());
+                doubleSetter.setCellValue(row, 3, item.getPrice());
+                doubleSetter.setCellValue(row, 4, item.getAmount());
+                stringSetter.setCellValue(row, 5, supplierContactDetails.getName());
+                stringSetter.setCellValue(row, 6, supplierContactDetails.getStreet());
+                stringSetter.setCellValue(row, 7, supplierContactDetails.getHouseNumber());
+                stringSetter.setCellValue(row, 8, supplierContactDetails.getCity());
+                stringSetter.setCellValue(row, 9, supplierContactDetails.getPostalCode());
+                stringSetter.setCellValue(row, 10, supplierContactDetails.getTelephoneNumber());
             }
 
             workbook.write(outputStream);
