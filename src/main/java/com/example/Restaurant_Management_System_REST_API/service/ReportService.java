@@ -11,7 +11,6 @@ import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.repository.*;
 import com.example.Restaurant_Management_System_REST_API.util.*;
 import lombok.AllArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -202,12 +201,12 @@ public class ReportService {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            createCell(headerRow, 0, "Restaurant Order ID");
-            createCell(headerRow, 1, "Order time");
-            createCell(headerRow, 2, "Order status");
-            createCell(headerRow, 3, "Table id");
-            createCell(headerRow, 4, "Telephone number");
-            createCell(headerRow, 5, "Total amount to pay");
+            stringSetter.setCellValue(headerRow, 0, "Restaurant Order ID");
+            stringSetter.setCellValue(headerRow, 1, "Order time");
+            stringSetter.setCellValue(headerRow, 2, "Order status");
+            stringSetter.setCellValue(headerRow, 3, "Table id");
+            stringSetter.setCellValue(headerRow, 4, "Telephone number");
+            stringSetter.setCellValue(headerRow, 5, "Total amount to pay");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -217,12 +216,12 @@ public class ReportService {
                 OrderStatus orderStatus = restaurantOrder.getOrderStatus();
 
                 Row row = sheet.createRow(i + 1);
-                createCell(row, 0, restaurantOrder.getId());
-                createCell(row, 1, restaurantOrder.getOrderTime().format(formatter));
-                createCell(row, 2, orderStatus.toString());
-                createCell(row, 3, restaurantOrder.getTable().getId());
-                createCell(row, 4, restaurantOrder.getTelephoneNumber());
-                createCell(row, 5, restaurantOrder.getTotalAmountToPay());
+                longSetter.setCellValue(row, 0, restaurantOrder.getId());
+                stringSetter.setCellValue(row, 1, restaurantOrder.getOrderTime().format(formatter));
+                stringSetter.setCellValue(row, 2, orderStatus.toString());
+                longSetter.setCellValue(row, 3, restaurantOrder.getTable().getId());
+                stringSetter.setCellValue(row, 4, restaurantOrder.getTelephoneNumber());
+                doubleSetter.setCellValue(row, 5, restaurantOrder.getTotalAmountToPay());
 
             }
             workbook.write(outputStream);
