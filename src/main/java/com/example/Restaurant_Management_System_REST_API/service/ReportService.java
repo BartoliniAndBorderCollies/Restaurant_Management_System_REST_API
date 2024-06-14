@@ -42,7 +42,6 @@ public class ReportService {
     private final CellValueSetter<String> stringSetter = new StringValueSetter();
     private final CellValueSetter<Long> longSetter = new LongValueSetter();
     private final CellValueSetter<Double> doubleSetter = new DoubleValueSetter();
-    private final CellValueSetter<Integer> integerSetter = new IntegerValueSetter();
 
     //section for InventoryItem reports
     public StreamingResponseBody getInventoryItemByAmountGreaterThan(double amount) {
@@ -360,11 +359,11 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("popularDishes");
 
             Row periodRow = sheet.createRow(0);
-            createCell(periodRow, 0, "Time period: " + timeFrom + " - " + timeTo);
+            stringSetter.setCellValue(periodRow, 0, "Time period: " + timeFrom + " - " + timeTo);
 
             Row headerRow = sheet.createRow(1);
-            createCell(headerRow, 0, "Dish name");
-            createCell(headerRow, 1, "Total portions ordered");
+            stringSetter.setCellValue(headerRow, 0, "Dish name");
+            stringSetter.setCellValue(headerRow, 1, "Total portions ordered");
 
             Map<String, Double> dishPortionsMap = new HashMap<>();
             for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrderMenuRecordList) {
@@ -380,8 +379,8 @@ public class ReportService {
             //below I iterate over each entry in the dishPortionsMap
             for (Map.Entry<String, Double> entry : dishPortionsMap.entrySet()) {
                 Row row = sheet.createRow(rowIndex++);
-                createCell(row, 0, entry.getKey());
-                createCell(row, 1, entry.getValue());
+                stringSetter.setCellValue(row, 0, entry.getKey());
+                doubleSetter.setCellValue(row, 1, entry.getValue());
             }
 
             workbook.write(outputStream);
