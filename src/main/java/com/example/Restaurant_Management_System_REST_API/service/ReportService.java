@@ -241,14 +241,14 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("restaurantOrdersByOrderStatus");
 
             Row headerRow = sheet.createRow(0);
-            createCell(headerRow, 0, "Restaurant Order ID");
-            createCell(headerRow, 1, "Order time");
-            createCell(headerRow, 2, "Order status");
-            createCell(headerRow, 3, "Table id");
-            createCell(headerRow, 4, "Telephone number");
-            createCell(headerRow, 5, "Total amount to pay");
-            createCell(headerRow, 6, "Menu record name");
-            createCell(headerRow, 7, "Portions amount");
+            stringSetter.setCellValue(headerRow, 0, "Restaurant Order ID");
+            stringSetter.setCellValue(headerRow, 1, "Order time");
+            stringSetter.setCellValue(headerRow, 2, "Order status");
+            stringSetter.setCellValue(headerRow, 3, "Table id");
+            stringSetter.setCellValue(headerRow, 4, "Telephone number");
+            stringSetter.setCellValue(headerRow, 5, "Total amount to pay");
+            stringSetter.setCellValue(headerRow, 6, "Menu record name");
+            stringSetter.setCellValue(headerRow, 7, "Portions amount");
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -263,15 +263,14 @@ public class ReportService {
                     Double portionsAmount = eachRestaurantOrderMenuRecord.getPortionsAmount();
 
                     Row row = sheet.createRow(rowIndex++);// this adds new row if restaurant order has multiple orders
-                    createCell(row, 0, restaurantOrder.getId());
-                    createCell(row, 1, restaurantOrder.getOrderTime().format(formatter));
-                    createCell(row, 2, restaurantOrder.getOrderStatus().toString());
-                    createCell(row, 3, restaurantOrder.getTable().getId());
-                    createCell(row, 4, restaurantOrder.getTelephoneNumber());
-                    createCell(row, 5, restaurantOrder.getTotalAmountToPay());
-                    createCell(row, 6, menuRecord.getName());
-                    createCell(row, 7, portionsAmount);
-
+                    longSetter.setCellValue(row, 0, restaurantOrder.getId());
+                    stringSetter.setCellValue(row, 1, restaurantOrder.getOrderTime().format(formatter));
+                    stringSetter.setCellValue(row, 2, restaurantOrder.getOrderStatus().toString());
+                    longSetter.setCellValue(row, 3, restaurantOrder.getTable().getId());
+                    stringSetter.setCellValue(row, 4, restaurantOrder.getTelephoneNumber());
+                    doubleSetter.setCellValue(row, 5, restaurantOrder.getTotalAmountToPay());
+                    stringSetter.setCellValue(row, 6, menuRecord.getName());
+                    doubleSetter.setCellValue(row, 7, portionsAmount);
                 }
             }
             workbook.write(outputStream);
