@@ -45,15 +45,15 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
     }
 
     private void checkIfThisInventoryItemWithThisSupplierAlreadyExists(InventoryItemDTORequest inventoryItemDTORequest) throws ObjectAlreadyExistException {
-        Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByName(inventoryItemDTORequest.getName());
+        Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByNameAndSupplierContactDetailsName(
+                inventoryItemDTORequest.getName(),
+                inventoryItemDTORequest.getSupplier().getContactDetails().getName()
+        );
+
         if (optionalInventoryItem.isPresent()) {
-            if (inventoryItemDTORequest.getName().equalsIgnoreCase(optionalInventoryItem.get().getName())
-                    && inventoryItemDTORequest.getSupplier().getContactDetails().getName().equalsIgnoreCase(optionalInventoryItem.get().getSupplier().getContactDetails().getName()))  {
-                throw new ObjectAlreadyExistException(InventoryItem.class);
-            }
+            throw new ObjectAlreadyExistException(InventoryItem.class);
         }
     }
-
 
     @Override
     public InventoryItemDTOResponse findById(Long id) throws NotFoundInDatabaseException {
