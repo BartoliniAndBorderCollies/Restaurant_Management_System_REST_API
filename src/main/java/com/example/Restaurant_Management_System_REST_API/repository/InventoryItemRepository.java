@@ -13,8 +13,7 @@ import java.util.Optional;
 public interface InventoryItemRepository extends CrudRepository<InventoryItem, Long> {
 
     Optional<InventoryItem> findByName(String name);
-    @Query("SELECT n FROM InventoryItem n WHERE n.name = :name")
-    List<InventoryItem> findByNameReturnList(@Param("name") String name);
+    Optional<InventoryItem> findByNameAndSupplierContactDetailsName(String name, String supplierName);
     List<InventoryItem> findByAmountGreaterThan(double amount);
     List<InventoryItem> findByAmountLessThan(double amount);
     List<InventoryItem> findBySupplier_ContactDetails_Name(String name);
