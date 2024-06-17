@@ -42,6 +42,34 @@ public class ReportService {
     private final CellValueSetter<String> stringSetter = new StringValueSetter();
     private final CellValueSetter<Long> longSetter = new LongValueSetter();
     private final CellValueSetter<Double> doubleSetter = new DoubleValueSetter();
+    private static final String ID = "ID";
+    private static final String NAME = "Name";
+    private static final String DESCRIPTION = "Description";
+    private static final String PRICE = "Price";
+    private static final String AMOUNT = "Amount";
+    private static final String SUPPLIER_NAME = "Supplier name";
+    private static final String SUPPLIER_STREET = "Supplier street";
+    private static final String SUPPLIER_HOUSE_NUMBER = "Supplier house number";
+    private static final String SUPPLIER_CITY = "Supplier city";
+    private static final String SUPPLIER_POSTAL_CODE = "Supplier postal code";
+    private static final String SUPPLIER_TELEPHONE_NUMBER = "Supplier telephone number";
+    private static final String CUSTOMER_ID = "Customer ID";
+    private static final String CUSTOMER_NAME = "Customer name";
+    private static final String CUSTOMER_TELEPHONE_NUMBER = "Telephone number";
+    private static final String CREATION_TIME = "Creation time";
+    private static final String RESERVATION_ID = "Reservation ID";
+    private static final String ORDER_TIME = "Order time";
+    private static final String ORDER_STATUS = "Order status";
+    private static final String ORDER_TOTAL_AMOUNT_TO_PAY = "Total amount to pay";
+    private static final String RESTAURANT_ORDER_ID = "Restaurant Order ID";
+    private static final String TABLE_ID = "Table ID";
+    private static final String MENU_RECORD_NAME = "Menu record name";
+    private static final String ACCOUNT_ENABLED = "Account Enabled";
+    private static final String PORTIONS_AMOUNT = "Portions amount";
+    private static final String ROLES = "Roles";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+
 
     //section for InventoryItem reports
     public StreamingResponseBody getInventoryItemByAmountGreaterThan(double amount) {
@@ -57,17 +85,17 @@ public class ReportService {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, "ID");
-            stringSetter.setCellValue(headerRow, 1, "Name");
-            stringSetter.setCellValue(headerRow, 2, "Description");
-            stringSetter.setCellValue(headerRow, 3, "Price");
-            stringSetter.setCellValue(headerRow, 4, "Amount");
-            stringSetter.setCellValue(headerRow, 5, "Supplier Name");
-            stringSetter.setCellValue(headerRow, 6, "Supplier Street");
-            stringSetter.setCellValue(headerRow, 7, "Supplier House Number");
-            stringSetter.setCellValue(headerRow, 8, "Supplier City");
-            stringSetter.setCellValue(headerRow, 9, "Supplier Postal Code");
-            stringSetter.setCellValue(headerRow, 10, "Supplier Telephone Number");
+            stringSetter.setCellValue(headerRow, 0, ID);
+            stringSetter.setCellValue(headerRow, 1, NAME);
+            stringSetter.setCellValue(headerRow, 2, DESCRIPTION);
+            stringSetter.setCellValue(headerRow, 3, PRICE);
+            stringSetter.setCellValue(headerRow, 4, AMOUNT);
+            stringSetter.setCellValue(headerRow, 5, SUPPLIER_NAME);
+            stringSetter.setCellValue(headerRow, 6, SUPPLIER_STREET);
+            stringSetter.setCellValue(headerRow, 7, SUPPLIER_HOUSE_NUMBER);
+            stringSetter.setCellValue(headerRow, 8, SUPPLIER_CITY);
+            stringSetter.setCellValue(headerRow, 9, SUPPLIER_POSTAL_CODE);
+            stringSetter.setCellValue(headerRow, 10, SUPPLIER_TELEPHONE_NUMBER);
 
             // Fill data rows
             for (int i = 0; i < items.size(); i++) {
@@ -115,14 +143,14 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("customersByRoles");
 
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, "Customer ID");
-            stringSetter.setCellValue(headerRow, 1, "Creation time");
-            stringSetter.setCellValue(headerRow, 2, "Reservation ID");
-            stringSetter.setCellValue(headerRow, 3, "Customer name");
-            stringSetter.setCellValue(headerRow, 4, "Account enabled");
-            stringSetter.setCellValue(headerRow, 5, "Roles");
+            stringSetter.setCellValue(headerRow, 0, CUSTOMER_ID);
+            stringSetter.setCellValue(headerRow, 1, CREATION_TIME);
+            stringSetter.setCellValue(headerRow, 2, RESERVATION_ID);
+            stringSetter.setCellValue(headerRow, 3, CUSTOMER_NAME);
+            stringSetter.setCellValue(headerRow, 4, ACCOUNT_ENABLED);
+            stringSetter.setCellValue(headerRow, 5, ROLES);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
             for (int i = 0; i < customerByRole.size(); i++) {
                 Customer customer = customerByRole.get(i);
@@ -200,14 +228,14 @@ public class ReportService {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, "Restaurant Order ID");
-            stringSetter.setCellValue(headerRow, 1, "Order time");
-            stringSetter.setCellValue(headerRow, 2, "Order status");
-            stringSetter.setCellValue(headerRow, 3, "Table id");
-            stringSetter.setCellValue(headerRow, 4, "Telephone number");
-            stringSetter.setCellValue(headerRow, 5, "Total amount to pay");
+            stringSetter.setCellValue(headerRow, 0, RESTAURANT_ORDER_ID);
+            stringSetter.setCellValue(headerRow, 1, ORDER_TIME);
+            stringSetter.setCellValue(headerRow, 2, ORDER_STATUS);
+            stringSetter.setCellValue(headerRow, 3, TABLE_ID);
+            stringSetter.setCellValue(headerRow, 4, CUSTOMER_TELEPHONE_NUMBER);
+            stringSetter.setCellValue(headerRow, 5, ORDER_TOTAL_AMOUNT_TO_PAY);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
             // Fill data rows
             for (int i = 0; i < restaurantOrderByOrderTimeRange.size(); i++) {
@@ -240,16 +268,16 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("restaurantOrdersByOrderStatus");
 
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, "Restaurant Order ID");
-            stringSetter.setCellValue(headerRow, 1, "Order time");
-            stringSetter.setCellValue(headerRow, 2, "Order status");
-            stringSetter.setCellValue(headerRow, 3, "Table id");
-            stringSetter.setCellValue(headerRow, 4, "Telephone number");
-            stringSetter.setCellValue(headerRow, 5, "Total amount to pay");
-            stringSetter.setCellValue(headerRow, 6, "Menu record name");
-            stringSetter.setCellValue(headerRow, 7, "Portions amount");
+            stringSetter.setCellValue(headerRow, 0, RESTAURANT_ORDER_ID);
+            stringSetter.setCellValue(headerRow, 1, ORDER_TIME);
+            stringSetter.setCellValue(headerRow, 2, ORDER_STATUS);
+            stringSetter.setCellValue(headerRow, 3, TABLE_ID);
+            stringSetter.setCellValue(headerRow, 4, CUSTOMER_TELEPHONE_NUMBER);
+            stringSetter.setCellValue(headerRow, 5, ORDER_TOTAL_AMOUNT_TO_PAY);
+            stringSetter.setCellValue(headerRow, 6, MENU_RECORD_NAME);
+            stringSetter.setCellValue(headerRow, 7, PORTIONS_AMOUNT);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
             //fill the data
             int rowIndex = 1;
@@ -362,8 +390,8 @@ public class ReportService {
             stringSetter.setCellValue(periodRow, 0, "Time period: " + dateFrom + " - " + dateTo);
 
             Row headerRow = sheet.createRow(1);
-            stringSetter.setCellValue(headerRow, 0, "Dish name");
-            stringSetter.setCellValue(headerRow, 1, "Total portions ordered");
+            stringSetter.setCellValue(headerRow, 0, MENU_RECORD_NAME);
+            stringSetter.setCellValue(headerRow, 1, PORTIONS_AMOUNT);
 
             Map<String, Double> dishPortionsMap = new HashMap<>();
             for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrderMenuRecordList) {
