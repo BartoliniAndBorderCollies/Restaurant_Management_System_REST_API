@@ -348,10 +348,10 @@ public class ReportService {
         return restaurantOrderMenuRecordDTO;
     }
 
-    public StreamingResponseBody getRestaurantOrderMenuRecordInTimePeriod(LocalDate timeFrom, LocalDate timeTo) {
+    public StreamingResponseBody getRestaurantOrderMenuRecordInTimePeriod(LocalDate dateFrom, LocalDate dateTo) {
 
-        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = restaurantOrderMenuRecordRepository.findRestaurantOrderMenuRecordByTimePeriod(timeFrom.atStartOfDay(),
-                timeTo.plusDays(1).atStartOfDay());
+        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = restaurantOrderMenuRecordRepository.findRestaurantOrderMenuRecordByTimePeriod(dateFrom.atStartOfDay(),
+                dateTo.plusDays(1).atStartOfDay());
 
         StreamingResponseBody stream = outputStream -> {
 
@@ -359,7 +359,7 @@ public class ReportService {
             Sheet sheet = workbook.createSheet("popularDishes");
 
             Row periodRow = sheet.createRow(0);
-            stringSetter.setCellValue(periodRow, 0, "Time period: " + timeFrom + " - " + timeTo);
+            stringSetter.setCellValue(periodRow, 0, "Time period: " + dateFrom + " - " + dateTo);
 
             Row headerRow = sheet.createRow(1);
             stringSetter.setCellValue(headerRow, 0, "Dish name");
