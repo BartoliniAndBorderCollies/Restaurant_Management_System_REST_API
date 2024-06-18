@@ -80,22 +80,19 @@ public class ReportService {
 
         //Below I create an excel file using Apache POI library and then I write it to outputStream for the client to download it
         StreamingResponseBody stream = outputStream -> {
+
             Workbook workbook = new XSSFWorkbook(); // a top level object to create sheets and other operations
-            Sheet sheet = workbook.createSheet("InventoryItems");
+            Sheet sheet = workbook.createSheet(REPORT_INVENTORY_ITEMS);
+
+            String[] headers = {ID, NAME, DESCRIPTION, PRICE, AMOUNT, SUPPLIER_NAME, SUPPLIER_STREET, SUPPLIER_HOUSE_NUMBER,
+            SUPPLIER_CITY, SUPPLIER_POSTAL_CODE, SUPPLIER_TELEPHONE_NUMBER};
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, ID);
-            stringSetter.setCellValue(headerRow, 1, NAME);
-            stringSetter.setCellValue(headerRow, 2, DESCRIPTION);
-            stringSetter.setCellValue(headerRow, 3, PRICE);
-            stringSetter.setCellValue(headerRow, 4, AMOUNT);
-            stringSetter.setCellValue(headerRow, 5, SUPPLIER_NAME);
-            stringSetter.setCellValue(headerRow, 6, SUPPLIER_STREET);
-            stringSetter.setCellValue(headerRow, 7, SUPPLIER_HOUSE_NUMBER);
-            stringSetter.setCellValue(headerRow, 8, SUPPLIER_CITY);
-            stringSetter.setCellValue(headerRow, 9, SUPPLIER_POSTAL_CODE);
-            stringSetter.setCellValue(headerRow, 10, SUPPLIER_TELEPHONE_NUMBER);
+
+            for (int i =0; i< headers.length; i ++) {
+                stringSetter.setCellValue(headerRow, i, headers[i]);
+            }
 
             // Fill data rows
             for (int i = 0; i < items.size(); i++) {
