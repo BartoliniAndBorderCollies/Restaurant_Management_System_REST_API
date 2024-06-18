@@ -116,7 +116,6 @@ public class ReportService {
                 stringSetter.setCellValue(row, 9, supplierContactDetails.getPostalCode());
                 stringSetter.setCellValue(row, 10, supplierContactDetails.getTelephoneNumber());
             }
-
             workbook.write(outputStream);
             workbook.close();//I close cause I want to free memory resources, save the input data,
         };
@@ -244,7 +243,6 @@ public class ReportService {
                 longSetter.setCellValue(row, 3, restaurantOrder.getTable().getId());
                 stringSetter.setCellValue(row, 4, restaurantOrder.getTelephoneNumber());
                 doubleSetter.setCellValue(row, 5, restaurantOrder.getTotalAmountToPay());
-
             }
             workbook.write(outputStream);
             workbook.close();
@@ -267,7 +265,6 @@ public class ReportService {
                     ORDER_TOTAL_AMOUNT_TO_PAY, MENU_RECORD_NAME, PORTIONS_AMOUNT};
             for(int i = 0; i< headers.length; i++)
                 stringSetter.setCellValue(headerRow, i, headers[i]);
-
 
             //fill the data
             int rowIndex = 1;
@@ -362,7 +359,6 @@ public class ReportService {
         restaurantOrderMenuRecordDTO.setMenuRecord(menuRecordForOrderDTOList);
         restaurantOrderMenuRecordDTO.setTotalAmountToPay(restaurantOrder.getTotalAmountToPay());
 
-
         return restaurantOrderMenuRecordDTO;
     }
 
@@ -400,7 +396,6 @@ public class ReportService {
                 stringSetter.setCellValue(row, 0, entry.getKey());
                 doubleSetter.setCellValue(row, 1, entry.getValue());
             }
-
             workbook.write(outputStream);
             workbook.close();
         };
