@@ -228,12 +228,9 @@ public class ReportService {
 
             // Create header row
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, RESTAURANT_ORDER_ID);
-            stringSetter.setCellValue(headerRow, 1, ORDER_TIME);
-            stringSetter.setCellValue(headerRow, 2, ORDER_STATUS);
-            stringSetter.setCellValue(headerRow, 3, TABLE_ID);
-            stringSetter.setCellValue(headerRow, 4, CUSTOMER_TELEPHONE_NUMBER);
-            stringSetter.setCellValue(headerRow, 5, ORDER_TOTAL_AMOUNT_TO_PAY);
+            String [] headers = {RESTAURANT_ORDER_ID, ORDER_TIME, ORDER_STATUS, TABLE_ID, CUSTOMER_TELEPHONE_NUMBER, ORDER_TOTAL_AMOUNT_TO_PAY};
+            for(int i = 0; i< headers.length; i++)
+                stringSetter.setCellValue(headerRow, i, headers[i]);
 
             // Fill data rows
             for (int i = 0; i < restaurantOrderByOrderTimeRange.size(); i++) {
