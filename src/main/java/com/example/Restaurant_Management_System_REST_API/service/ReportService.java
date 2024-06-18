@@ -142,16 +142,15 @@ public class ReportService {
             Workbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet(REPORT_CUSTOMER_BY_ROLES);
 
+            // Create header row
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, CUSTOMER_ID);
-            stringSetter.setCellValue(headerRow, 1, CREATION_TIME);
-            stringSetter.setCellValue(headerRow, 2, RESERVATION_ID);
-            stringSetter.setCellValue(headerRow, 3, CUSTOMER_NAME);
-            stringSetter.setCellValue(headerRow, 4, ACCOUNT_ENABLED);
-            stringSetter.setCellValue(headerRow, 5, ROLES);
+            String [] headers = {CUSTOMER_ID, CREATION_TIME, RESERVATION_ID, CUSTOMER_NAME, ACCOUNT_ENABLED, ROLES};
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+            for(int i = 0; i<headers.length; i++) {
+                stringSetter.setCellValue(headerRow, i, headers[i]);
+            }
 
+            // Fill data rows
             for (int i = 0; i < customerByRole.size(); i++) {
                 Customer customer = customerByRole.get(i);
                 Collection<? extends GrantedAuthority> authorities = customer.getAuthorities();
