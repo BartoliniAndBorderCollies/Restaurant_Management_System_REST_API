@@ -42,6 +42,7 @@ public class ReportService {
     private final CellValueSetter<String> stringSetter = new StringValueSetter();
     private final CellValueSetter<Long> longSetter = new LongValueSetter();
     private final CellValueSetter<Double> doubleSetter = new DoubleValueSetter();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
     private static final String ID = "ID";
     private static final String NAME = "Name";
     private static final String DESCRIPTION = "Description";
@@ -234,8 +235,6 @@ public class ReportService {
             stringSetter.setCellValue(headerRow, 4, CUSTOMER_TELEPHONE_NUMBER);
             stringSetter.setCellValue(headerRow, 5, ORDER_TOTAL_AMOUNT_TO_PAY);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-
             // Fill data rows
             for (int i = 0; i < restaurantOrderByOrderTimeRange.size(); i++) {
                 RestaurantOrder restaurantOrder = restaurantOrderByOrderTimeRange.get(i);
@@ -275,8 +274,6 @@ public class ReportService {
             stringSetter.setCellValue(headerRow, 5, ORDER_TOTAL_AMOUNT_TO_PAY);
             stringSetter.setCellValue(headerRow, 6, MENU_RECORD_NAME);
             stringSetter.setCellValue(headerRow, 7, PORTIONS_AMOUNT);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
             //fill the data
             int rowIndex = 1;
