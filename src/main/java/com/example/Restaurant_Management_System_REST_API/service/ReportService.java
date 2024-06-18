@@ -68,8 +68,11 @@ public class ReportService {
     private static final String PORTIONS_AMOUNT = "Portions amount";
     private static final String ROLES = "Roles";
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-
+    private static final String REPORT_INVENTORY_ITEMS = "Inventory items";
+    private static final String REPORT_CUSTOMER_BY_ROLES = "Customer by roles";
+    private static final String REPORT_RESTAURANT_ORDERS_BY_TIME_RANGE = "Restaurant orders by time range";
+    private static final String REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS = "Restaurant orders by order status";
+    private static final String REPORT_POPULAR_DISHES = "Popular dishes";
 
     //section for InventoryItem reports
     public StreamingResponseBody getInventoryItemByAmountGreaterThan(double amount) {
@@ -137,7 +140,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("customersByRoles");
+            Sheet sheet = workbook.createSheet(REPORT_CUSTOMER_BY_ROLES);
 
             Row headerRow = sheet.createRow(0);
             stringSetter.setCellValue(headerRow, 0, CUSTOMER_ID);
@@ -164,7 +167,7 @@ public class ReportService {
                 if (customer.getReservation() != null)
                     longSetter.setCellValue(row, 2, customer.getReservation().getId());
                 stringSetter.setCellValue(row, 3, customer.getContactDetails().getName());
-                stringSetter.setCellValue(row, 4, customer.getEnabled().toString());//TODO: is that fine Szymon? boolean to string?it works but is that according to standards?
+                stringSetter.setCellValue(row, 4, customer.getEnabled().toString());
                 stringSetter.setCellValue(row, 5, roles);
             }
             workbook.write(outputStream);
@@ -221,7 +224,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("restaurantOrdersByTimeRange");
+            Sheet sheet = workbook.createSheet(REPORT_RESTAURANT_ORDERS_BY_TIME_RANGE);
 
             // Create header row
             Row headerRow = sheet.createRow(0);
@@ -262,7 +265,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("restaurantOrdersByOrderStatus");
+            Sheet sheet = workbook.createSheet(REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS);
 
             Row headerRow = sheet.createRow(0);
             stringSetter.setCellValue(headerRow, 0, RESTAURANT_ORDER_ID);
@@ -381,7 +384,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("popularDishes");
+            Sheet sheet = workbook.createSheet(REPORT_POPULAR_DISHES);
 
             Row periodRow = sheet.createRow(0);
             stringSetter.setCellValue(periodRow, 0, "Time period: " + dateFrom + " - " + dateTo);
