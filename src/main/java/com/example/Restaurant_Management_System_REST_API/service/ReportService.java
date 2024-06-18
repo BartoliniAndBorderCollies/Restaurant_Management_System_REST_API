@@ -263,14 +263,11 @@ public class ReportService {
             Sheet sheet = workbook.createSheet(REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS);
 
             Row headerRow = sheet.createRow(0);
-            stringSetter.setCellValue(headerRow, 0, RESTAURANT_ORDER_ID);
-            stringSetter.setCellValue(headerRow, 1, ORDER_TIME);
-            stringSetter.setCellValue(headerRow, 2, ORDER_STATUS);
-            stringSetter.setCellValue(headerRow, 3, TABLE_ID);
-            stringSetter.setCellValue(headerRow, 4, CUSTOMER_TELEPHONE_NUMBER);
-            stringSetter.setCellValue(headerRow, 5, ORDER_TOTAL_AMOUNT_TO_PAY);
-            stringSetter.setCellValue(headerRow, 6, MENU_RECORD_NAME);
-            stringSetter.setCellValue(headerRow, 7, PORTIONS_AMOUNT);
+            String [] headers = {RESTAURANT_ORDER_ID, ORDER_TIME, ORDER_STATUS, TABLE_ID, CUSTOMER_TELEPHONE_NUMBER,
+                    ORDER_TOTAL_AMOUNT_TO_PAY, MENU_RECORD_NAME, PORTIONS_AMOUNT};
+            for(int i = 0; i< headers.length; i++)
+                stringSetter.setCellValue(headerRow, i, headers[i]);
+
 
             //fill the data
             int rowIndex = 1;
