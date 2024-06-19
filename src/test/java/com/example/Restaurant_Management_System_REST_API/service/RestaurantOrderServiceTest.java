@@ -188,7 +188,7 @@ class RestaurantOrderServiceTest {
     }
 
     @Test
-    public void delete_ShouldReturnOkResponse_WhenRestaurantOrderExists()
+    public void delete_ShouldReturnResponseDTOAndOkResponseWithMessage_WhenRestaurantOrderExists()
             throws NotFoundInDatabaseException {
         //Arrange
         when(restaurantOrderRepository.findById(id)).thenReturn(Optional.ofNullable(restaurantOrder));

@@ -50,7 +50,7 @@ class TableServiceTest {
     }
 
     @Test
-    public void add_ShouldMapAndSaveAndMapAgainAndReturn_WhenTableDTOIsGiven() {
+    public void add_ShouldMapAndSaveAndMapAgainAndReturnTableDTO_WhenTableDTOIsGiven() {
         //Arrange
         when(modelMapper.map(tableDTO, Table.class)).thenReturn(table);
         when(tableRepository.save(table)).thenReturn(table);
@@ -101,7 +101,7 @@ class TableServiceTest {
     }
 
     @Test
-    public void deleteById_ShouldInteractWithDependenciesCorrectlyAndReturnResponseEntity_WhenTableIdIsGiven()
+    public void deleteById_ShouldFindDeleteAndReturnResponseDTO_WhenTableIdIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
         Table tableToDelete = new Table(1L, true, null, null);

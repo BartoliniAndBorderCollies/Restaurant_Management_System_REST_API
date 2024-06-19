@@ -71,7 +71,7 @@ class InventoryItemServiceTest {
     }
 
     @Test
-    public void create_ShouldInteractWithDependenciesCorrectly_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException,
+    public void create_ShouldMapSaveMapAgainAndReturnInventoryItemDTOResponse_WhenInventoryItemDTORequestIsGiven() throws NotFoundInDatabaseException,
             ObjectAlreadyExistException {
         //Arrange
         InventoryItemDTORequest inventoryItemDTORequest = mock(InventoryItemDTORequest.class);

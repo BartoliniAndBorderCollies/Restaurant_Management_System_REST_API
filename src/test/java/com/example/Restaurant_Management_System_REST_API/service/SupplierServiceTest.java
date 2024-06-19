@@ -55,7 +55,7 @@ class SupplierServiceTest {
     }
 
     @Test
-    public void add_ShouldInteractWithDependenciesCorrectly_WhenSupplierDTORequestIsGiven() throws ObjectAlreadyExistException {
+    public void add_ShouldMapFindSaveMapAgainAndReturnDTO_WhenSupplierDTORequestIsGiven() throws ObjectAlreadyExistException {
         //Arrange
         when(modelMapper.map(supplierDTO, Supplier.class)).thenReturn(supplier);
         when(supplierRepository.findByContactDetails_NameAndContactDetails_Street(supplier.getContactDetails().getName(),
