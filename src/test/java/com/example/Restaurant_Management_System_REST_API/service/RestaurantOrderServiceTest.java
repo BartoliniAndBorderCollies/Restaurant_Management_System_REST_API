@@ -41,6 +41,7 @@ class RestaurantOrderServiceTest {
     private static final String INVALID_MEAL_NAME = "Not valid meal";
     private static final Double INVALID_PORTIONS_AMOUNT = 1.0;
     private static final Long NON_EXISTENT_ORDER_ID = 999L;
+    private static final Double IMAGINABLE_PRICE = 100.0;
 
     @BeforeEach
     public void setUpEnvironment() {
@@ -82,7 +83,8 @@ class RestaurantOrderServiceTest {
     private RestaurantOrderRequestDTO createRestaurantOrderDTOWithInvalidMeal() {
         RestaurantOrderRequestDTO restaurantOrderDTO = new RestaurantOrderRequestDTO();
 
-        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(INVALID_MEAL_ID, INVALID_MEAL_NAME, INVALID_PORTIONS_AMOUNT)));
+        restaurantOrderDTO.setMenuRecords(Arrays.asList(new MenuRecordForOrderDTO(INVALID_MEAL_ID, INVALID_MEAL_NAME,
+                INVALID_PORTIONS_AMOUNT, IMAGINABLE_PRICE)));
         return restaurantOrderDTO;
     }
 
