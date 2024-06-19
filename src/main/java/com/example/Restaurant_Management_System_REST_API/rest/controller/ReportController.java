@@ -4,33 +4,22 @@ import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderMenu
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
-import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
 import com.example.Restaurant_Management_System_REST_API.model.entity.*;
 import com.example.Restaurant_Management_System_REST_API.service.ReportService;
-import com.example.Restaurant_Management_System_REST_API.service.RestaurantOrderMenuRecordService;
 import lombok.AllArgsConstructor;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/")
@@ -38,59 +27,15 @@ import java.util.stream.Collectors;
 public class ReportController {
 
     private final ReportService reportService;
-    private final RestaurantOrderMenuRecordService restaurantOrderMenuRecordService;
 
     //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping(value = "info/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    //MIME binary data type
+    @GetMapping(value = "info/inventory/stockAmount/greaterThan", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE) //MIME binary data type
     public ResponseEntity<StreamingResponseBody> getInventoryItemByAmountGreaterThan(@RequestParam("amount") double amount) {
-        List<InventoryItem> items = reportService.getInventoryItemByAmountGreaterThan(amount);
 
-        // The StreamingResponseBody is used to stream the response back to the client. This is particularly useful for large files which can’t be held in memory.
+        StreamingResponseBody stream = reportService.getInventoryItemByAmountGreaterThan(amount);
 
-        //Below I create an excel file using Apache POI library and then I write it to outputStream for the client to download it
-        StreamingResponseBody stream = outputStream -> {
-            Workbook workbook = new XSSFWorkbook(); // a top level object to create sheets and other operations
-            Sheet sheet = workbook.createSheet("InventoryItems");
-
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("ID");
-            headerRow.createCell(1).setCellValue("Name");
-            headerRow.createCell(2).setCellValue("Description");
-            headerRow.createCell(3).setCellValue("Price");
-            headerRow.createCell(4).setCellValue("Amount");
-            headerRow.createCell(5).setCellValue("Supplier Name");
-            headerRow.createCell(6).setCellValue("Supplier Street");
-            headerRow.createCell(7).setCellValue("Supplier House Number");
-            headerRow.createCell(8).setCellValue("Supplier City");
-            headerRow.createCell(9).setCellValue("Supplier Postal Code");
-            headerRow.createCell(10).setCellValue("Supplier Telephone Number");
-
-            // Fill data rows
-            for (int i = 0; i < items.size(); i++) {
-                InventoryItem item = items.get(i);
-                Supplier supplier = item.getSupplier();
-                ContactDetails contactDetails = supplier.getContactDetails();
-                Row row = sheet.createRow(i + 1);
-                row.createCell(0).setCellValue(item.getId());
-                row.createCell(1).setCellValue(item.getName());
-                row.createCell(2).setCellValue(item.getDescription());
-                row.createCell(3).setCellValue(item.getPrice());
-                row.createCell(4).setCellValue(item.getAmount());
-                row.createCell(5).setCellValue(contactDetails.getName());
-                row.createCell(6).setCellValue(contactDetails.getStreet());
-                row.createCell(7).setCellValue(contactDetails.getHouseNumber());
-                row.createCell(8).setCellValue(contactDetails.getCity());
-                row.createCell(9).setCellValue(contactDetails.getPostalCode());
-                row.createCell(10).setCellValue(contactDetails.getTelephoneNumber());
-            }
-
-            workbook.write(outputStream);
-            workbook.close();//I close cause I want to free memory resources, save the input data,
-        };
         //Because in headers I didn't have a Content-Disposition I got response a zip file with html and xml files.
         //When I add below I manually add the header Content-Disposition. In this case I got a response as report xls file
         HttpHeaders headers = new HttpHeaders();
@@ -165,41 +110,8 @@ public class ReportController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
-        List<RestaurantOrder> restaurantOrderByOrderTimeRange = reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
+        StreamingResponseBody stream = reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
 
-        StreamingResponseBody stream = outputStream -> {
-
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("restaurantOrdersByTimeRange");
-
-            // Create header row
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Restaurant Order ID");
-            headerRow.createCell(1).setCellValue("Order time");
-            headerRow.createCell(2).setCellValue("Order status");
-            headerRow.createCell(3).setCellValue("Table id");
-            headerRow.createCell(4).setCellValue("Telephone number");
-            headerRow.createCell(5).setCellValue("Total amount to pay");
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-            // Fill data rows
-            for (int i = 0; i < restaurantOrderByOrderTimeRange.size(); i++) {
-                RestaurantOrder restaurantOrder = restaurantOrderByOrderTimeRange.get(i);
-                OrderStatus orderStatus = restaurantOrder.getOrderStatus();
-
-                Row row = sheet.createRow(i + 1);
-                row.createCell(0).setCellValue(restaurantOrder.getId());
-                row.createCell(1).setCellValue(restaurantOrder.getOrderTime().format(formatter));
-                row.createCell(2).setCellValue(orderStatus.toString());
-                row.createCell(3).setCellValue(restaurantOrder.getTable().getId());
-                row.createCell(4).setCellValue(restaurantOrder.getTelephoneNumber());
-                row.createCell(5).setCellValue(restaurantOrder.getTotalAmountToPay());
-
-            }
-            workbook.write(outputStream);
-            workbook.close();
-        };
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByTimeRange.xlsx");
 
@@ -209,49 +121,7 @@ public class ReportController {
     @GetMapping(value = "info/restaurantOrder/findByOrderStatus", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<StreamingResponseBody> getRestaurantOrderByOrderStatus(@RequestParam("order_status") OrderStatus orderStatus) {
 
-        List<RestaurantOrder> restaurantOrderByOrderStatus = reportService.getRestaurantOrderByOrderStatus(orderStatus);
-
-        StreamingResponseBody stream = outputStream -> {
-
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("restaurantOrdersByOrderStatus");
-
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Restaurant Order ID");
-            headerRow.createCell(1).setCellValue("Order time");
-            headerRow.createCell(2).setCellValue("Order status");
-            headerRow.createCell(3).setCellValue("Table id");
-            headerRow.createCell(4).setCellValue("Telephone number");
-            headerRow.createCell(5).setCellValue("Total amount to pay");
-            headerRow.createCell(6).setCellValue("Menu record name");
-            headerRow.createCell(7).setCellValue("Portions amount");
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-            //fill the data
-            int rowIndex = 1;
-            for (int i = 0; i < restaurantOrderByOrderStatus.size(); i++) {
-                RestaurantOrder restaurantOrder = restaurantOrderByOrderStatus.get(i);
-                List<RestaurantOrderMenuRecord> restaurantOrders = restaurantOrder.getRestaurantOrders();
-
-                for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrders) {
-                    MenuRecord menuRecord = eachRestaurantOrderMenuRecord.getMenuRecord();
-                    Double portionsAmount = eachRestaurantOrderMenuRecord.getPortionsAmount();
-
-                    Row row = sheet.createRow(rowIndex++);// this adds new row if restaurant order has multiple orders
-                    row.createCell(0).setCellValue(restaurantOrder.getId());
-                    row.createCell(1).setCellValue(restaurantOrder.getOrderTime().format(formatter));
-                    row.createCell(2).setCellValue(restaurantOrder.getOrderStatus().toString());
-                    row.createCell(3).setCellValue(restaurantOrder.getTable().getId());
-                    row.createCell(4).setCellValue(restaurantOrder.getTelephoneNumber());
-                    row.createCell(5).setCellValue(restaurantOrder.getTotalAmountToPay());
-                    row.createCell(6).setCellValue(menuRecord.getName());
-                    row.createCell(7).setCellValue(portionsAmount);
-                }
-            }
-            workbook.write(outputStream);
-            workbook.close();
-        };
+        StreamingResponseBody stream = reportService.getRestaurantOrderByOrderStatus(orderStatus);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByOrderStatus.xlsx");
 
@@ -307,45 +177,7 @@ public class ReportController {
     @GetMapping(value = "report/customer/findByRole", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<StreamingResponseBody> getCustomerByRole(@RequestParam("role") String roleName) {
 
-        List<Customer> customerByRole = reportService.getCustomerByRole(roleName);
-
-        StreamingResponseBody stream = outputStream -> {
-
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("customersByRoles");
-
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Customer ID");
-            headerRow.createCell(1).setCellValue("Creation time");
-            headerRow.createCell(2).setCellValue("Reservation ID");
-            headerRow.createCell(3).setCellValue("Customer name");
-            headerRow.createCell(4).setCellValue("Account enabled");
-            headerRow.createCell(5).setCellValue("Roles");
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-            for (int i = 0; i < customerByRole.size(); i++) {
-                Customer customer = customerByRole.get(i);
-                Collection<? extends GrantedAuthority> authorities = customer.getAuthorities();
-
-                // Collect all roles into a single string with commas
-                String roles = authorities.stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.joining(", "));
-
-                Row row = sheet.createRow(i + 1);
-                row.createCell(0).setCellValue(customer.getId());
-                row.createCell(1).setCellValue(customer.getCreationTime().format(formatter));
-                if (customer.getReservation() != null)
-                    row.createCell(2).setCellValue(customer.getReservation().getId());
-                row.createCell(3).setCellValue(customer.getContactDetails().getName());
-                row.createCell(4).setCellValue(customer.getEnabled());
-                row.createCell(5).setCellValue(roles);
-            }
-            workbook.write(outputStream);
-            workbook.close();
-        };
-
+        StreamingResponseBody stream = reportService.getCustomerByRole(roleName);
         HttpHeaders header = new HttpHeaders();
         header.add("Content-Disposition", "attachment; filename=customerByRoles.xlsx");
 
@@ -362,46 +194,10 @@ public class ReportController {
     public ResponseEntity<StreamingResponseBody> getPopularDishesInTimePeriod(@RequestParam("time_from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeFrom,
                                                                               @RequestParam("time_to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate timeTo) {
 
-        List<RestaurantOrderMenuRecord> restaurantOrderMenuRecordList = reportService.getRestaurantOrderMenuRecordInTimePeriod(timeFrom, timeTo);
-
-        StreamingResponseBody stream = outputStream -> {
-
-            Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("popularDishes");
-
-            Row periodRow = sheet.createRow(0);
-            periodRow.createCell(0).setCellValue("Time period: " + timeFrom + " - " + timeTo);
-
-            Row headerRow = sheet.createRow(1);
-            headerRow.createCell(0).setCellValue("Dish name");
-            headerRow.createCell(1).setCellValue("Total portions ordered");
-
-            Map<String, Double> dishPortionsMap = new HashMap<>();
-            for (RestaurantOrderMenuRecord eachRestaurantOrderMenuRecord : restaurantOrderMenuRecordList) {
-                String dishName = eachRestaurantOrderMenuRecord.getMenuRecord().getName();
-                Double portions = eachRestaurantOrderMenuRecord.getPortionsAmount();
-                //This below is retrieving the current total portions for the dish from the map. If the dish is not yet in the map
-                // (this is the first time seeing this dish), it returns a default value of 0.0.
-                //... + portions: This is adding the portions of the current RestaurantOrderMenuRecord to the total portions retrieved from the map.
-                dishPortionsMap.put(dishName, dishPortionsMap.getOrDefault(dishName, 0.0) + portions);
-            }
-
-            int rowIndex = 2;  // This variable is used to keep track of which row in the Excel sheet the code is currently writing to.
-            //below I iterate over each entry in the dishPortionsMap
-            for (Map.Entry<String, Double> entry : dishPortionsMap.entrySet()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(entry.getKey());
-                row.createCell(1).setCellValue(entry.getValue());
-            }
-
-            workbook.write(outputStream);
-            workbook.close();
-        };
+        StreamingResponseBody stream = reportService.getRestaurantOrderMenuRecordInTimePeriod(timeFrom, timeTo);
         HttpHeaders header = new HttpHeaders();
         header.add("Content-Disposition", "attachment; filename=popularDishes.xlsx");
 
         return new ResponseEntity<>(stream, header, HttpStatus.OK);
     }
-
-
 }
