@@ -91,7 +91,7 @@ class SupplierControllerIntegrationTest {
 
 
     @Test
-    public void add_ShouldCreateSupplierAndSaveItInDatabaseAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
+    public void add_ShouldCreateSupplierAndSaveItAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
         supplierRepository.deleteAll();
         SupplierDTO supplierDTORequest = new SupplierDTO(null, contactDetails, null);
         SupplierDTO expected = new SupplierDTO(null, contactDetails, null);
@@ -139,7 +139,7 @@ class SupplierControllerIntegrationTest {
     }
 
     @Test
-    public void deleteById_ShouldDeleteSupplierInDbAndReturnResponseDTO_WhenSupplierIdIsGiven() {
+    public void deleteById_ShouldDeleteSupplierAndReturnResponseDTO_WhenSupplierIdIsGiven() {
 
         webTestClient.delete()
                 .uri("/api/supplier/delete/" + supplier.getId())

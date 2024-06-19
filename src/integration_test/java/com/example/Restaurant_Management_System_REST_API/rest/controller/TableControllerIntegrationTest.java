@@ -88,7 +88,7 @@ class TableControllerIntegrationTest {
     }
 
     @Test
-    public void add_ShouldAddRestaurantTableToDatabaseAndReturnTableDTO_WhenTableDTOIsGiven() {
+    public void add_ShouldAddRestaurantTableToDbAndReturnTableDTO_WhenTableDTOIsGiven() {
         TableDTO tableDTO = modelMapper.map(table, TableDTO.class);
 
         webTestClient.post()

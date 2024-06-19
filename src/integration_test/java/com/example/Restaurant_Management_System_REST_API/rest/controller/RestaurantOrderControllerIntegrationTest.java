@@ -287,7 +287,7 @@ class RestaurantOrderControllerIntegrationTest {
     }
 
     @Test
-    public void delete_ShouldDeleteRestaurantOrderFromDatabase_WhenRestaurantOrderIdIsGiven() {
+    public void delete_ShouldDeleteRestaurantOrderAndReturnResponseDTO_WhenRestaurantOrderIdIsGiven() {
 
         webTestClient.delete()
                 .uri("/api/order/delete/" + restaurantOrder.getId())
