@@ -27,6 +27,13 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+    private static final String HEADER_NAME = "Content-Disposition";
+    private static final String HEADER_VALUE = "attachment; filename=";
+    private static final String REPORT_INVENTORY_ITEMS = "Inventory_items.xlsx";
+    private static final String REPORT_CUSTOMER_BY_ROLES = "Customer_by_roles.xlsx";
+    private static final String REPORT_RESTAURANT_ORDERS_BY_TIME_RANGE = "Restaurant_orders_by_time_range.xlsx";
+    private static final String REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS = "Restaurant_orders_by_order_status.xlsx";
+    private static final String REPORT_POPULAR_DISHES = "Popular_dishes.xlsx";
 
     //This part is intended to be used by entire staff (waitress, kitchen staff, manager and owner) and is covered with spring security
     //------------------------------------------------------------------------------------------------------------------
@@ -39,7 +46,7 @@ public class ReportController {
         //Because in headers I didn't have a Content-Disposition I got response a zip file with html and xml files.
         //When I add below I manually add the header Content-Disposition. In this case I got a response as report xls file
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=InventoryItems.xlsx");
+        headers.add(HEADER_NAME, HEADER_VALUE + REPORT_INVENTORY_ITEMS);
 
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
@@ -113,7 +120,7 @@ public class ReportController {
         StreamingResponseBody stream = reportService.getRestaurantOrderByOrderTimeRange(startDate, endDate);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByTimeRange.xlsx");
+        headers.add(HEADER_NAME, HEADER_VALUE + REPORT_RESTAURANT_ORDERS_BY_TIME_RANGE);
 
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
@@ -123,7 +130,7 @@ public class ReportController {
 
         StreamingResponseBody stream = reportService.getRestaurantOrderByOrderStatus(orderStatus);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=restaurantOrdersByOrderStatus.xlsx");
+        headers.add(HEADER_NAME, HEADER_VALUE + REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS);
 
         return new ResponseEntity<>(stream, headers, HttpStatus.OK);
     }
@@ -179,7 +186,7 @@ public class ReportController {
 
         StreamingResponseBody stream = reportService.getCustomerByRole(roleName);
         HttpHeaders header = new HttpHeaders();
-        header.add("Content-Disposition", "attachment; filename=customerByRoles.xlsx");
+        header.add(HEADER_NAME, HEADER_VALUE + REPORT_CUSTOMER_BY_ROLES);
 
         return new ResponseEntity<>(stream, header, HttpStatus.OK);
     }
@@ -196,7 +203,7 @@ public class ReportController {
 
         StreamingResponseBody stream = reportService.getRestaurantOrderMenuRecordInTimePeriod(timeFrom, timeTo);
         HttpHeaders header = new HttpHeaders();
-        header.add("Content-Disposition", "attachment; filename=popularDishes.xlsx");
+        header.add(HEADER_NAME, HEADER_VALUE + REPORT_POPULAR_DISHES);
 
         return new ResponseEntity<>(stream, header, HttpStatus.OK);
     }

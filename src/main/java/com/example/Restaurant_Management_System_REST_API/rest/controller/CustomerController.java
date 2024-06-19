@@ -36,7 +36,6 @@ public class CustomerController {
     public CustomerDTOResponse update(@PathVariable Long id, @RequestBody CustomerDTORequest customerDTORequest)
             throws NotFoundInDatabaseException {
         return customerService.update(id, customerDTORequest);
-
     }
 
     @DeleteMapping("/delete/{id}") // this will be done only by the owner and manager
