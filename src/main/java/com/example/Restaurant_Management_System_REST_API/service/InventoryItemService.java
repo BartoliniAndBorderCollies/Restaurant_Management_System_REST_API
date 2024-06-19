@@ -36,7 +36,8 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
 
         //Checking if provided inventory item with the same supplier already exists in database
-        checkIfThisInventoryItemWithThisSupplierAlreadyExists(inventoryItemDTORequest);
+        if(inventoryItemDTORequest.getSupplier() != null)
+            checkIfThisInventoryItemWithThisSupplierAlreadyExists(inventoryItemDTORequest);
 
         inventoryItem.setSupplier(supplier);
         inventoryItemRepository.save(inventoryItem);
@@ -44,7 +45,8 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
     }
 
-    private void checkIfThisInventoryItemWithThisSupplierAlreadyExists(InventoryItemDTORequest inventoryItemDTORequest) throws ObjectAlreadyExistException {
+    private void checkIfThisInventoryItemWithThisSupplierAlreadyExists(InventoryItemDTORequest inventoryItemDTORequest)
+            throws ObjectAlreadyExistException {
         Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByNameAndSupplierContactDetailsName(
                 inventoryItemDTORequest.getName(),
                 inventoryItemDTORequest.getSupplier().getContactDetails().getName()
