@@ -15,5 +15,4 @@ public interface InventoryItemRepository extends CrudRepository<InventoryItem, L
     List<InventoryItem> findByAmountGreaterThan(double amount);
     List<InventoryItem> findByAmountLessThan(double amount);
     List<InventoryItem> findBySupplier_ContactDetails_Name(String name);
-
 }
