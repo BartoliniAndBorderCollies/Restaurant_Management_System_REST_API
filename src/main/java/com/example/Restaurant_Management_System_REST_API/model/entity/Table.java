@@ -24,6 +24,6 @@ public class Table {
     @OneToMany(mappedBy = "table")
     private List<RestaurantOrder> restaurantOrders;
     @ManyToMany(mappedBy = "tables")
-    @JsonBackReference
+    @JsonBackReference(value="reservation-table")
     private List<Reservation> reservationList;
 }

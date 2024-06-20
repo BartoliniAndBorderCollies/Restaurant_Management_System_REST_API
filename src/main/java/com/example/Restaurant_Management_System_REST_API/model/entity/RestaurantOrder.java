@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class RestaurantOrder {
     private OrderStatus orderStatus;
     @ManyToOne
     @JoinColumn(name = "table_id")
+    @JsonBackReference(value="table-restaurantOrder")
     private Table table;
     private String telephoneNumber;
     private double totalAmountToPay;

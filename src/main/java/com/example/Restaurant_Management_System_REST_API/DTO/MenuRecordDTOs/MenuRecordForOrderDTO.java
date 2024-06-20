@@ -13,4 +13,5 @@ public class MenuRecordForOrderDTO {
     private Long id;
     private String name;
     private Double portionsAmount;
+    private Double price;
 }

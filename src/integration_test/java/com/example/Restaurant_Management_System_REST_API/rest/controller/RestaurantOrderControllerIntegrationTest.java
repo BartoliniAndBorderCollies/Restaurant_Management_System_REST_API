@@ -70,8 +70,8 @@ class RestaurantOrderControllerIntegrationTest {
         tableRepository.save(table);
         tableDTO = modelMapper.map(table, TableReservationDTO.class);
         menuRecordForOrderDTOList = new ArrayList<>();
-        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles", 2.0);
-        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 2.0);
+        MenuRecordForOrderDTO menuRecordForOrderDTO = new MenuRecordForOrderDTO(7L, "Chop with potatoes and pickles",1.0, 2.0);
+        MenuRecordForOrderDTO menuRecordForOrderDTO2 = new MenuRecordForOrderDTO(8L, "Lech beer 0.5", 1.0, 2.0);
         menuRecordForOrderDTOList.add(menuRecordForOrderDTO);
         menuRecordForOrderDTOList.add(menuRecordForOrderDTO2);
     }
@@ -87,9 +87,9 @@ class RestaurantOrderControllerIntegrationTest {
         List<Ingredient> lechBeerIngredientsList = Arrays.asList(lechBeerIngredient);
 
         chopWithPotatoes = new MenuRecord(chopWithPotatoesIngredientsList, Category.MAIN_DISH,
-                "Chop with potatoes and pickles", "Yumiiii", 15.0, true);
+                "Chop with potatoes and pickles", "Yumiiii", 2.0, true);
         MenuRecord lechBeer = new MenuRecord(lechBeerIngredientsList, Category.BEVERAGE, "Lech beer 0.5",
-                "0,5L", 7.0, true);
+                "0,5L", 2.0, true);
 
         menuRecordRepository.save(chopWithPotatoes);
         menuRecordRepository.save(lechBeer);
@@ -173,7 +173,7 @@ class RestaurantOrderControllerIntegrationTest {
     public void add_ShouldAddRestaurantOrderToDatabaseAndReturnRestaurantOrderDTO_WhenRestaurantOrderDTOIsGiven() {
         RestaurantOrderRequestDTO restaurantOrderRequestDTO = new RestaurantOrderRequestDTO(OrderStatus.PENDING, tableDTO,
                 "1234567890", menuRecordForOrderDTOList);
-        double amountToPay = 44.0;
+        double amountToPay = 4.0;
 
         webTestClient.post()
                 .uri("/api/order/add")

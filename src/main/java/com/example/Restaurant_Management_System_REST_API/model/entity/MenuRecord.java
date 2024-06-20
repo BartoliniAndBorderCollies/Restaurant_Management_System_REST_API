@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.model.entity;
 
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -39,5 +40,6 @@ public class MenuRecord extends CatalogItem {
     //just fields which hold values, if some are skipped they should not be changed on db. if it was a primitive data type
     //of boolean then it would change to false as default
     @OneToMany(mappedBy = "menuRecord")
+    @JsonManagedReference(value="menuRecord-restaurantOrderMenuRecord")
     private List<RestaurantOrderMenuRecord> menuRecords;
 }
