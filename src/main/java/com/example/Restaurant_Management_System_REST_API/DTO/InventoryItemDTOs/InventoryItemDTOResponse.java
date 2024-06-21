@@ -9,6 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@Data
 public class InventoryItemDTOResponse extends CatalogItem {
 
     public InventoryItemDTOResponse(Long id, int amount, Supplier supplier,
@@ -21,7 +22,7 @@ public class InventoryItemDTOResponse extends CatalogItem {
 
     private Long id;
     private int amount;
-    private Supplier supplier; //TODO: change to DTO
+    private Supplier supplier;
 
     @Override
     public boolean equals(Object o) {
