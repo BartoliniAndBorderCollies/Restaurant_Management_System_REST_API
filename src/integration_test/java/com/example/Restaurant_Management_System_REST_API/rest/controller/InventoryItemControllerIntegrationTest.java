@@ -3,12 +3,15 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
+import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
+import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
 import com.example.Restaurant_Management_System_REST_API.repository.AuthorityRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.CustomerRepository;
 import com.example.Restaurant_Management_System_REST_API.repository.InventoryItemRepository;
+import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,6 +51,9 @@ class InventoryItemControllerIntegrationTest {
     private InventoryItemRepository inventoryItemRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private SupplierRepository supplierRepository;
+    private Supplier supplier;
 
     @BeforeAll
     void setUpRolesAndCustomers() {
@@ -74,21 +80,30 @@ class InventoryItemControllerIntegrationTest {
                 .encodeToString((staff.getEmailAddress() + ":" + originalPassword).getBytes());// here I need to provide a raw password
     }
 
+    @BeforeAll
+    public void createSupplier() {
+        ContactDetails contactDetails = new ContactDetails("Test supplier", "Test street", "Test house number", "Test city",
+                "00-000", "123456789");
+        supplier = new Supplier(null, contactDetails, new ArrayList<>());
+        supplierRepository.save(supplier);
+    }
+
     @AfterAll
     public void clearRolesAndCustomers() {
         customerRepository.deleteAll();
         authorityRepository.deleteAll();
         inventoryItemRepository.deleteAll();
+        supplierRepository.deleteAll();
     }
 
     @Test
     public void create_ShouldCreateInventoryItemInDbAndReturnDTOResponse_WhenInventoryItemDTORequestIsGiven() {
 
         InventoryItemDTORequest inventoryItemDTORequest = new InventoryItemDTORequest(null, null,
-                100, null, "Potatoes", "Potatoes", 1.49);
+                100, supplier, "Potatoes", "Potatoes", 1.49);
 
         InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 100,
-                null, "Potatoes", "Potatoes", 1.49 );
+                supplier, "Potatoes", "Potatoes", 1.49 );
 
         webTestClient.post()
                 .uri("/api/inventory/add")
@@ -111,11 +126,11 @@ class InventoryItemControllerIntegrationTest {
     @Test
     public void findById_ShouldReturnInventoryItemDTOResponse_WhenInventoryItemIdExist() {
 
-        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, supplier,
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 
-        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 55, null,
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 55, supplier,
                 "Pepper", "Black pepper", 0.19);
 
         webTestClient.get()
@@ -138,9 +153,9 @@ class InventoryItemControllerIntegrationTest {
 
     @Test
     public void findAll_ShouldReturnInventoryItemDTOResponseList_WhenInventoryExist() {
-        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, supplier,
                 "Pepper", "Black pepper", 0.19);
-        InventoryItem inventoryItem2 = new InventoryItem(null, 100, null,
+        InventoryItem inventoryItem2 = new InventoryItem(null, 100, supplier,
                 "Salt", "Sea salt", 0.49);
 
         inventoryItemRepository.saveAll(Arrays.asList(inventoryItem, inventoryItem2));
@@ -167,7 +182,7 @@ class InventoryItemControllerIntegrationTest {
 
     @Test
     public void update_ShouldUpdateInventoryItemAndReturnInventoryDTOResponse_WhenIdAndInventoryItemDTORequestAreGiven() {
-        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, supplier,
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 
@@ -176,7 +191,7 @@ class InventoryItemControllerIntegrationTest {
                 null, "Updated pepper","So nice updated pepper", 0.99);
 
         InventoryItemDTOResponse expected = new InventoryItemDTOResponse(999L, 1000,
-                null, "Updated pepper","So nice updated pepper", 0.99);
+                supplier, "Updated pepper","So nice updated pepper", 0.99);
 
         webTestClient.put()
                 .uri("/api/inventory/update/" + inventoryItem.getId())
@@ -199,7 +214,7 @@ class InventoryItemControllerIntegrationTest {
     @Test
     public void delete_ShouldDeleteInventoryItemAndReturnResponseDTO_WhenIdIsGiven() {
 
-        InventoryItem inventoryItem = new InventoryItem(null, 55, null,
+        InventoryItem inventoryItem = new InventoryItem(null, 55, supplier,
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 
