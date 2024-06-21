@@ -120,6 +120,7 @@ class InventoryItemControllerIntegrationTest {
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
+                    assertEquals(expected.getSupplier(), actualResponse.getSupplier());
                 });
     }
 
@@ -147,6 +148,7 @@ class InventoryItemControllerIntegrationTest {
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
+                    assertEquals(expected.getSupplier(), actualResponse.getSupplier());
                 });
         inventoryItemRepository.deleteAll();
     }
@@ -207,6 +209,7 @@ class InventoryItemControllerIntegrationTest {
                     assertEquals(expected.getName(), actualResponse.getName());
                     assertEquals(expected.getDescription(), actualResponse.getDescription());
                     assertEquals(expected.getPrice(), actualResponse.getPrice());
+                    assertEquals(expected.getSupplier(), actualResponse.getSupplier());
                 });
         inventoryItemRepository.deleteAll();
     }
