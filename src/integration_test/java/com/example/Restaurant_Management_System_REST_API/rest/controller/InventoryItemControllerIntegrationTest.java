@@ -1,8 +1,10 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ContactDetailsDTO.ContactDetailsDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
 import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.InventoryItemSupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -54,6 +56,7 @@ class InventoryItemControllerIntegrationTest {
     @Autowired
     private SupplierRepository supplierRepository;
     private Supplier supplier;
+    private InventoryItemSupplierDTO supplierDTO;
 
     @BeforeAll
     void setUpRolesAndCustomers() {
@@ -86,6 +89,10 @@ class InventoryItemControllerIntegrationTest {
                 "00-000", "123456789");
         supplier = new Supplier(null, contactDetails, new ArrayList<>());
         supplierRepository.save(supplier);
+
+        ContactDetailsDTO contactDetailsDTO = modelMapper.map(contactDetails, ContactDetailsDTO.class);
+
+        supplierDTO = new InventoryItemSupplierDTO(supplier.getId(), contactDetailsDTO);
     }
 
     @AfterAll
