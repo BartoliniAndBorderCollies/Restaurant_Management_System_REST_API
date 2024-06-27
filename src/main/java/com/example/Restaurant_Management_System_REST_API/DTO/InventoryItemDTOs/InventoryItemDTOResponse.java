@@ -1,7 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.InventoryItemSupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
-import com.example.Restaurant_Management_System_REST_API.model.entity.Supplier;
 import lombok.*;
 
 import java.util.Objects;
@@ -12,7 +12,7 @@ import java.util.Objects;
 @Data
 public class InventoryItemDTOResponse extends CatalogItem {
 
-    public InventoryItemDTOResponse(Long id, int amount, Supplier supplier,
+    public InventoryItemDTOResponse(Long id, int amount, InventoryItemSupplierDTO supplier,
                                     String name, String description, Double price) {
         super(name, description, price);
         this.id = id;
@@ -22,7 +22,7 @@ public class InventoryItemDTOResponse extends CatalogItem {
 
     private Long id;
     private int amount;
-    private Supplier supplier;
+    private InventoryItemSupplierDTO supplier;
 
     @Override
     public boolean equals(Object o) {
