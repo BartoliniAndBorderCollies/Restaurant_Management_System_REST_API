@@ -110,7 +110,7 @@ class InventoryItemControllerIntegrationTest {
                 100, supplier, "Potatoes", "Potatoes", 1.49);
 
         InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 100,
-                supplier, "Potatoes", "Potatoes", 1.49 );
+                supplierDTO, "Potatoes", "Potatoes", 1.49 );
 
         webTestClient.post()
                 .uri("/api/inventory/add")
@@ -138,7 +138,7 @@ class InventoryItemControllerIntegrationTest {
                 "Pepper", "Black pepper", 0.19);
         inventoryItemRepository.save(inventoryItem);
 
-        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 55, supplier,
+        InventoryItemDTOResponse expected = new InventoryItemDTOResponse(null, 55, supplierDTO,
                 "Pepper", "Black pepper", 0.19);
 
         webTestClient.get()
@@ -200,7 +200,7 @@ class InventoryItemControllerIntegrationTest {
                 null, "Updated pepper","So nice updated pepper", 0.99);
 
         InventoryItemDTOResponse expected = new InventoryItemDTOResponse(999L, 1000,
-                supplier, "Updated pepper","So nice updated pepper", 0.99);
+                supplierDTO, "Updated pepper","So nice updated pepper", 0.99);
 
         webTestClient.put()
                 .uri("/api/inventory/update/" + inventoryItem.getId())
