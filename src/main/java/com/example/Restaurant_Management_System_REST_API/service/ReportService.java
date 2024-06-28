@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.ReportMenuRecordDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderMenuRecordDTO.RestaurantOrderMenuRecordDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
@@ -180,8 +181,15 @@ public class ReportService {
         return menuRecordRepository.findByIsAvailable(true);
     }
 
-    public List<MenuRecord> getMenuRecordsByCategory(Category category) {
-        return menuRecordRepository.findByCategory(category);
+    public List<ReportMenuRecordDTO> getMenuRecordsByCategory(Category category) {
+        List<ReportMenuRecordDTO> menuRecordDTOResponseList = new ArrayList<>();
+        List<MenuRecord> menuRecordList = menuRecordRepository.findByCategory(category);
+
+        menuRecordList.forEach(menuRecord ->
+            menuRecordDTOResponseList.add(modelMapper.map(menuRecord, ReportMenuRecordDTO.class))
+        );
+
+        return menuRecordDTOResponseList;
     }
 
     public List<Reservation> getReservationByName(String name) {
