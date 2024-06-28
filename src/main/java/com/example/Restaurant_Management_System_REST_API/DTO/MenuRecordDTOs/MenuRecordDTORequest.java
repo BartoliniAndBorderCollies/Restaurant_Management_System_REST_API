@@ -3,7 +3,6 @@ package com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs;
 import com.example.Restaurant_Management_System_REST_API.model.CatalogItem;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
-import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,5 +27,4 @@ public class MenuRecordDTORequest extends CatalogItem {
     private List<Ingredient> ingredients;
     private Category category;
     private Boolean isAvailable;
-    private List<InventoryItem> inventoryItems;
 }
