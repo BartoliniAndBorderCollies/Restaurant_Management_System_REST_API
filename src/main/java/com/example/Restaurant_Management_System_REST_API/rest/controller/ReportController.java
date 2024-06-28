@@ -68,7 +68,7 @@ public class ReportController {
     }
 
     @GetMapping("info/menuRecord/findAvailable")
-    List<MenuRecord> getAvailableMenuRecords() {
+    List<ReportMenuRecordDTO> getAvailableMenuRecords() {
         return reportService.getAvailableMenuRecords();
     }
 

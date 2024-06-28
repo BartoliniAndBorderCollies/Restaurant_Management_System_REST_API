@@ -177,8 +177,14 @@ public class ReportService {
         return customerRepository.findByReservation();
     }
 
-    public List<MenuRecord> getAvailableMenuRecords() {
-        return menuRecordRepository.findByIsAvailable(true);
+    public List<ReportMenuRecordDTO> getAvailableMenuRecords() {
+        List<ReportMenuRecordDTO> menuRecordDTOResponseList = new ArrayList<>();
+        List<MenuRecord> availableMenuRecordList = menuRecordRepository.findByIsAvailable(true);
+
+        availableMenuRecordList.forEach(availableMenuRecord ->
+                menuRecordDTOResponseList.add(modelMapper.map(availableMenuRecord, ReportMenuRecordDTO.class)));
+
+        return menuRecordDTOResponseList;
     }
 
     public List<ReportMenuRecordDTO> getMenuRecordsByCategory(Category category) {
