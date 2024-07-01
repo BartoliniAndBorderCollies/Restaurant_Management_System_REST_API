@@ -1,5 +1,3 @@
-This project is under development.
-
 # Restaurant Management System – Backend Service
 
 ## Main objective
@@ -111,8 +109,6 @@ with access to ReportService, it will be a reporting module. Without a repositor
 
 ## Functionalities - proposal for app version 1.0
 
-`All functionalities in 1.0 are proposed for desktop use only.`
-
 
 ### 1. Restaurant Menu
 - add a record
@@ -170,6 +166,6 @@ This part is about all users -> guests (clients) as well as members of a staff.
 Proposed roles: (ADMIN, OWNER, MANAGER, STAFF, CLIENT)
 
 ### 6. Report
-It will be possible to generate a report depending on a role. For example OWNER 
+It is be possible to generate a report depending on a role. For example OWNER 
 could check sales in a specific month. MANAGER could check stock level in specific period of time.
-A report will be downloadable in excel file for further processing of data. 
+A report is downloadable in excel file for further processing of data. 
