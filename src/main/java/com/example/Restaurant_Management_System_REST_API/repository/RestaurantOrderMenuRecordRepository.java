@@ -15,6 +15,4 @@ public interface RestaurantOrderMenuRecordRepository extends CrudRepository<Rest
 
     @Query("SELECT romr FROM RestaurantOrderMenuRecord romr WHERE romr.restaurantOrder.orderTime >= :time_from AND romr.restaurantOrder.orderTime < :time_to")
     List<RestaurantOrderMenuRecord> findRestaurantOrderMenuRecordByTimePeriod(@Param("time_from") LocalDateTime timeFrom, @Param("time_to") LocalDateTime timeTo);
-
-
 }

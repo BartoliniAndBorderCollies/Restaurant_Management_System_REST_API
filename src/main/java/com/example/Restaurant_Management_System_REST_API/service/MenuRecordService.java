@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
 import com.example.Restaurant_Management_System_REST_API.model.entity.MenuRecord;
@@ -10,7 +11,6 @@ import com.example.Restaurant_Management_System_REST_API.service.generic.Generic
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,12 +69,16 @@ public class MenuRecordService implements GenericBasicCrudOperations<MenuRecordD
     }
 
     @Override
-    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO delete(Long id) throws NotFoundInDatabaseException {
         MenuRecord menuRecord = menuRecordRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(MenuRecord.class));
         menuRecordRepository.delete(menuRecord);
 
-        return new ResponseEntity<>("Menu record has been deleted!", HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Menu record has been deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
+
+        return responseDTO;
     }
 
     MenuRecord findByName(String name) throws NotFoundInDatabaseException {

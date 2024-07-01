@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
@@ -9,7 +10,6 @@ import com.example.Restaurant_Management_System_REST_API.repository.SupplierRepo
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -56,14 +56,16 @@ public class SupplierService {
         return DTOlist;
     }
 
-    public ResponseEntity<?> deleteById(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO deleteById(Long id) throws NotFoundInDatabaseException {
         Supplier supplierToDelete = supplierRepository.findById(id).orElseThrow(()->
                 new NotFoundInDatabaseException(Supplier.class));
 
         supplierRepository.delete(supplierToDelete);
 
-        return new ResponseEntity<>("Supplier: " + supplierToDelete.getId() + " has been deleted!",
-                HttpStatus.OK);
-    }
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Supplier: " + supplierToDelete.getId() + " has been deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
 
+        return responseDTO;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Reservation;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -50,7 +50,7 @@ class TableServiceTest {
     }
 
     @Test
-    public void add_ShouldMapAndSaveAndMapAgainAndReturn_WhenTableDTOIsGiven() {
+    public void add_ShouldMapAndSaveAndMapAgainAndReturnTableDTO_WhenTableDTOIsGiven() {
         //Arrange
         when(modelMapper.map(tableDTO, Table.class)).thenReturn(table);
         when(tableRepository.save(table)).thenReturn(table);
@@ -101,18 +101,18 @@ class TableServiceTest {
     }
 
     @Test
-    public void deleteById_ShouldInteractWithDependenciesCorrectlyAndReturnResponseEntity_WhenTableIdIsGiven()
+    public void deleteById_ShouldFindDeleteAndReturnResponseDTO_WhenTableIdIsGiven()
             throws NotFoundInDatabaseException {
         //Arrange
         Table tableToDelete = new Table(1L, true, null, null);
         when(tableRepository.findById(tableToDelete.getId())).thenReturn(Optional.of(tableToDelete));
 
         //Act
-        ResponseEntity<?> actualResponse = tableService.deleteById(tableToDelete.getId());
+        ResponseDTO actualResponse = tableService.deleteById(tableToDelete.getId());
 
         //Assert
-        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        assertEquals("Table with id " + tableToDelete.getId() + " has been deleted!", actualResponse.getBody());
+        assertEquals(HttpStatus.OK, actualResponse.getStatus());
+        assertEquals("Table with id " + tableToDelete.getId() + " has been deleted!", actualResponse.getMessage());
     }
 
     @Test

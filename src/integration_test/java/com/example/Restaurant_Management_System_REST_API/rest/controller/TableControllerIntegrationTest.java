@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
@@ -87,7 +88,7 @@ class TableControllerIntegrationTest {
     }
 
     @Test
-    public void add_ShouldAddRestaurantTableToDatabaseAndReturnTableDTO_WhenTableDTOIsGiven() {
+    public void add_ShouldAddRestaurantTableToDbAndReturnTableDTO_WhenTableDTOIsGiven() {
         TableDTO tableDTO = modelMapper.map(table, TableDTO.class);
 
         webTestClient.post()
@@ -124,20 +125,19 @@ class TableControllerIntegrationTest {
     }
 
     @Test
-    public void deleteById_ShouldFindAndDeleteTableAndReturnResponseEntity_WhenTableExistAndTableIdIsGiven() {
+    public void deleteById_ShouldFindAndDeleteTableAndReturnResponseDTO_WhenTableExistAndTableIdIsGiven() {
 
         webTestClient.delete()
                 .uri("/api/table/delete/" + table.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String actualResponse = response.getResponseBody();
-                    assert actualResponse != null;
-                    assertFalse(actualResponse.isEmpty());
-                    assertEquals("Table with id " + table.getId() + " has been deleted!", actualResponse);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                    ResponseDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals("Table with id " + table.getId() + " has been deleted!", actualResponse.getMessage());
+                    assertEquals(HttpStatus.OK, actualResponse.getStatus());
                     Optional<Table> thisTableShouldBeDeleted = tableRepository.findById(table.getId());
                     assertFalse(thisTableShouldBeDeleted.isPresent());
                 });

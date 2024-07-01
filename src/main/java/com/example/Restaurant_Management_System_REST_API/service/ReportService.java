@@ -1,6 +1,7 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordForOrderDTO;
+import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.ReportMenuRecordDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.RestaurantOrderMenuRecordDTO.RestaurantOrderMenuRecordDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.TableDTO.TableForReportDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
@@ -69,11 +70,7 @@ public class ReportService {
     private static final String PORTIONS_AMOUNT = "Portions amount";
     private static final String ROLES = "Roles";
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final String REPORT_INVENTORY_ITEMS = "Inventory items";
-    private static final String REPORT_CUSTOMER_BY_ROLES = "Customer by roles";
-    private static final String REPORT_RESTAURANT_ORDERS_BY_TIME_RANGE = "Restaurant orders by time range";
-    private static final String REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS = "Restaurant orders by order status";
-    private static final String REPORT_POPULAR_DISHES = "Popular dishes";
+
 
     //section for InventoryItem reports
     public StreamingResponseBody getInventoryItemByAmountGreaterThan(double amount) {
@@ -86,7 +83,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook(); // a top level object to create sheets and other operations
-            Sheet sheet = workbook.createSheet(REPORT_INVENTORY_ITEMS);
+            Sheet sheet = workbook.createSheet();
 
             String[] headers = {ID, NAME, DESCRIPTION, PRICE, AMOUNT, SUPPLIER_NAME, SUPPLIER_STREET, SUPPLIER_HOUSE_NUMBER,
             SUPPLIER_CITY, SUPPLIER_POSTAL_CODE, SUPPLIER_TELEPHONE_NUMBER};
@@ -140,7 +137,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet(REPORT_CUSTOMER_BY_ROLES);
+            Sheet sheet = workbook.createSheet();
 
             // Create header row
             Row headerRow = sheet.createRow(0);
@@ -180,12 +177,25 @@ public class ReportService {
         return customerRepository.findByReservation();
     }
 
-    public List<MenuRecord> getAvailableMenuRecords() {
-        return menuRecordRepository.findByIsAvailable(true);
+    public List<ReportMenuRecordDTO> getAvailableMenuRecords() {
+        List<ReportMenuRecordDTO> menuRecordDTOResponseList = new ArrayList<>();
+        List<MenuRecord> availableMenuRecordList = menuRecordRepository.findByIsAvailable(true);
+
+        availableMenuRecordList.forEach(availableMenuRecord ->
+                menuRecordDTOResponseList.add(modelMapper.map(availableMenuRecord, ReportMenuRecordDTO.class)));
+
+        return menuRecordDTOResponseList;
     }
 
-    public List<MenuRecord> getMenuRecordsByCategory(Category category) {
-        return menuRecordRepository.findByCategory(category);
+    public List<ReportMenuRecordDTO> getMenuRecordsByCategory(Category category) {
+        List<ReportMenuRecordDTO> menuRecordDTOResponseList = new ArrayList<>();
+        List<MenuRecord> menuRecordList = menuRecordRepository.findByCategory(category);
+
+        menuRecordList.forEach(menuRecord ->
+            menuRecordDTOResponseList.add(modelMapper.map(menuRecord, ReportMenuRecordDTO.class))
+        );
+
+        return menuRecordDTOResponseList;
     }
 
     public List<Reservation> getReservationByName(String name) {
@@ -223,7 +233,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet(REPORT_RESTAURANT_ORDERS_BY_TIME_RANGE);
+            Sheet sheet = workbook.createSheet();
 
             // Create header row
             Row headerRow = sheet.createRow(0);
@@ -258,7 +268,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet(REPORT_RESTAURANT_ORDERS_BY_ORDER_STATUS);
+            Sheet sheet = workbook.createSheet();
 
             Row headerRow = sheet.createRow(0);
             String [] headers = {RESTAURANT_ORDER_ID, ORDER_TIME, ORDER_STATUS, TABLE_ID, CUSTOMER_TELEPHONE_NUMBER,
@@ -370,7 +380,7 @@ public class ReportService {
         StreamingResponseBody stream = outputStream -> {
 
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet(REPORT_POPULAR_DISHES);
+            Sheet sheet = workbook.createSheet();
 
             Row periodRow = sheet.createRow(0);
             stringSetter.setCellValue(periodRow, 0, "Time period: " + dateFrom + " - " + dateTo);

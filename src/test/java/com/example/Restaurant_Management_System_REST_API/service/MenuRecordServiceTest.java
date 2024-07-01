@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Ingredient;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -57,11 +57,11 @@ class MenuRecordServiceTest {
                     ingredients, Category.FOR_KIDS, true);
             menuRecord = new MenuRecord(ingredients, Category.BEVERAGE, "Drink", "Thirsty very much!",
                     6.0, true);
-            menuRecordDTOResponse = new MenuRecordDTOResponse(1L, "Lech beer", ingredients, Category.BEVERAGE, false, new ArrayList<>());
+            menuRecordDTOResponse = new MenuRecordDTOResponse(1L, "Lech beer", ingredients, Category.BEVERAGE, false);
         }
 
         @Test
-        public void create_ShouldInteractWithDependenciesCorrectly_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
+        public void create_ShouldMapSaveMapAgainAndReturnDTO_WhenMenuRecordDTORequestIsGiven() throws NotFoundInDatabaseException {
             //Arrange
             when(modelMapper.map(menuRecordDTORequest, MenuRecord.class)).thenReturn(menuRecord);
             when(menuRecordRepository.save(menuRecord)).thenReturn(menuRecord);
@@ -110,7 +110,7 @@ class MenuRecordServiceTest {
         public void setUp() {
             id = 1L;
             menuRecordDTOResponse1 = new MenuRecordDTOResponse(id, "Lech beer", ingredients, Category.DESSERT,
-                    true, new ArrayList<>());
+                    true);
             menuRecord = new MenuRecord(ingredients, Category.DESSERT, "Lovely dessert!", "mhmmm",
                     6.5, true);
         }
@@ -142,7 +142,7 @@ class MenuRecordServiceTest {
             when(menuRecordRepository.findAll()).thenReturn(listMenuRecords);
 
             MenuRecordDTOResponse menuRecordDTOResponse2 = new MenuRecordDTOResponse(2L, "Lech beer", ingredients,
-                    Category.BEVERAGE, true, new ArrayList<>());
+                    Category.BEVERAGE, true);
             when(modelMapper.map(menuRecord, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse1);
             when(modelMapper.map(menuRecord2, MenuRecordDTOResponse.class)).thenReturn(menuRecordDTOResponse2);
 
@@ -202,17 +202,17 @@ class MenuRecordServiceTest {
         }
 
         @Test
-        public void delete_ShouldReturnResponsEntityWithStatusOkAndAppropriateMessage_WhenMenuRecordIsDeleted()
+        public void delete_ShouldReturnResponseDTOWithStatusOkAndAppropriateMessage_WhenMenuRecordIsDeleted()
                 throws NotFoundInDatabaseException {
             //Arrange
             when(menuRecordRepository.findById(id)).thenReturn(Optional.of(menuRecord));
 
             //Act
-            ResponseEntity<?> actualResponse = menuRecordService.delete(id);
+            ResponseDTO actualResponse = menuRecordService.delete(id);
 
             //Assert
-            assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-            assertEquals("Menu record has been deleted!", actualResponse.getBody());
+            assertEquals(HttpStatus.OK, actualResponse.getStatus());
+            assertEquals("Menu record has been deleted!", actualResponse.getMessage());
         }
     }
 }

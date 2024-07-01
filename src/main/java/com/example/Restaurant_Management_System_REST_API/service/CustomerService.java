@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.CustomerAlreadyHasReservationException;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
@@ -17,7 +18,6 @@ import lombok.AllArgsConstructor;
 import org.hibernate.PropertyValueException;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -131,13 +131,16 @@ public class CustomerService implements GenericBasicCrudOperations<CustomerDTORe
     }
 
     @Override
-    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO delete(Long id) throws NotFoundInDatabaseException {
         Customer customerToDelete = customerRepository.findById(id).orElseThrow( ()->
                 new NotFoundInDatabaseException(Customer.class));
         customerRepository.delete(customerToDelete);
 
-        return new ResponseEntity<>("Customer: " + customerToDelete.getUsername() + " has been successfully deleted!",
-                HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Customer: " + customerToDelete.getUsername() + " has been successfully deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
+
+        return responseDTO;
     }
 
     Optional<Customer> getCustomerFromReservationByEmailAddress(Reservation reservation) {

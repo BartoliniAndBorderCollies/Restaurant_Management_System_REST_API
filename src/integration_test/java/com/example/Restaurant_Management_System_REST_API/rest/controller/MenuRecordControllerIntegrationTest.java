@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.MenuRecordDTOs.MenuRecordDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.model.Category;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -231,7 +232,7 @@ class MenuRecordControllerIntegrationTest {
     }
 
     @Test
-    public void delete_ShouldDeleteMenuRecordAndReturnResponseEntity_WhenIdIsGiven() {
+    public void delete_ShouldDeleteMenuRecordAndReturnResponseDTO_WhenIdIsGiven() {
 
         MenuRecord menuRecord = new MenuRecord(ingredients, Category.SNACKS, "lovely snacks", "omommoom",
                 3.0, true);
@@ -242,11 +243,12 @@ class MenuRecordControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String responseBody = response.getResponseBody();
-                    assertEquals("Menu record has been deleted!", responseBody);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                    ResponseDTO actualResponse = response.getResponseBody();
+                    assertNotNull(actualResponse);
+                    assertEquals("Menu record has been deleted!", actualResponse.getMessage());
+                    assertEquals(HttpStatus.OK, actualResponse.getStatus());
                     Optional<MenuRecord> shouldBeEmpty = menuRecordRepository.findById(menuRecord.getId());
                     assertTrue(shouldBeEmpty.isEmpty());
                 });

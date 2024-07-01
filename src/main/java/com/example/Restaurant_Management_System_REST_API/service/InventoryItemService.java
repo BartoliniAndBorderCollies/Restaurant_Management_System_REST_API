@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.service;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.InventoryItem;
@@ -11,7 +12,6 @@ import com.example.Restaurant_Management_System_REST_API.service.generic.Generic
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,7 +36,8 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         InventoryItem inventoryItem = modelMapper.map(inventoryItemDTORequest, InventoryItem.class);
 
         //Checking if provided inventory item with the same supplier already exists in database
-        checkIfThisInventoryItemWithThisSupplierAlreadyExists(inventoryItemDTORequest);
+        if(inventoryItemDTORequest.getSupplier() != null)
+            verifyItemWithSupplierExists(inventoryItemDTORequest);
 
         inventoryItem.setSupplier(supplier);
         inventoryItemRepository.save(inventoryItem);
@@ -44,16 +45,23 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         return modelMapper.map(inventoryItem, InventoryItemDTOResponse.class);
     }
 
-    private void checkIfThisInventoryItemWithThisSupplierAlreadyExists(InventoryItemDTORequest inventoryItemDTORequest) throws ObjectAlreadyExistException {
-        Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByName(inventoryItemDTORequest.getName());
+    /**
+     * Checks whether an Inventory Item with the specific Supplier exists.
+     *
+     * @param inventoryItemDTORequest The InventoryItemDTORequest containing the item name and supplier details.
+     * @throws ObjectAlreadyExistException If an item with the same name and supplier already exists.
+     */
+    private void verifyItemWithSupplierExists(InventoryItemDTORequest inventoryItemDTORequest)
+            throws ObjectAlreadyExistException {
+        Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findByNameAndSupplierContactDetailsName(
+                inventoryItemDTORequest.getName(),
+                inventoryItemDTORequest.getSupplier().getContactDetails().getName()
+        );
+
         if (optionalInventoryItem.isPresent()) {
-            if (inventoryItemDTORequest.getName().equalsIgnoreCase(optionalInventoryItem.get().getName())
-                    && inventoryItemDTORequest.getSupplier().getContactDetails().getName().equalsIgnoreCase(optionalInventoryItem.get().getSupplier().getContactDetails().getName()))  {
-                throw new ObjectAlreadyExistException(InventoryItem.class);
-            }
+            throw new ObjectAlreadyExistException(InventoryItem.class);
         }
     }
-
 
     @Override
     public InventoryItemDTOResponse findById(Long id) throws NotFoundInDatabaseException {
@@ -79,7 +87,6 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
         InventoryItemDTOResponse inventoryDTOToBeUpdated = findById(id);
 
         Optional.of(inventoryItemDTORequest.getAmount()).ifPresent(inventoryDTOToBeUpdated::setAmount);
-        Optional.ofNullable(inventoryItemDTORequest.getSupplier()).ifPresent(inventoryDTOToBeUpdated::setSupplier);
         Optional.ofNullable(inventoryItemDTORequest.getName()).ifPresent(inventoryDTOToBeUpdated::setName);
         Optional.ofNullable(inventoryItemDTORequest.getDescription()).ifPresent(inventoryDTOToBeUpdated::setDescription);
         Optional.ofNullable(inventoryItemDTORequest.getPrice()).ifPresent(inventoryDTOToBeUpdated::setPrice);
@@ -90,12 +97,16 @@ public class InventoryItemService implements GenericBasicCrudOperations<Inventor
     }
 
     @Override
-    public ResponseEntity<?> delete(Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO delete(Long id) throws NotFoundInDatabaseException {
         InventoryItem inventoryToDelete = inventoryItemRepository.findById(id).orElseThrow(() ->
                 new NotFoundInDatabaseException(InventoryItem.class));
         inventoryItemRepository.delete(inventoryToDelete);
 
-        return new ResponseEntity<>("Inventory item: " + inventoryToDelete.getName() + " has been deleted!", HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("Inventory item: " + inventoryToDelete.getName() + " has been deleted!");
+        responseDTO.setStatus(HttpStatus.OK);
+
+        return responseDTO;
     }
 
     public InventoryItem findByName(String name) throws NotFoundInDatabaseException {

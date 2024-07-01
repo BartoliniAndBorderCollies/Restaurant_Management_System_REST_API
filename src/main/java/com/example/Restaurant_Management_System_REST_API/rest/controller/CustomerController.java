@@ -2,10 +2,10 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.service.CustomerService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,11 +36,10 @@ public class CustomerController {
     public CustomerDTOResponse update(@PathVariable Long id, @RequestBody CustomerDTORequest customerDTORequest)
             throws NotFoundInDatabaseException {
         return customerService.update(id, customerDTORequest);
-
     }
 
     @DeleteMapping("/delete/{id}") // this will be done only by the owner and manager
-    public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return customerService.delete(id);
     }
 }

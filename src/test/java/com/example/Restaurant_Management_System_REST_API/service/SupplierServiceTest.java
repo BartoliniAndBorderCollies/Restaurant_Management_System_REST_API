@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.service;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +55,7 @@ class SupplierServiceTest {
     }
 
     @Test
-    public void add_ShouldInteractWithDependenciesCorrectly_WhenSupplierDTORequestIsGiven() throws ObjectAlreadyExistException {
+    public void add_ShouldMapFindSaveMapAgainAndReturnDTO_WhenSupplierDTORequestIsGiven() throws ObjectAlreadyExistException {
         //Arrange
         when(modelMapper.map(supplierDTO, Supplier.class)).thenReturn(supplier);
         when(supplierRepository.findByContactDetails_NameAndContactDetails_Street(supplier.getContactDetails().getName(),
@@ -113,16 +113,16 @@ class SupplierServiceTest {
     }
 
     @Test
-    public void deleteById_ShouldReturnResponseEntityWithAppropriateMessage_WhenSupplierIdIsGiven() throws NotFoundInDatabaseException {
+    public void deleteById_ShouldReturnResponseDTOWithAppropriateMessage_WhenSupplierIdIsGiven() throws NotFoundInDatabaseException {
         //Arrange
         supplierRepository.save(supplier);
         when(supplierRepository.findById(supplier.getId())).thenReturn(Optional.of(supplier));
 
         //Act
-        ResponseEntity<?> actualResponse = supplierService.deleteById(supplier.getId());
+        ResponseDTO actualResponse = supplierService.deleteById(supplier.getId());
 
         //Assert
-        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        assertEquals("Supplier: " + supplier.getId() + " has been deleted!", actualResponse.getBody());
+        assertEquals(HttpStatus.OK, actualResponse.getStatus());
+        assertEquals("Supplier: " + supplier.getId() + " has been deleted!", actualResponse.getMessage());
     }
 }

@@ -2,6 +2,7 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.CustomerDTOs.CustomerDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Customer;
@@ -226,7 +227,7 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
-    public void delete_ShouldDeleteCustomerOnDatabaseAndReturnResponseEntity_WhenCustomerIdIsGiven() {
+    public void delete_ShouldDeleteCustomerOnDatabaseAndReturnResponseDTO_WhenCustomerIdIsGiven() {
         Customer customerToDelete = new Customer(null, LocalDateTime.now(), null, null, encodedPassword, true, true, true, true,
                 "staff@test.eu", authoritiesStaff);
         customerRepository.save(customerToDelete);
@@ -236,12 +237,13 @@ class CustomerControllerIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String responseMessage = response.getResponseBody();
+                    ResponseDTO responseDTO = response.getResponseBody();
+                    assertNotNull(responseDTO);
                     assertEquals("Customer: " + customerToDelete.getUsername() + " has been successfully deleted!",
-                            responseMessage);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                            responseDTO.getMessage());
+                    assertEquals(HttpStatus.OK, responseDTO.getStatus());
                     Optional<Customer> shouldBeEmpty = customerRepository.findById(customerToDelete.getId());
                     assertTrue(shouldBeEmpty.isEmpty());
                 });

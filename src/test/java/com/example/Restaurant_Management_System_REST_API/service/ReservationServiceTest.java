@@ -179,7 +179,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    public void update_ShouldInteractWithDependenciesCorrectly_WhenReservationIdAndDTORequestAreGiven()
+    public void update_ShouldFindMapGetFindMapAgainAndReturnDTO_WhenReservationIdAndDTORequestAreGiven()
             throws NotFoundInDatabaseException {
         //Arrange
         Long id = 1L;

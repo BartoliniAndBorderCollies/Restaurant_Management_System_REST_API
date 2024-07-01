@@ -1,11 +1,11 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.service.SupplierService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,11 +46,11 @@ public class SupplierController {
      * Access is restricted to the owner and manager.
      *
      * @param id The ID of the supplier to be deleted.
-     * @return The response entity after deleting the supplier.
+     * @return The ResponseDTO after deleting the supplier.
      * @throws NotFoundInDatabaseException If the supplier is not found in the database.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO deleteById(@PathVariable Long id) throws NotFoundInDatabaseException {
         return supplierService.deleteById(id);
     }
 }

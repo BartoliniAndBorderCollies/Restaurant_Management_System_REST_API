@@ -2,11 +2,11 @@ package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTORequest;
 import com.example.Restaurant_Management_System_REST_API.DTO.InventoryItemDTOs.InventoryItemDTOResponse;
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.exception.NotFoundInDatabaseException;
 import com.example.Restaurant_Management_System_REST_API.exception.ObjectAlreadyExistException;
 import com.example.Restaurant_Management_System_REST_API.service.InventoryItemService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -76,11 +76,11 @@ public class InventoryItemController {
      * Access is restricted to the owner, manager, and staff.
      *
      * @param id The ID of the inventory item to be deleted.
-     * @return A ResponseEntity indicating the result of the deletion operation.
+     * @return A ResponseDTO indicating the result of the deletion operation.
      * @throws NotFoundInDatabaseException If the requested item is not found in the database.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) throws NotFoundInDatabaseException {
+    public ResponseDTO delete(@PathVariable Long id) throws NotFoundInDatabaseException {
         return inventoryItemService.delete(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.Restaurant_Management_System_REST_API.rest.controller;
 
+import com.example.Restaurant_Management_System_REST_API.DTO.ResponseDTO;
 import com.example.Restaurant_Management_System_REST_API.DTO.SupplierDTOs.SupplierDTO;
 import com.example.Restaurant_Management_System_REST_API.model.ContactDetails;
 import com.example.Restaurant_Management_System_REST_API.model.entity.Authority;
@@ -90,7 +91,7 @@ class SupplierControllerIntegrationTest {
 
 
     @Test
-    public void add_ShouldCreateSupplierAndSaveItInDatabaseAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
+    public void add_ShouldCreateSupplierAndSaveItAndReturnSupplierDTOResponse_WhenSupplierDTORequestIsGiven() {
         supplierRepository.deleteAll();
         SupplierDTO supplierDTORequest = new SupplierDTO(null, contactDetails, null);
         SupplierDTO expected = new SupplierDTO(null, contactDetails, null);
@@ -138,19 +139,19 @@ class SupplierControllerIntegrationTest {
     }
 
     @Test
-    public void deleteById_ShouldDeleteSupplierInDbAndReturnResponseEntity_WhenSupplierIdIsGiven() {
+    public void deleteById_ShouldDeleteSupplierAndReturnResponseDTO_WhenSupplierIdIsGiven() {
 
         webTestClient.delete()
                 .uri("/api/supplier/delete/" + supplier.getId())
                 .header(HttpHeaders.AUTHORIZATION, basicAuthHeaderOwner)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
+                .expectBody(ResponseDTO.class)
                 .consumeWith(response -> {
-                    String actualResponse = response.getResponseBody();
+                    ResponseDTO actualResponse = response.getResponseBody();
                     assertNotNull(actualResponse);
-                    assertEquals("Supplier: " + supplier.getId() + " has been deleted!", actualResponse);
-                    assertEquals(HttpStatus.OK, response.getStatus());
+                    assertEquals("Supplier: " + supplier.getId() + " has been deleted!", actualResponse.getMessage());
+                    assertEquals(HttpStatus.OK, actualResponse.getStatus());
                     Optional<Supplier> optionalSupplier = supplierRepository.findById(supplier.getId());
                     assertTrue(optionalSupplier.isEmpty());
                 });
